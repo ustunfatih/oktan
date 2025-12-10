@@ -65,7 +65,7 @@ This report summarizes the provided 2025 fuel log and outlines product ideas for
 | 2025-05-12 | Normal     | Pearl          | 379           | 41.04    | 10.83    | 0.211        |
 | 2025-05-31 | Normal     | Pearl          | 401           | 40.86    | 10.19    | 0.200        |
 | 2025-07-06 | Normal     | Onaiza         | 409           | 42.57    | 10.41    | 0.200        |
-| 2025-07-20 | Sport      | Pearl          | 357           | 41.01    | 11.49    | 0.238        |
+| 2025-07-20 | Sport      | Pearl          | 357           | 41.01    | 11.49    | 0.239        |
 | 2025-09-10 | Sport      | Pearl          | 373           | 42.94    | 11.51    | 0.220        |
 | 2025-10-11 | Normal     | Pearl          | 419           | 41.95    | 10.01    | 0.210        |
 | 2025-10-27 | Normal     | Pearl          | 412           | 44.50    | 10.80    | 0.209        |
