@@ -128,3 +128,8 @@ private struct FuelEntryRow: View {
         }
     }
 }
+
+#Preview {
+    TrackingView()
+        .environmentObject(FuelRepository())
+}

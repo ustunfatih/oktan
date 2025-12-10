@@ -29,9 +29,7 @@ struct MetricCard: View {
     }
 }
 
-struct MetricCard_Previews: PreviewProvider {
-    static var previews: some View {
-        MetricCard(title: "Cost / km", value: "0.18 QAR", trend: "Better than last 5 fill-ups", icon: "creditcard", tint: .blue)
-            .padding()
-    }
+#Preview {
+    MetricCard(title: "Cost / km", value: "0.18 QAR", trend: "Better than last 5 fill-ups", icon: "creditcard", tint: .blue)
+        .padding()
 }

@@ -47,7 +47,7 @@ struct FuelEntry: Identifiable, Codable, Equatable {
 
 extension FuelEntry {
     var distance: Double? {
-        guard let start = odometerStart, let end = odometerEnd, end >= start else { return nil }
+        guard let start = odometerStart, let end = odometerEnd, end > start else { return nil }
         return end - start
     }
 
