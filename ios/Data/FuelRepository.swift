@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 
 @MainActor
@@ -56,8 +57,8 @@ final class FuelRepository: ObservableObject {
         let costPerKM = distance > 0 ? cost / distance : nil
 
         let recent = completed.suffix(5)
-        let recentLPer100 = recent.compactMap { $0.litersPer100KM }.average()
-        let recentCostPerKM = recent.compactMap { $0.costPerKM }.average()
+        let recentLPer100 = average(of: recent.compactMap { $0.litersPer100KM })
+        let recentCostPerKM = average(of: recent.compactMap { $0.costPerKM })
 
         let modes = Dictionary(grouping: completed, by: { $0.driveMode })
             .mapValues { group -> DriveModeBreakdown in
@@ -126,7 +127,7 @@ enum SeedData {
         formatter.locale = Locale(identifier: "en_US_POSIX")
 
         let raw: [(String, Double?, Double?, Double, Double, String, FuelEntry.DriveMode, Bool)] = [
-            ("16/04/2025", 13, 170, 19.58, 2.05, "Unknown", .normal, false),
+            ("16/04/2025", 13, 170, 19.58, 2.05, "Lusail", .eco, false),
             ("28/04/2025", 170, 584, 41.46, 2.05, "Pearl", .eco, true),
             ("12/05/2025", 584, 963, 41.03, 1.95, "Pearl", .normal, true),
             ("31/05/2025", 963, 1364, 41.04, 1.95, "Pearl", .normal, true),
@@ -155,9 +156,8 @@ enum SeedData {
     }
 }
 
-private extension Array where Element == Double {
-    func average() -> Double? {
-        guard !isEmpty else { return nil }
-        return reduce(0, +) / Double(count)
-    }
+private func average(of values: [Double]) -> Double? {
+    guard !values.isEmpty else { return nil }
+    let total = values.reduce(0, +)
+    return total / Double(values.count)
 }

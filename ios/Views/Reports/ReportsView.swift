@@ -160,8 +160,3 @@ struct ReportsView: View {
             .glassCard()
     }
 }
-
-#Preview {
-    ReportsView()
-        .environmentObject(FuelRepository())
-}
