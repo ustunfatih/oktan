@@ -125,3 +125,8 @@ struct FuelEntryFormView: View {
         dismiss()
     }
 }
+
+#Preview {
+    FuelEntryFormView()
+        .environmentObject(FuelRepository())
+}
