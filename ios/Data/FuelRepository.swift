@@ -1,6 +1,7 @@
 import Combine
 import Foundation
 
+@MainActor
 final class FuelRepository: ObservableObject {
     @Published private(set) var entries: [FuelEntry] = []
     private let storageURL: URL
@@ -123,6 +124,7 @@ enum SeedData {
     static var entries: [FuelEntry] {
         let formatter = DateFormatter()
         formatter.dateFormat = "dd/MM/yyyy"
+        formatter.locale = Locale(identifier: "en_US_POSIX")
 
         let raw: [(String, Double?, Double?, Double, Double, String, FuelEntry.DriveMode, Bool)] = [
             ("16/04/2025", 13, 170, 19.58, 2.05, "Lusail", .eco, false),
