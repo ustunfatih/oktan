@@ -100,6 +100,50 @@ final class FuelRepository: ObservableObject {
         guard let data = try? encoder.encode(entries) else { return }
         try? data.write(to: storageURL, options: .atomic)
     }
+
+    // MARK: - CSV Export
+
+    /// Exports all entries to CSV format
+    func exportToCSV() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+
+        var csv = "Date,Odometer_Start,Odometer_End,Total_Liters,Price_per_Liter,Total_Cost,Full_Refill,Drive_Mode,Gas_Station,Distance_KM,L_per_100KM,Cost_per_KM,Notes\n"
+
+        for entry in entries.sorted(by: { $0.date < $1.date }) {
+            let date = dateFormatter.string(from: entry.date)
+            let odometerStart = entry.odometerStart.map { String(format: "%.0f", $0) } ?? ""
+            let odometerEnd = entry.odometerEnd.map { String(format: "%.0f", $0) } ?? ""
+            let liters = String(format: "%.2f", entry.totalLiters)
+            let price = String(format: "%.2f", entry.pricePerLiter)
+            let totalCost = String(format: "%.2f", entry.totalCost)
+            let fullRefill = entry.isFullRefill ? "true" : "false"
+            let driveMode = entry.driveMode.rawValue
+            let station = entry.gasStation.replacingOccurrences(of: ",", with: ";")
+            let distance = entry.distance.map { String(format: "%.0f", $0) } ?? ""
+            let lPer100 = entry.litersPer100KM.map { String(format: "%.2f", $0) } ?? ""
+            let costPerKM = entry.costPerKM.map { String(format: "%.3f", $0) } ?? ""
+            let notes = (entry.notes ?? "").replacingOccurrences(of: ",", with: ";")
+
+            csv += "\(date),\(odometerStart),\(odometerEnd),\(liters),\(price),\(totalCost),\(fullRefill),\(driveMode),\(station),\(distance),\(lPer100),\(costPerKM),\(notes)\n"
+        }
+
+        return csv
+    }
+
+    /// Creates a shareable CSV file URL
+    func createCSVFile() -> URL? {
+        let csv = exportToCSV()
+        let fileName = "oktan-fuel-log-\(Date().formatted(.iso8601.year().month().day())).csv"
+        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(fileName)
+
+        do {
+            try csv.write(to: tempURL, atomically: true, encoding: .utf8)
+            return tempURL
+        } catch {
+            return nil
+        }
+    }
 }
 
 struct FuelSummary {

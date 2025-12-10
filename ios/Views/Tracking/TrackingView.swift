@@ -3,6 +3,7 @@ import SwiftUI
 struct TrackingView: View {
     @EnvironmentObject private var repository: FuelRepository
     @State private var isPresentingForm = false
+    @State private var entryToEdit: FuelEntry?
 
     var body: some View {
         NavigationStack {
@@ -30,6 +31,10 @@ struct TrackingView: View {
                 FuelEntryFormView()
                     .presentationDetents([.medium, .large])
             }
+            .sheet(item: $entryToEdit) { entry in
+                FuelEntryFormView(existingEntry: entry)
+                    .presentationDetents([.medium, .large])
+            }
         }
     }
 
@@ -53,7 +58,11 @@ struct TrackingView: View {
             } else {
                 VStack(spacing: DesignSystem.Spacing.medium) {
                     ForEach(repository.entries.sorted(by: { $0.date > $1.date })) { entry in
-                        FuelEntryRow(entry: entry)
+                        FuelEntryRow(
+                            entry: entry,
+                            onEdit: { entryToEdit = entry },
+                            onDelete: { repository.delete(entry) }
+                        )
                     }
                 }
             }
@@ -79,6 +88,10 @@ struct TrackingView: View {
 
 private struct FuelEntryRow: View {
     let entry: FuelEntry
+    let onEdit: () -> Void
+    let onDelete: () -> Void
+
+    @State private var showDeleteConfirmation = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: DesignSystem.Spacing.small) {
@@ -104,7 +117,7 @@ private struct FuelEntryRow: View {
                     valueChip(title: "Distance", value: distance, suffix: "km")
                 }
                 valueChip(title: "Fuel", value: entry.totalLiters, suffix: "L")
-                Text(entry.totalCost, format: .currency(code: "QAR"))
+                Text(entry.totalCost, format: .currency(code: AppConfiguration.currencyCode))
                     .font(.headline)
                     .foregroundStyle(DesignSystem.ColorPalette.label)
             }
@@ -114,8 +127,32 @@ private struct FuelEntryRow: View {
                     .font(.footnote)
                     .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
             }
+
+            // Action buttons
+            HStack(spacing: DesignSystem.Spacing.medium) {
+                Button(action: onEdit) {
+                    Label("Edit", systemImage: "pencil")
+                        .font(.subheadline)
+                }
+                .tint(DesignSystem.ColorPalette.primaryBlue)
+
+                Spacer()
+
+                Button(action: { showDeleteConfirmation = true }) {
+                    Label("Delete", systemImage: "trash")
+                        .font(.subheadline)
+                }
+                .tint(DesignSystem.ColorPalette.errorRed)
+            }
+            .padding(.top, DesignSystem.Spacing.xsmall)
         }
         .glassCard()
+        .confirmationDialog("Delete this fill-up?", isPresented: $showDeleteConfirmation, titleVisibility: .visible) {
+            Button("Delete", role: .destructive, action: onDelete)
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This action cannot be undone.")
+        }
     }
 
     private func valueChip(title: String, value: Double, suffix: String) -> some View {
@@ -127,4 +164,9 @@ private struct FuelEntryRow: View {
                 .font(.headline)
         }
     }
+}
+
+#Preview {
+    TrackingView()
+        .environmentObject(FuelRepository())
 }

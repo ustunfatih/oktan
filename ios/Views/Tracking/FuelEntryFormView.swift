@@ -4,6 +4,9 @@ struct FuelEntryFormView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var repository: FuelRepository
 
+    private let existingEntry: FuelEntry?
+    private var isEditing: Bool { existingEntry != nil }
+
     @State private var date: Date = .now
     @State private var odometerStart: String = ""
     @State private var odometerEnd: String = ""
@@ -15,6 +18,10 @@ struct FuelEntryFormView: View {
     @State private var notes: String = ""
 
     @State private var errorMessage: String?
+
+    init(existingEntry: FuelEntry? = nil) {
+        self.existingEntry = existingEntry
+    }
 
     var body: some View {
         NavigationStack {
@@ -63,7 +70,7 @@ struct FuelEntryFormView: View {
             }
             .scrollContentBackground(.hidden)
             .background(DesignSystem.ColorPalette.background)
-            .navigationTitle("Add Fill-up")
+            .navigationTitle(isEditing ? "Edit Fill-up" : "Add Fill-up")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Close", action: { dismiss() })
@@ -76,7 +83,7 @@ struct FuelEntryFormView: View {
                     .disabled(!isValidForm)
                 }
             }
-            .onAppear(perform: prefillFromLastEntry)
+            .onAppear(perform: setupForm)
         }
     }
 
@@ -84,6 +91,24 @@ struct FuelEntryFormView: View {
         guard Double(liters) ?? 0 > 0, Double(pricePerLiter) ?? 0 > 0 else { return false }
         if let start = Double(odometerStart), let end = Double(odometerEnd), end < start { return false }
         return true
+    }
+
+    private func setupForm() {
+        if let entry = existingEntry {
+            // Editing existing entry
+            date = entry.date
+            if let start = entry.odometerStart { odometerStart = String(Int(start)) }
+            if let end = entry.odometerEnd { odometerEnd = String(Int(end)) }
+            liters = String(format: "%.2f", entry.totalLiters)
+            pricePerLiter = String(format: "%.2f", entry.pricePerLiter)
+            gasStation = entry.gasStation
+            driveMode = entry.driveMode
+            isFull = entry.isFullRefill
+            notes = entry.notes ?? ""
+        } else {
+            // New entry - prefill from last entry
+            prefillFromLastEntry()
+        }
     }
 
     private func prefillFromLastEntry() {
@@ -106,6 +131,7 @@ struct FuelEntryFormView: View {
         }
 
         let entry = FuelEntry(
+            id: existingEntry?.id ?? UUID(),
             date: date,
             odometerStart: Double(odometerStart),
             odometerEnd: Double(odometerEnd),
@@ -117,11 +143,26 @@ struct FuelEntryFormView: View {
             notes: notes.isEmpty ? nil : notes
         )
 
-        guard repository.add(entry) else {
-            errorMessage = "The entry could not be saved. Check odometer values and required fields."
-            return
+        if isEditing {
+            repository.update(entry)
+        } else {
+            guard repository.add(entry) else {
+                errorMessage = "The entry could not be saved. Check odometer values and required fields."
+                return
+            }
         }
 
+        triggerHapticFeedback()
         dismiss()
     }
+
+    private func triggerHapticFeedback() {
+        let generator = UINotificationFeedbackGenerator()
+        generator.notificationOccurred(.success)
+    }
+}
+
+#Preview {
+    FuelEntryFormView()
+        .environmentObject(FuelRepository())
 }

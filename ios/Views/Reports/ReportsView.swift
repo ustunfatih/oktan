@@ -3,22 +3,29 @@ import SwiftUI
 
 struct ReportsView: View {
     @EnvironmentObject private var repository: FuelRepository
+    @State private var showingExportSheet = false
+    @State private var csvFileURL: URL?
 
     var body: some View {
-        let summary = repository.summary()
-        ScrollView {
-            VStack(spacing: DesignSystem.Spacing.large) {
-                Text("Reporting")
-                    .font(.largeTitle.weight(.bold))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                metricsGrid(summary: summary)
-                efficiencyChart
-                costChart
-                driveModeBreakdown(summary: summary)
+        NavigationStack {
+            let summary = repository.summary()
+            ScrollView {
+                VStack(spacing: DesignSystem.Spacing.large) {
+                    metricsGrid(summary: summary)
+                    efficiencyChart
+                    costChart
+                    driveModeBreakdown(summary: summary)
+                    exportSection
+                }
+                .padding(DesignSystem.Spacing.large)
             }
-            .padding(DesignSystem.Spacing.large)
             .background(DesignSystem.ColorPalette.background.ignoresSafeArea())
+            .navigationTitle("Reports")
+            .sheet(isPresented: $showingExportSheet) {
+                if let url = csvFileURL {
+                    ShareSheet(items: [url])
+                }
+            }
         }
     }
 
@@ -46,8 +53,8 @@ struct ReportsView: View {
 
                 MetricCard(
                     title: "Total cost",
-                    value: summary.totalCost.formatted(.currency(code: "QAR")),
-                    trend: summary.averageCostPerKM.map { "Avg: \($0, specifier: "%.3f") QAR/km" },
+                    value: summary.totalCost.formatted(.currency(code: AppConfiguration.currencyCode)),
+                    trend: summary.averageCostPerKM.map { "Avg: \($0, specifier: "%.3f") \(AppConfiguration.currencyCode)/km" },
                     icon: "creditcard.fill",
                     tint: DesignSystem.ColorPalette.successGreen
                 )
@@ -55,7 +62,7 @@ struct ReportsView: View {
                 MetricCard(
                     title: "Recent efficiency",
                     value: summary.recentAverageLitersPer100KM.map { "\($0, specifier: "%.2f") L/100km" } ?? "N/A",
-                    trend: summary.recentAverageCostPerKM.map { "Cost: \($0, specifier: "%.3f") QAR/km" },
+                    trend: summary.recentAverageCostPerKM.map { "Cost: \($0, specifier: "%.3f") \(AppConfiguration.currencyCode)/km" },
                     icon: "waveform.path.ecg.rectangle",
                     tint: DesignSystem.ColorPalette.warningOrange
                 )
@@ -107,7 +114,7 @@ struct ReportsView: View {
                 Chart(entries) { entry in
                     BarMark(
                         x: .value("Date", entry.date, unit: .day),
-                        y: .value("QAR/km", entry.costPerKM ?? 0)
+                        y: .value("\(AppConfiguration.currencyCode)/km", entry.costPerKM ?? 0)
                     )
                     .foregroundStyle(DesignSystem.ColorPalette.deepPurple.gradient)
                 }
@@ -138,7 +145,7 @@ struct ReportsView: View {
                                         .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
                                 }
                                 if let cost = breakdown.costPerKM {
-                                    Text("\(cost, specifier: "%.3f") QAR/km")
+                                    Text("\(cost, specifier: "%.3f") \(AppConfiguration.currencyCode)/km")
                                         .font(.subheadline)
                                         .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
                                 }
@@ -152,6 +159,29 @@ struct ReportsView: View {
         }
     }
 
+    private var exportSection: some View {
+        VStack(alignment: .leading, spacing: DesignSystem.Spacing.medium) {
+            Text("Export")
+                .font(.title2.weight(.semibold))
+
+            Button(action: exportData) {
+                Label("Export to CSV", systemImage: "square.and.arrow.up")
+                    .font(.headline)
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            .tint(DesignSystem.ColorPalette.primaryBlue)
+            .disabled(repository.entries.isEmpty)
+        }
+    }
+
+    private func exportData() {
+        csvFileURL = repository.createCSVFile()
+        if csvFileURL != nil {
+            showingExportSheet = true
+        }
+    }
+
     private func placeholder(_ text: String) -> some View {
         Text(text)
             .font(.footnote)
@@ -159,4 +189,21 @@ struct ReportsView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .glassCard()
     }
+}
+
+// MARK: - Share Sheet
+
+struct ShareSheet: UIViewControllerRepresentable {
+    let items: [Any]
+
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        UIActivityViewController(activityItems: items, applicationActivities: nil)
+    }
+
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
+}
+
+#Preview {
+    ReportsView()
+        .environmentObject(FuelRepository())
 }
