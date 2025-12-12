@@ -65,9 +65,16 @@ struct OktanApp: App {
     var body: some Scene {
         WindowGroup {
             ZStack {
-                MainTabView(appSettings: appSettings)
+                Group {
+                    if let carRepoSD = carRepository {
+                        MainTabView(appSettings: appSettings)
+                            .environment(carRepoSD)
+                    } else {
+                        MainTabView(appSettings: appSettings)
+                            .environment(legacyCarRepository)
+                    }
+                }
                     .environmentObject(repository)
-                    .environment(carRepository ?? legacyCarRepository)
                     .environment(appSettings)
                     .environment(authManager)
                     .environment(errorHandler)
