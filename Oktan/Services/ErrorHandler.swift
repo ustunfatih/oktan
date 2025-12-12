@@ -102,7 +102,7 @@ final class ErrorHandler {
     /// Executes an async operation with automatic error handling
     func withErrorHandling<T>(
         retryable: Bool = false,
-        operation: () async throws -> T
+        operation: @escaping () async throws -> T
     ) async -> T? {
         do {
             return try await operation()
