@@ -3,6 +3,7 @@ import SwiftUI
 
 struct ReportsView: View {
     @EnvironmentObject private var repository: FuelRepository
+    @Environment(AppSettings.self) private var settings
     @State private var showingExportSheet = false
     @State private var csvFileURL: URL?
 
@@ -37,7 +38,7 @@ struct ReportsView: View {
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: DesignSystem.Spacing.medium) {
                 MetricCard(
                     title: "Total distance",
-                    value: summary.totalDistance.formatted(.number.precision(.fractionLength(0))).appending(" km"),
+                    value: settings.formatDistance(summary.totalDistance),
                     trend: "Based on completed odometer entries",
                     icon: "point.topleft.down.curvedto.point.bottomright.up",
                     tint: DesignSystem.ColorPalette.primaryBlue
@@ -45,24 +46,24 @@ struct ReportsView: View {
 
                 MetricCard(
                     title: "Total fuel",
-                    value: summary.totalLiters.formatted(.number.precision(.fractionLength(1))).appending(" L"),
-                    trend: summary.averageLitersPer100KM.map { "Avg: \($0.formatted(.number.precision(.fractionLength(2)))) L/100km" },
+                    value: settings.formatVolume(summary.totalLiters),
+                    trend: summary.averageLitersPer100KM.map { "Avg: \(settings.formatEfficiency($0))" },
                     icon: "drop.fill",
                     tint: DesignSystem.ColorPalette.deepPurple
                 )
 
                 MetricCard(
                     title: "Total cost",
-                    value: summary.totalCost.formatted(.currency(code: AppConfiguration.currencyCode)),
-                    trend: summary.averageCostPerKM.map { "Avg: \($0.formatted(.number.precision(.fractionLength(3)))) \(AppConfiguration.currencyCode)/km" },
+                    value: settings.formatCost(summary.totalCost),
+                    trend: summary.averageCostPerKM.map { "Avg: \(settings.formatCostPerDistance($0))" },
                     icon: "creditcard.fill",
                     tint: DesignSystem.ColorPalette.successGreen
                 )
 
                 MetricCard(
                     title: "Recent efficiency",
-                    value: summary.recentAverageLitersPer100KM.map { "\($0.formatted(.number.precision(.fractionLength(2)))) L/100km" } ?? "N/A",
-                    trend: summary.recentAverageCostPerKM.map { "Cost: \($0.formatted(.number.precision(.fractionLength(3)))) \(AppConfiguration.currencyCode)/km" },
+                    value: summary.recentAverageLitersPer100KM.map { settings.formatEfficiency($0) } ?? "N/A",
+                    trend: summary.recentAverageCostPerKM.map { "Cost: \(settings.formatCostPerDistance($0))" },
                     icon: "waveform.path.ecg.rectangle",
                     tint: DesignSystem.ColorPalette.warningOrange
                 )
@@ -77,7 +78,7 @@ struct ReportsView: View {
         }
 
         return VStack(alignment: .leading, spacing: DesignSystem.Spacing.medium) {
-            Text("Efficiency trend (L/100km)")
+            Text("Efficiency trend (\(settings.efficiencyUnit.rawValue))")
                 .font(.title2.weight(.semibold))
 
             if entries.isEmpty {
@@ -86,10 +87,16 @@ struct ReportsView: View {
                 Chart(entries) { entry in
                     LineMark(
                         x: .value("Date", entry.date),
-                        y: .value("L/100km", entry.litersPer100KM ?? 0)
+                        y: .value(settings.efficiencyUnit.rawValue, settings.convertEfficiency(entry.litersPer100KM ?? 0))
                     )
                     .foregroundStyle(DesignSystem.ColorPalette.primaryBlue)
                     .interpolationMethod(.catmullRom)
+                    
+                    PointMark(
+                        x: .value("Date", entry.date),
+                        y: .value(settings.efficiencyUnit.rawValue, settings.convertEfficiency(entry.litersPer100KM ?? 0))
+                    )
+                    .foregroundStyle(DesignSystem.ColorPalette.primaryBlue)
                 }
                 .chartXAxis { AxisMarks(values: .stride(by: .month)) }
                 .frame(height: 200)
@@ -105,7 +112,7 @@ struct ReportsView: View {
         }
 
         return VStack(alignment: .leading, spacing: DesignSystem.Spacing.medium) {
-            Text("Cost per km")
+            Text("Cost per \(settings.distanceUnit.rawValue)")
                 .font(.title2.weight(.semibold))
 
             if entries.isEmpty {
@@ -114,7 +121,7 @@ struct ReportsView: View {
                 Chart(entries) { entry in
                     BarMark(
                         x: .value("Date", entry.date, unit: .day),
-                        y: .value("\(AppConfiguration.currencyCode)/km", entry.costPerKM ?? 0)
+                        y: .value("\(settings.currencyCode)/\(settings.distanceUnit.rawValue)", settings.convertCostPerDistance(entry.costPerKM ?? 0))
                     )
                     .foregroundStyle(DesignSystem.ColorPalette.deepPurple.gradient)
                 }
@@ -140,12 +147,12 @@ struct ReportsView: View {
                                     .font(.headline)
                                 Spacer()
                                 if let lPer100 = breakdown.lPer100KM {
-                                    Text("\(lPer100.formatted(.number.precision(.fractionLength(2)))) L/100km")
+                                    Text(settings.formatEfficiency(lPer100))
                                         .font(.subheadline)
                                         .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
                                 }
                                 if let cost = breakdown.costPerKM {
-                                    Text("\(cost.formatted(.number.precision(.fractionLength(3)))) \(AppConfiguration.currencyCode)/km")
+                                    Text(settings.formatCostPerDistance(cost))
                                         .font(.subheadline)
                                         .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
                                 }
@@ -191,19 +198,8 @@ struct ReportsView: View {
     }
 }
 
-// MARK: - Share Sheet
-
-struct ShareSheet: UIViewControllerRepresentable {
-    let items: [Any]
-
-    func makeUIViewController(context: Context) -> UIActivityViewController {
-        UIActivityViewController(activityItems: items, applicationActivities: nil)
-    }
-
-    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
-}
-
 #Preview {
     ReportsView()
         .environmentObject(FuelRepository())
+        .environment(AppSettings())
 }

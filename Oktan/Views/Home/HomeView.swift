@@ -2,6 +2,7 @@ import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject private var repository: FuelRepository
+    @Environment(AppSettings.self) private var settings
     @State private var carRepository = CarRepository()
     @State private var isPresentingForm = false
     @State private var isPresentingCarSelection = false
@@ -55,7 +56,6 @@ struct HomeView: View {
             // Car image - displayed as fit, not cropped
             if let imageData = car.imageData, let uiImage = UIImage(data: imageData) {
                 ZStack {
-                    // Subtle gradient background
                     RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.medium, style: .continuous)
                         .fill(
                             LinearGradient(
@@ -69,7 +69,6 @@ struct HomeView: View {
                         )
                         .frame(height: 180)
                     
-                    // Car image - fit aspect ratio so it's not cropped
                     Image(uiImage: uiImage)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
@@ -79,52 +78,50 @@ struct HomeView: View {
                 }
             }
             
-            // Car details
             HStack {
-                VStack(alignment: .leading, spacing: DesignSystem.Spacing.xsmall) {
-                    Text("My Car")
-                        .font(.caption)
-                        .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
-                    
-                    Text(car.displayName)
-                        .font(.title3.weight(.bold))
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("\(car.year) \(car.make)")
+                        .font(.headline)
                         .foregroundStyle(DesignSystem.ColorPalette.label)
-                    
-                    if car.tankCapacity > 0 {
-                        Label("\(Int(car.tankCapacity))L tank capacity", systemImage: "fuelpump.fill")
-                            .font(.subheadline)
-                            .foregroundStyle(DesignSystem.ColorPalette.primaryBlue)
-                    } else {
-                        Label("Electric Vehicle", systemImage: "bolt.fill")
-                            .font(.subheadline)
-                            .foregroundStyle(DesignSystem.ColorPalette.successGreen)
-                    }
+                    Text(car.model)
+                        .font(.title2.weight(.bold))
+                        .foregroundStyle(DesignSystem.ColorPalette.label)
                 }
                 
                 Spacer()
                 
-                Button(action: { isPresentingCarSelection = true }) {
-                    Image(systemName: "pencil.circle.fill")
-                        .font(.title2)
+                VStack(alignment: .trailing, spacing: 4) {
+                    Text("Tank")
+                        .font(.caption)
+                        .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
+                    Text(settings.formatVolume(car.tankCapacity))
+                        .font(.headline)
                         .foregroundStyle(DesignSystem.ColorPalette.primaryBlue)
                 }
             }
+            
+            Button(action: { isPresentingCarSelection = true }) {
+                Label("Change Car", systemImage: "arrow.triangle.2.circlepath")
+                    .font(.subheadline)
+            }
+            .tint(DesignSystem.ColorPalette.secondaryLabel)
         }
+        .padding(DesignSystem.Spacing.medium)
         .glassCard()
     }
     
     private var addCarButton: some View {
         Button(action: { isPresentingCarSelection = true }) {
             VStack(spacing: DesignSystem.Spacing.medium) {
-                ZStack {
-                    Circle()
-                        .stroke(DesignSystem.ColorPalette.primaryBlue.opacity(0.3), style: StrokeStyle(lineWidth: 2, dash: [8]))
-                        .frame(width: 80, height: 80)
-                    
-                    Image(systemName: "plus.circle.fill")
-                        .font(.system(size: 40))
-                        .foregroundStyle(DesignSystem.ColorPalette.primaryBlue)
-                }
+                Image(systemName: "car.badge.gearshape")
+                    .font(.system(size: 48))
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [DesignSystem.ColorPalette.primaryBlue, DesignSystem.ColorPalette.deepPurple],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
                 
                 Text("Add Your Car")
                     .font(.headline)
@@ -152,7 +149,7 @@ struct HomeView: View {
                         .font(.subheadline)
                         .foregroundStyle(.white.opacity(0.8))
                     
-                    Text("\(summary.totalDistance.formatted(.number.precision(.fractionLength(0)))) km")
+                    Text(settings.formatDistance(summary.totalDistance))
                         .font(.system(size: 36, weight: .bold))
                         .foregroundStyle(.white)
                 }
@@ -172,7 +169,7 @@ struct HomeView: View {
                     Text("Total Spent")
                         .font(.caption)
                         .foregroundStyle(.white.opacity(0.7))
-                    Text(summary.totalCost.formatted(.currency(code: AppConfiguration.currencyCode)))
+                    Text(settings.formatCost(summary.totalCost))
                         .font(.headline)
                         .foregroundStyle(.white)
                 }
@@ -213,15 +210,15 @@ struct HomeView: View {
             HStack(spacing: DesignSystem.Spacing.medium) {
                 StatCard(
                     title: "Average",
-                    value: summary.averageLitersPer100KM.map { "\($0.formatted(.number.precision(.fractionLength(1)))) L" } ?? "—",
-                    subtitle: "per 100 km",
+                    value: summary.averageLitersPer100KM.map { settings.formatEfficiency($0) } ?? "—",
+                    subtitle: "all time",
                     icon: "gauge.with.needle",
                     color: DesignSystem.ColorPalette.successGreen
                 )
                 
                 StatCard(
                     title: "Recent",
-                    value: summary.recentAverageLitersPer100KM.map { "\($0.formatted(.number.precision(.fractionLength(1)))) L" } ?? "—",
+                    value: summary.recentAverageLitersPer100KM.map { settings.formatEfficiency($0) } ?? "—",
                     subtitle: "last 5 fill-ups",
                     icon: "clock.arrow.circlepath",
                     color: DesignSystem.ColorPalette.warningOrange
@@ -243,7 +240,7 @@ struct HomeView: View {
             } else {
                 VStack(spacing: DesignSystem.Spacing.small) {
                     ForEach(repository.entries.sorted(by: { $0.date > $1.date }).prefix(3)) { entry in
-                        RecentEntryRow(entry: entry)
+                        RecentEntryRow(entry: entry, settings: settings)
                     }
                 }
             }
@@ -313,6 +310,7 @@ private struct StatCard: View {
 
 private struct RecentEntryRow: View {
     let entry: FuelEntry
+    let settings: AppSettings
     
     var body: some View {
         HStack {
@@ -327,10 +325,10 @@ private struct RecentEntryRow: View {
             Spacer()
             
             VStack(alignment: .trailing, spacing: 4) {
-                Text(entry.totalCost.formatted(.currency(code: AppConfiguration.currencyCode)))
+                Text(settings.formatCost(entry.totalCost))
                     .font(.headline)
                 if let lPer100 = entry.litersPer100KM {
-                    Text("\(lPer100.formatted(.number.precision(.fractionLength(1)))) L/100km")
+                    Text(settings.formatEfficiency(lPer100))
                         .font(.caption)
                         .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
                 }
@@ -345,4 +343,5 @@ private struct RecentEntryRow: View {
 #Preview {
     HomeView()
         .environmentObject(FuelRepository())
+        .environment(AppSettings())
 }

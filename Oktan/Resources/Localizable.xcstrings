@@ -1,156 +1,1214 @@
 {
-  "sourceLanguage": "en",
-  "strings": {
-    "tracking.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Tracking" } }
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@"
+          }
+        }
       }
     },
-    "tracking.header": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Log each refuel with a few taps. We calculate distance, L/100km, and cost automatically." } }
+    "%@ %@ - %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@ - %3$@"
+          }
+        }
       }
     },
-    "tracking.recentFillups": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Recent fill-ups" } }
+    "%@. %@. %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@. %2$@. %3$@"
+          }
+        }
       }
     },
-    "tracking.noEntries": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "No entries yet" } }
+    "%@/%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@/%2$@"
+          }
+        }
       }
     },
-    "tracking.addFillupHint": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Tap Add Fill-up to start tracking your fuel efficiency." } }
+    "%lld" : {
+
+    },
+    "%lld models" : {
+
+    },
+    "%lldL" : {
+
+    },
+    "About" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hakkında"
+          }
+        }
       }
     },
-    "form.addFillup": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Add Fill-up" } }
+    "About Oktan" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oktan Hakkında"
+          }
+        }
       }
     },
-    "form.editFillup": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Edit Fill-up" } }
+    "Access your data on all devices" : {
+
+    },
+    "Add Fill-up" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dolum Ekle"
+          }
+        }
       }
     },
-    "form.date": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Date" } }
+    "Add odometer start/end to chart efficiency" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verimlilik grafiği için km başlangıç/bitiş ekleyin"
+          }
+        }
       }
     },
-    "form.liters": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Liters" } }
+    "Add Your Car" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arabanızı Ekleyin"
+          }
+        }
       }
     },
-    "form.pricePerLiter": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Price per liter" } }
+    "Advanced Analytics" : {
+
+    },
+    "all time" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tüm zamanlar"
+          }
+        }
       }
     },
-    "form.gasStation": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Gas station" } }
+    "An unknown error occurred." : {
+
+    },
+    "Analytics" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Analitik"
+          }
+        }
       }
     },
-    "form.driveMode": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Drive mode" } }
+    "Appearance" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Görünüm"
+          }
+        }
       }
     },
-    "form.fullRefill": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Full refill" } }
+    "Are you sure you want to sign out?" : {
+
+    },
+    "At a glance" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir bakışta"
+          }
+        }
       }
     },
-    "form.odometer": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Odometer" } }
+    "Average" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ortalama"
+          }
+        }
       }
     },
-    "form.notes": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Notes" } }
+    "Back" : {
+
+    },
+    "Based on completed odometer entries" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tamamlanan kilometre girişlerine göre"
+          }
+        }
       }
     },
-    "reports.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Reporting" } }
+    "Cancel" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İptal"
+          }
+        }
       }
     },
-    "reports.atAGlance": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "At a glance" } }
+    "Change Car" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Araç Değiştir"
+          }
+        }
       }
     },
-    "reports.totalDistance": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Total distance" } }
+    "Changes will take effect after restarting the app." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Değişiklikler uygulama yeniden başlatıldıktan sonra geçerli olacak."
+          }
+        }
       }
     },
-    "reports.totalFuel": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Total fuel" } }
+    "Choose your preferred units for tracking fuel consumption." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yakıt tüketimi takibi için tercih ettiğiniz birimleri seçin."
+          }
+        }
       }
     },
-    "reports.totalCost": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Total cost" } }
+    "Close" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kapat"
+          }
+        }
       }
     },
-    "common.save": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Save" } }
+    "Cloud Sync" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bulut Senkronizasyonu"
+          }
+        }
       }
     },
-    "common.close": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Close" } }
+    "Confirm" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Onayla"
+          }
+        }
       }
     },
-    "common.edit": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Edit" } }
+    "Contact Support" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Destek İletişim"
+          }
+        }
       }
     },
-    "common.delete": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Delete" } }
+    "Continue" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Devam"
+          }
+        }
       }
     },
-    "common.cancel": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": { "stringUnit": { "state": "translated", "value": "Cancel" } }
+    "Cost per %@" : {
+
+    },
+    "Currency" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para Birimi"
+          }
+        }
       }
+    },
+    "Data" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Veri"
+          }
+        }
+      }
+    },
+    "Data Management" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Veri Yönetimi"
+          }
+        }
+      }
+    },
+    "Date" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tarih"
+          }
+        }
+      }
+    },
+    "Delete" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sil"
+          }
+        }
+      }
+    },
+    "Delete All" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tümünü Sil"
+          }
+        }
+      }
+    },
+    "Delete All Data" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tüm Verileri Sil"
+          }
+        }
+      }
+    },
+    "Delete All Data?" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tüm Veriler Silinsin mi?"
+          }
+        }
+      }
+    },
+    "Delete this fill-up?" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu dolumu sil?"
+          }
+        }
+      }
+    },
+    "Detailed insights and trends" : {
+
+    },
+    "Distance" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mesafe"
+          }
+        }
+      }
+    },
+    "Done" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tamam"
+          }
+        }
+      }
+    },
+    "Drive mode" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sürüş modu"
+          }
+        }
+      }
+    },
+    "Drive modes" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sürüş modları"
+          }
+        }
+      }
+    },
+    "Edit" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Düzenle"
+          }
+        }
+      }
+    },
+    "Edit Fill-up" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dolumu Düzenle"
+          }
+        }
+      }
+    },
+    "Efficiency" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verimlilik"
+          }
+        }
+      }
+    },
+    "Efficiency trend (%@)" : {
+
+    },
+    "Electric" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elektrikli"
+          }
+        }
+      }
+    },
+    "End" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bitiş"
+          }
+        }
+      }
+    },
+    "Export" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dışa Aktar"
+          }
+        }
+      }
+    },
+    "Export to CSV" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CSV olarak dışa aktar"
+          }
+        }
+      }
+    },
+    "Fill-up" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dolum"
+          }
+        }
+      }
+    },
+    "Fill-ups" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dolumlar"
+          }
+        }
+      }
+    },
+    "Fuel" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yakıt"
+          }
+        }
+      }
+    },
+    "Fuel Tracking" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yakıt Takibi"
+          }
+        }
+      }
+    },
+    "Full refill" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tam dolum"
+          }
+        }
+      }
+    },
+    "Gallons (US)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Galon (ABD)"
+          }
+        }
+      }
+    },
+    "Gas station" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Benzin istasyonu"
+          }
+        }
+      }
+    },
+    "Generating car image..." : {
+
+    },
+    "Generating image..." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Görsel oluşturuluyor..."
+          }
+        }
+      }
+    },
+    "GitHub Repository" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub Deposu"
+          }
+        }
+      }
+    },
+    "Home" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ana Sayfa"
+          }
+        }
+      }
+    },
+    "Image will be generated" : {
+
+    },
+    "Invalid response from Apple." : {
+
+    },
+    "Keep your data synced across devices" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verilerinizi cihazlar arasında senkronize tutun"
+          }
+        }
+      }
+    },
+    "Kilometers" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kilometre"
+          }
+        }
+      }
+    },
+    "Language" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dil"
+          }
+        }
+      }
+    },
+    "last 5 fill-ups" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "son 5 dolum"
+          }
+        }
+      }
+    },
+    "liters" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "litre"
+          }
+        }
+      }
+    },
+    "Liters" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Litre"
+          }
+        }
+      }
+    },
+    "Log drive modes to see performance deltas" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Performans farklarını görmek için sürüş modlarını kaydedin"
+          }
+        }
+      }
+    },
+    "Log each refuel with a few taps. We calculate distance, efficiency, and cost automatically." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Her yakıt ikmali birkaç dokunuşla kaydedin. Mesafe, verimlilik ve maliyet otomatik hesaplanır."
+          }
+        }
+      }
+    },
+    "Log every fill-up with detailed information" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Her dolumu detaylı bilgilerle kaydedin"
+          }
+        }
+      }
+    },
+    "Made with ❤️ for drivers" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sürücüler için ❤️ ile yapıldı"
+          }
+        }
+      }
+    },
+    "Manage fuel logs for all your vehicles" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tüm araçlarınız için yakıt kayıtlarını yönetin"
+          }
+        }
+      }
+    },
+    "Miles" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mil"
+          }
+        }
+      }
+    },
+    "models" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "model"
+          }
+        }
+      }
+    },
+    "Multiple Cars" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Birden Fazla Araç"
+          }
+        }
+      }
+    },
+    "Never lose your fuel logs" : {
+
+    },
+    "No entries yet" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Henüz giriş yok"
+          }
+        }
+      }
+    },
+    "Notes" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notlar"
+          }
+        }
+      }
+    },
+    "Odometer" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kilometre"
+          }
+        }
+      }
+    },
+    "OK" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tamam"
+          }
+        }
+      }
+    },
+    "oktan" : {
+
+    },
+    "Oktan" : {
+
+    },
+    "Optional notes (e.g., AC on, cargo)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İsteğe bağlı notlar (örn: klima açık, yük)"
+          }
+        }
+      }
+    },
+    "Please enter a valid price per liter." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lütfen geçerli bir litre fiyatı girin."
+          }
+        }
+      }
+    },
+    "Please enter liters purchased." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lütfen alınan litreyi girin."
+          }
+        }
+      }
+    },
+    "Please restart the app for language changes to take effect." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dil değişikliklerinin geçerli olması için lütfen uygulamayı yeniden başlatın."
+          }
+        }
+      }
+    },
+    "Price per liter" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Litre fiyatı"
+          }
+        }
+      }
+    },
+    "Profile" : {
+
+    },
+    "Purchase date" : {
+
+    },
+    "Recent" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son"
+          }
+        }
+      }
+    },
+    "Recent Activity" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son Aktivite"
+          }
+        }
+      }
+    },
+    "Recent efficiency" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son verimlilik"
+          }
+        }
+      }
+    },
+    "Recent fill-ups" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son dolumlar"
+          }
+        }
+      }
+    },
+    "Reports" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Raporlar"
+          }
+        }
+      }
+    },
+    "Restart Required" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yeniden Başlatma Gerekli"
+          }
+        }
+      }
+    },
+    "Save" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaydet"
+          }
+        }
+      }
+    },
+    "Save Car" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aracı Kaydet"
+          }
+        }
+      }
+    },
+    "Search makes..." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marka ara..."
+          }
+        }
+      }
+    },
+    "Secure Backup" : {
+
+    },
+    "Select Make" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marka Seç"
+          }
+        }
+      }
+    },
+    "Select Model Year" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Model Yılını Seç"
+          }
+        }
+      }
+    },
+    "Set up your car to track fuel efficiency" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yakıt verimliliğini takip etmek için arabanızı ayarlayın"
+          }
+        }
+      }
+    },
+    "Settings" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ayarlar"
+          }
+        }
+      }
+    },
+    "Show splash animation" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Açılış animasyonunu göster"
+          }
+        }
+      }
+    },
+    "Sign in failed. Please try again." : {
+
+    },
+    "Sign in request was not handled." : {
+
+    },
+    "Sign in requires user interaction." : {
+
+    },
+    "Sign in to Oktan" : {
+
+    },
+    "Sign Out" : {
+
+    },
+    "Signed in with Apple" : {
+
+    },
+    "Start" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Başlangıç"
+          }
+        }
+      }
+    },
+    "Start tracking your fuel consumption" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yakıt tüketiminizi takip etmeye başlayın"
+          }
+        }
+      }
+    },
+    "Sync your data across devices and unlock premium features" : {
+
+    },
+    "System Default" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sistem Varsayılanı"
+          }
+        }
+      }
+    },
+    "Tank" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Depo"
+          }
+        }
+      }
+    },
+    "Tank Capacity" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Depo Kapasitesi"
+          }
+        }
+      }
+    },
+    "Tap Add Fill-up to start tracking your fuel efficiency." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yakıt verimliliğinizi takip etmeye başlamak için Dolum Ekle'ye dokunun."
+          }
+        }
+      }
+    },
+    "This action cannot be undone." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu işlem geri alınamaz."
+          }
+        }
+      }
+    },
+    "This will permanently delete all %lld fuel entries. This action cannot be undone." : {
+
+    },
+    "This will permanently delete all fuel entries. This action cannot be undone." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu, tüm yakıt girişlerini kalıcı olarak silecektir. Bu işlem geri alınamaz."
+          }
+        }
+      }
+    },
+    "Total cost" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toplam maliyet"
+          }
+        }
+      }
+    },
+    "Total distance" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toplam mesafe"
+          }
+        }
+      }
+    },
+    "Total Distance" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toplam Mesafe"
+          }
+        }
+      }
+    },
+    "Total fuel" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toplam yakıt"
+          }
+        }
+      }
+    },
+    "Total liters purchased" : {
+
+    },
+    "Total Spent" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toplam Harcama"
+          }
+        }
+      }
+    },
+    "Track efficiency trends and costs over time" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zaman içinde verimlilik trendlerini ve maliyetleri takip edin"
+          }
+        }
+      }
+    },
+    "Track odometer values to unlock cost insights" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maliyet analizini açmak için km değerlerini girin"
+          }
+        }
+      }
+    },
+    "Track your fuel. Optimize your drive." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yakıtınızı takip edin. Sürüşünüzü optimize edin."
+          }
+        }
+      }
+    },
+    "Tracking" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Takip"
+          }
+        }
+      }
+    },
+    "Units & Currency" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Birimler ve Para Birimi"
+          }
+        }
+      }
+    },
+    "Volume" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hacim"
+          }
+        }
+      }
+    },
+    "We only use your Apple ID to identify you. Your data stays private." : {
+
     }
   },
-  "version": "1.0"
+  "version" : "1.0"
 }

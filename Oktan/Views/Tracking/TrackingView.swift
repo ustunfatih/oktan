@@ -2,6 +2,7 @@ import SwiftUI
 
 struct TrackingView: View {
     @EnvironmentObject private var repository: FuelRepository
+    @Environment(AppSettings.self) private var settings
     @State private var isPresentingForm = false
     @State private var entryToEdit: FuelEntry?
 
@@ -40,7 +41,7 @@ struct TrackingView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: DesignSystem.Spacing.small) {
-            Text("Log each refuel with a few taps. We calculate distance, L/100km, and cost automatically.")
+            Text("Log each refuel with a few taps. We calculate distance, efficiency, and cost automatically.")
                 .font(.callout)
                 .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
         }
@@ -60,6 +61,7 @@ struct TrackingView: View {
                     ForEach(repository.entries.sorted(by: { $0.date > $1.date })) { entry in
                         FuelEntryRow(
                             entry: entry,
+                            settings: settings,
                             onEdit: { entryToEdit = entry },
                             onDelete: { repository.delete(entry) }
                         )
@@ -88,6 +90,7 @@ struct TrackingView: View {
 
 private struct FuelEntryRow: View {
     let entry: FuelEntry
+    let settings: AppSettings
     let onEdit: () -> Void
     let onDelete: () -> Void
 
@@ -108,24 +111,29 @@ private struct FuelEntryRow: View {
                     .font(.caption)
                     .padding(.horizontal, DesignSystem.Spacing.small)
                     .padding(.vertical, 6)
-                    .background(DesignSystem.ColorPalette.glassTint)
+                    .background(driveModeColor.opacity(0.2))
+                    .foregroundStyle(driveModeColor)
                     .clipShape(Capsule())
             }
 
             HStack(spacing: DesignSystem.Spacing.medium) {
                 if let distance = entry.distance {
-                    valueChip(title: "Distance", value: distance, suffix: "km")
+                    valueChip(title: "Distance", value: settings.formatDistance(distance))
                 }
-                valueChip(title: "Fuel", value: entry.totalLiters, suffix: "L")
-                Text(entry.totalCost, format: .currency(code: AppConfiguration.currencyCode))
+                valueChip(title: "Fuel", value: settings.formatVolume(entry.totalLiters))
+                Text(settings.formatCost(entry.totalCost))
                     .font(.headline)
                     .foregroundStyle(DesignSystem.ColorPalette.label)
             }
 
             if let lPer100 = entry.litersPer100KM {
-                Text("\(lPer100.formatted(.number.precision(.fractionLength(2)))) L / 100 km")
+                Text(settings.formatEfficiency(lPer100))
                     .font(.footnote)
-                    .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
+                    .foregroundStyle(DesignSystem.ColorPalette.successGreen)
+                    .padding(.horizontal, DesignSystem.Spacing.small)
+                    .padding(.vertical, 4)
+                    .background(DesignSystem.ColorPalette.successGreen.opacity(0.1))
+                    .clipShape(Capsule())
             }
 
             // Action buttons
@@ -154,13 +162,21 @@ private struct FuelEntryRow: View {
             Text("This action cannot be undone.")
         }
     }
+    
+    private var driveModeColor: Color {
+        switch entry.driveMode {
+        case .eco: return DesignSystem.ColorPalette.successGreen
+        case .normal: return DesignSystem.ColorPalette.primaryBlue
+        case .sport: return DesignSystem.ColorPalette.warningOrange
+        }
+    }
 
-    private func valueChip(title: String, value: Double, suffix: String) -> some View {
+    private func valueChip(title: String, value: String) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title)
                 .font(.caption)
                 .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
-            Text("\(value.formatted(.number.precision(.fractionLength(0)))) \(suffix)")
+            Text(value)
                 .font(.headline)
         }
     }
@@ -169,4 +185,5 @@ private struct FuelEntryRow: View {
 #Preview {
     TrackingView()
         .environmentObject(FuelRepository())
+        .environment(AppSettings())
 }

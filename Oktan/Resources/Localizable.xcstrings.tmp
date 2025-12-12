@@ -1,0 +1,91 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Profile" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Profil" } }
+      }
+    },
+    "Sign in to Oktan" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Oktan'a Giriş Yap" } }
+      }
+    },
+    "Sync your data across devices and unlock premium features" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Verilerinizi cihazlar arasında senkronize edin ve premium özellikleri açın" } }
+      }
+    },
+    "Access your data on all devices" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Tüm cihazlarınızdan verilerinize erişin" } }
+      }
+    },
+    "Secure Backup" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Güvenli Yedekleme" } }
+      }
+    },
+    "Never lose your fuel logs" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Yakıt kayıtlarınızı asla kaybetmeyin" } }
+      }
+    },
+    "Advanced Analytics" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Gelişmiş Analitik" } }
+      }
+    },
+    "Detailed insights and trends" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Detaylı görüşler ve trendler" } }
+      }
+    },
+    "We only use your Apple ID to identify you. Your data stays private." : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Apple ID'nizi sadece sizi tanımlamak için kullanıyoruz. Verileriniz gizli kalır." } }
+      }
+    },
+    "Signed in with Apple" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Apple ile giriş yapıldı" } }
+      }
+    },
+    "Sign Out" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Çıkış Yap" } }
+      }
+    },
+    "Are you sure you want to sign out?" : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Çıkış yapmak istediğinizden emin misiniz?" } }
+      }
+    },
+    "Sign in failed. Please try again." : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Giriş başarısız. Lütfen tekrar deneyin." } }
+      }
+    },
+    "Invalid response from Apple." : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Apple'dan geçersiz yanıt." } }
+      }
+    },
+    "Sign in request was not handled." : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Giriş isteği işlenmedi." } }
+      }
+    },
+    "An unknown error occurred." : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Bilinmeyen bir hata oluştu." } }
+      }
+    },
+    "Sign in requires user interaction." : {
+      "localizations" : {
+        "tr" : { "stringUnit" : { "state" : "translated", "value" : "Giriş için kullanıcı etkileşimi gerekiyor." } }
+      }
+    }
+  },
+  "version" : "1.0"
+}
