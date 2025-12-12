@@ -97,7 +97,7 @@ struct OktanApp: App {
                 authManager.checkCredentialState()
                 
                 // Dismiss splash after animation completes
-                try? await Task.sleep(for: .seconds(2.0))
+                try? await Task.sleep(for: .seconds(3.5))
                 withAnimation(.easeInOut(duration: 0.5)) {
                     showSplash = false
                 }
