@@ -49,16 +49,6 @@
         }
       }
     },
-    "%@: %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@: %2$@"
-          }
-        }
-      }
-    },
     "%@. %@. %@" : {
       "localizations" : {
         "en" : {
@@ -534,9 +524,6 @@
         }
       }
     },
-    "Delete this fill-up" : {
-
-    },
     "Delete this fill-up?" : {
       "localizations" : {
         "tr" : {
@@ -620,9 +607,6 @@
           }
         }
       }
-    },
-    "Edit this fill-up" : {
-
     },
     "Efficiency" : {
       "localizations" : {
@@ -1218,9 +1202,6 @@
     "Opens a form to log a new refuel" : {
 
     },
-    "Opens editor for this entry" : {
-
-    },
     "Operation was cancelled." : {
 
     },
@@ -1378,9 +1359,6 @@
 
     },
     "Reminders" : {
-
-    },
-    "Removes this entry permanently" : {
 
     },
     "Report Type" : {

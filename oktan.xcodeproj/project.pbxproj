@@ -50,6 +50,7 @@
 		BC6126FD2EECAB780025A96B /* OktanWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = OktanWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC6126FF2EECAB780025A96B /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		BC6127012EECAB780025A96B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		BC61272A2EECBBEF0025A96B /* OktanWidgetsExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = OktanWidgetsExtension.entitlements; sourceTree = "<group>"; };
 		BCA4F6202EEC9530002504C6 /* oktanTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = oktanTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -139,6 +140,7 @@
 		BC5E9A8C2EE9D52800489193 = {
 			isa = PBXGroup;
 			children = (
+				BC61272A2EECBBEF0025A96B /* OktanWidgetsExtension.entitlements */,
 				BC5E9A972EE9D52800489193 /* oktan */,
 				BCA4F6212EEC9530002504C6 /* oktanTests */,
 				BC6127032EECAB780025A96B /* OktanWidgets */,
@@ -541,6 +543,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = OktanWidgetsExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 23BJ9QDJAH;
@@ -571,6 +574,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = OktanWidgetsExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 23BJ9QDJAH;

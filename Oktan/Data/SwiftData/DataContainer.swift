@@ -19,12 +19,18 @@ enum DataContainer {
     /// Default configuration for local storage (supporting App Groups)
     static var localConfiguration: ModelConfiguration {
         let appGroupID = "group.com.oktan.data"
-        return ModelConfiguration(
-            schema: schema,
-            isStoredInMemoryOnly: false,
-            allowsSave: true,
-            groupContainer: .identifier(appGroupID)
-        )
+        let url: URL
+        
+        // Safety check: Use App Group only if available and provisioned
+        if let groupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupID) {
+            url = groupURL.appendingPathComponent("Oktan.sqlite")
+        } else {
+            print("WARNING: App Group container unavailable. Fallback to local storage.")
+            url = URL.applicationSupportDirectory.appending(path: "Oktan.sqlite")
+        }
+
+        // Use the appropriate initializer (schema, url)
+        return ModelConfiguration(schema: schema, url: url)
     }
     
     /// In-memory configuration for testing and previews
