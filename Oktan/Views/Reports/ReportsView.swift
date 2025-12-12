@@ -4,7 +4,9 @@ import SwiftUI
 struct ReportsView: View {
     @EnvironmentObject private var repository: FuelRepository
     @Environment(AppSettings.self) private var settings
+    @Environment(PremiumManager.self) private var premiumManager
     @State private var showingExportSheet = false
+    @State private var showingPaywall = false
     @State private var showingPDFAlert = false
     @State private var csvFileURL: URL?
     @State private var selectedTab: ReportTab = .overview
@@ -70,6 +72,9 @@ struct ReportsView: View {
             } message: {
                 Text("PDF export will be available in the next update. Please use CSV export for now.")
             }
+            .sheet(isPresented: $showingPaywall) {
+                PaywallView()
+            }
         }
     }
     
@@ -94,28 +99,36 @@ struct ReportsView: View {
     
     @ViewBuilder
     private func trendsContent() -> some View {
-        // Interactive Efficiency Chart
-        EfficiencyTrendChart(entries: repository.entries, settings: settings)
-        
-        // Monthly Cost Chart
-        MonthlyCostChart(entries: repository.entries, settings: settings)
-        
-        // Cost per km trend
-        costPerKMChart
+        if premiumManager.isPremium {
+            // Interactive Efficiency Chart
+            EfficiencyTrendChart(entries: repository.entries, settings: settings)
+            
+            // Monthly Cost Chart
+            MonthlyCostChart(entries: repository.entries, settings: settings)
+            
+            // Cost per km trend
+            costPerKMChart
+        } else {
+            lockedState(message: "Unlock Trends to see detailed efficiency and cost analysis over time.")
+        }
     }
     
     // MARK: - Patterns Tab
     
     @ViewBuilder
     private func patternsContent() -> some View {
-        // Drive Mode Comparison
-        DriveModeComparisonChart(entries: repository.entries, settings: settings)
-        
-        // Fill-up Frequency
-        FillupFrequencyChart(entries: repository.entries)
-        
-        // Drive Mode Breakdown
-        driveModeBreakdown(summary: repository.summary())
+        if premiumManager.isPremium {
+            // Drive Mode Comparison
+            DriveModeComparisonChart(entries: repository.entries, settings: settings)
+            
+            // Fill-up Frequency
+            FillupFrequencyChart(entries: repository.entries)
+            
+            // Drive Mode Breakdown
+            driveModeBreakdown(summary: repository.summary())
+        } else {
+            lockedState(message: "Unlock Patterns to discover your driving habits and optimal modes.")
+        }
     }
     
     // MARK: - Metrics Grid
@@ -334,6 +347,29 @@ struct ReportsView: View {
         }
         .frame(maxWidth: .infinity)
         .frame(height: 150)
+    }
+
+    private func lockedState(message: String) -> some View {
+        VStack(spacing: DesignSystem.Spacing.medium) {
+            Image(systemName: "lock.fill")
+                .font(.largeTitle)
+                .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
+            
+            Text(message)
+                .font(.headline)
+                .foregroundStyle(DesignSystem.ColorPalette.label)
+                .multilineTextAlignment(.center)
+            
+            Button("Unlock Premium") {
+                showingPaywall = true
+            }
+            .buttonStyle(.borderedProminent)
+            .tint(DesignSystem.ColorPalette.deepPurple)
+        }
+        .frame(maxWidth: .infinity)
+        .padding()
+        .glassCard()
+        .frame(maxHeight: .infinity, alignment: .center)
     }
 
     private func exportData() {

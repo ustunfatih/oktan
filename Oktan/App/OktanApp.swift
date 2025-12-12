@@ -37,6 +37,7 @@ struct OktanApp: App {
     
     @State private var appSettings = AppSettings()
     @State private var authManager = AuthenticationManager()
+    @State private var premiumManager = PremiumManager()
     @State private var showSplash = true
     @Environment(\.scenePhase) private var scenePhase
     @State private var isInitialized = false
@@ -79,6 +80,7 @@ struct OktanApp: App {
                     .environment(authManager)
                     .environment(errorHandler)
                     .environment(notificationService)
+                    .environment(premiumManager)
                     .errorAlert(errorHandler)
                     .opacity(showSplash ? 0 : 1)
                     .modelContainer(modelContainer)
