@@ -1,171 +1,120 @@
 import SwiftUI
 
 struct SplashView: View {
-    // Animation phases
-    @State private var phase: AnimationPhase = .rotating
-    @State private var rotationY: Double = 0
-    @State private var dropVisible = false
-    @State private var dropY: CGFloat = -80
-    @State private var splashVisible = false
-    @State private var splashDroplets: [SplashDroplet] = []
-    @State private var textVisible = false
-    @State private var textScale: CGFloat = 0.3
+    @State private var animationReady = false
     
-    enum AnimationPhase {
-        case rotating, dropping, splashing, forming
-    }
+    // Letters for "oktan"
+    // We'll calculate positions dynamically or fixed relative to center
+    // Centered alignment: o k t a n
+    // t is center.
+    let letters = [
+        (char: "o", offset: -95.0, delay: 0.0, size: 28.0),
+        (char: "k", offset: -50.0, delay: 0.15, size: 24.0),
+        (char: "t", offset: 0.0, delay: 0.3, size: 32.0),
+        (char: "a", offset: 45.0, delay: 0.45, size: 26.0),
+        (char: "n", offset: 95.0, delay: 0.6, size: 30.0)
+    ]
     
     var body: some View {
         ZStack {
-            // Solid white background
-            Color.white
+            Color.white // Force white background for oil contrast
                 .ignoresSafeArea()
             
-            VStack {
-                Spacer()
+            GeometryReader { geometry in
+                let centerX = geometry.size.width / 2
+                let centerY = geometry.size.height / 2
                 
-                // Gas pump nozzle with 3D rotation
-                Image("GasPump")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 200, height: 200)
-                    .rotation3DEffect(
-                        .degrees(rotationY),
-                        axis: (x: 0, y: 1, z: 0),
-                        perspective: 0.4
+                ForEach(letters.indices, id: \.self) { index in
+                    let item = letters[index]
+                    DropLetterView(
+                        char: item.char,
+                        targetX: centerX + item.offset,
+                        targetY: centerY,
+                        dropSize: item.size,
+                        delay: item.delay,
+                        startPoint: CGPoint(x: centerX, y: 60) // Dynamic Island approx y
                     )
-                
-                Spacer()
-                    .frame(height: 40)
-                
-                // Drop, splash, and text area
-                ZStack {
-                    // Falling drop
-                    if dropVisible {
-                        DropShape()
-                            .fill(Color.black)
-                            .frame(width: 35, height: 50)
-                            .offset(y: dropY)
-                    }
-                    
-                    // Splash droplets
-                    ForEach(splashDroplets) { droplet in
-                        Circle()
-                            .fill(Color.black)
-                            .frame(width: droplet.size, height: droplet.size)
-                            .offset(x: droplet.x, y: droplet.y)
-                            .opacity(droplet.opacity)
-                    }
-                    
-                    // Puddle
-                    if splashVisible {
-                        Ellipse()
-                            .fill(Color.black)
-                            .frame(width: 100, height: 25)
-                            .offset(y: 60)
-                    }
-                    
-                    // Final text
-                    if textVisible {
-                        Text("oktan")
-                            .font(.system(size: 60, weight: .black, design: .rounded))
-                            .foregroundColor(.black)
-                            .scaleEffect(textScale)
-                            .offset(y: 20)
-                    }
                 }
-                .frame(height: 200)
-                
-                Spacer()
-            }
-        }
-        .onAppear {
-            startAnimation()
-        }
-    }
-    
-    private func startAnimation() {
-        // PHASE 1: Rotate pump slowly (0-2s)
-        withAnimation(.easeInOut(duration: 2.0)) {
-            rotationY = 360
-        }
-        
-        // PHASE 2: Drop falls (2.0s)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-            dropVisible = true
-            
-            withAnimation(.easeIn(duration: 0.5)) {
-                dropY = 60
-            }
-        }
-        
-        // PHASE 3: Splash (2.5s)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
-            dropVisible = false
-            splashVisible = true
-            createSplashDroplets()
-            animateSplash()
-        }
-        
-        // PHASE 4: Droplets converge to form text (3.3s)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.3) {
-            convergeDropletsToText()
-        }
-        
-        // PHASE 5: Show text (3.8s)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.8) {
-            textVisible = true
-            
-            withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                textScale = 1.0
-            }
-            
-            // Fade out droplets
-            withAnimation(.easeOut(duration: 0.3)) {
-                for i in splashDroplets.indices {
-                    splashDroplets[i].opacity = 0
-                }
-                splashVisible = false
-            }
-        }
-    }
-    
-    private func createSplashDroplets() {
-        splashDroplets = (0..<20).map { i in
-            SplashDroplet(
-                id: i,
-                x: CGFloat.random(in: -10...10),
-                y: 55,
-                size: CGFloat.random(in: 8...16),
-                opacity: 1.0
-            )
-        }
-    }
-    
-    private func animateSplash() {
-        withAnimation(.easeOut(duration: 0.4)) {
-            for i in splashDroplets.indices {
-                let angle = Double.random(in: 0...(2 * .pi))
-                let distance = CGFloat.random(in: 60...140)
-                splashDroplets[i].x = cos(angle) * distance
-                splashDroplets[i].y = 40 + sin(angle) * distance * 0.4
-            }
-        }
-    }
-    
-    private func convergeDropletsToText() {
-        withAnimation(.easeInOut(duration: 0.5)) {
-            for i in splashDroplets.indices {
-                // Move droplets to where text will appear
-                splashDroplets[i].x = CGFloat.random(in: -80...80)
-                splashDroplets[i].y = CGFloat.random(in: 0...40)
-                splashDroplets[i].size = CGFloat.random(in: 4...10)
             }
         }
     }
 }
 
-// MARK: - Drop Shape
+struct DropLetterView: View {
+    let char: String
+    let targetX: CGFloat
+    let targetY: CGFloat
+    let dropSize: CGFloat
+    let delay: Double
+    let startPoint: CGPoint
+    
+    @State private var position: CGPoint
+    @State private var isSplashed = false
+    @State private var dropScale: CGFloat = 1.0
+    @State private var letterScale: CGFloat = 0.0
+    @State private var splashScale: CGFloat = 0.0
+    @State private var splashOpacity: Double = 1.0
+    
+    init(char: String, targetX: CGFloat, targetY: CGFloat, dropSize: CGFloat, delay: Double, startPoint: CGPoint) {
+        self.char = char
+        self.targetX = targetX
+        self.targetY = targetY
+        self.dropSize = dropSize
+        self.delay = delay
+        self.startPoint = startPoint
+        self._position = State(initialValue: startPoint)
+    }
+    
+    var body: some View {
+        ZStack {
+            // Drop (Visible while falling)
+            if !isSplashed {
+                DropShape()
+                    .fill(Color.black)
+                    .frame(width: dropSize, height: dropSize * 1.5) // Slightly elongated
+                    .position(position)
+                    .scaleEffect(dropScale)
+            } else {
+                // Splash Effect (Ring)
+                Circle()
+                    .stroke(Color.black, lineWidth: 3)
+                    .frame(width: dropSize, height: dropSize)
+                    .scaleEffect(splashScale)
+                    .opacity(splashOpacity)
+                    .position(x: targetX, y: targetY)
+                
+                // Letter
+                Text(char)
+                    .font(.system(size: 60, weight: .black, design: .rounded)) // "Proxima Nova Black" proxy
+                    .foregroundStyle(Color.black)
+                    .position(x: targetX, y: targetY)
+                    .scaleEffect(letterScale)
+            }
+        }
+        .task {
+             // Fall animation
+             try? await Task.sleep(for: .seconds(delay))
+             withAnimation(.easeIn(duration: 0.6)) {
+                 position = CGPoint(x: targetX, y: targetY)
+             }
+             
+             // Impact
+             try? await Task.sleep(for: .seconds(0.6))
+             isSplashed = true
+             
+             // Splash ring expansion
+             withAnimation(.easeOut(duration: 0.4)) {
+                 splashScale = 2.5
+                 splashOpacity = 0
+             }
+             
+             // Letter popup
+             withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                 letterScale = 1.0
+             }
+        }
+    }
+}
 
 struct DropShape: Shape {
     func path(in rect: CGRect) -> Path {
@@ -173,7 +122,7 @@ struct DropShape: Shape {
         let w = rect.width
         let h = rect.height
         
-        // Teardrop
+        // Teardrop shape suitable for falling oil
         path.move(to: CGPoint(x: w / 2, y: 0))
         path.addQuadCurve(
             to: CGPoint(x: w, y: h * 0.65),
@@ -196,16 +145,6 @@ struct DropShape: Shape {
         
         return path
     }
-}
-
-// MARK: - Splash Droplet
-
-struct SplashDroplet: Identifiable {
-    let id: Int
-    var x: CGFloat
-    var y: CGFloat
-    var size: CGFloat
-    var opacity: Double
 }
 
 #Preview {

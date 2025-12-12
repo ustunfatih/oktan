@@ -1243,6 +1243,12 @@
     "PDF" : {
 
     },
+    "PDF Export" : {
+
+    },
+    "PDF export will be available in the next update. Please use CSV export for now." : {
+
+    },
     "Permission" : {
 
     },
@@ -1512,6 +1518,7 @@
       }
     },
     "Show splash animation" : {
+      "extractionState" : "stale",
       "localizations" : {
         "tr" : {
           "stringUnit" : {
@@ -1673,6 +1680,9 @@
 
     },
     "The request timed out. Please try again." : {
+
+    },
+    "Theme" : {
 
     },
     "This action cannot be undone." : {
