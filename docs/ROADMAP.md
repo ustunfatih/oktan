@@ -226,14 +226,14 @@ Strengthen the codebase before adding major features.
 ---
 
 ## Phase 11: App Store Preparation 🚀
-**Priority: FINAL** | **Status: PENDING**
+**Priority: FINAL** | **Status: IN PROGRESS**
 
 ### 11.1 Assets
-- [ ] App icon (all sizes)
+- [ ] App icon (all sizes) - **(Next Step)**
 - [ ] App Store screenshots (6.7", 6.5", 5.5")
 - [ ] App preview video (optional)
 
-### 11.2 Metadata
+### 11.2 Metadata (Deferred)
 - [ ] App name & subtitle
 - [ ] Description (EN & TR)
 - [ ] Keywords
@@ -241,7 +241,7 @@ Strengthen the codebase before adding major features.
 - [ ] Privacy policy URL
 - [ ] Support URL
 
-### 11.3 Technical
+### 11.3 Technical (Deferred)
 - [ ] Archive & upload to App Store Connect
 - [ ] TestFlight beta testing
 - [ ] App Review preparation
@@ -249,6 +249,9 @@ Strengthen the codebase before adding major features.
 ---
 
 ## Future Considerations 🔮
+
+### Essential Polish
+- **Multi-Car Data Separation**: Currently `FuelEntry` does not store `carID`, so logs are shared across all cars. Needs SwiftData migration.
 
 ### Maybe Later
 - Apple Watch companion app
