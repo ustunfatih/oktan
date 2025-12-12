@@ -1,4 +1,5 @@
 import SwiftUI
+import RevenueCat
 import RevenueCatUI
 
 struct PaywallView: View {
