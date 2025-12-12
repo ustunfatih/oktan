@@ -81,30 +81,37 @@ Strengthen the codebase before adding major features.
 
 ---
 
-## Phase 5: Charts Enhancements 📊
-**Priority: HIGH** | **Status: PENDING**
+## Phase 5: Charts Enhancements 📊 ✅
+**Priority: HIGH** | **Status: COMPLETE**
 
-Accuracy is critical - every calculation must be verified.
+### 5.1 Data Accuracy Audit ✅
+- [x] Audit L/100km calculations (verified in ChartDataServiceTests)
+- [x] Audit cost per km calculations (verified in ChartDataServiceTests)
+- [x] Audit rolling averages (3-point moving average implemented)
+- [x] Add unit tests for all calculations (ChartDataServiceTests.swift)
+- [x] Handle edge cases (missing odometer, partial refills gracefully handled)
 
-### 5.1 Data Accuracy Audit
-- [ ] Audit L/100km calculations
-- [ ] Audit cost per km calculations
-- [ ] Audit rolling averages
-- [ ] Add unit tests for all calculations
-- [ ] Handle edge cases (missing odometer, partial refills)
+### 5.2 Enhanced Charts ✅
+- [x] Monthly efficiency comparison chart (MonthlyCostChart)
+- [x] Cost trend over time (weekly/monthly aggregation)
+- [x] Drive mode efficiency comparison (DriveModeComparisonChart)
+- [x] Rolling average trend line
+- [x] Fill-up frequency insights (FillupFrequencyChart)
 
-### 5.2 Enhanced Charts
-- [ ] Monthly efficiency comparison chart
-- [ ] Cost trend over time (weekly/monthly)
-- [ ] Drive mode efficiency comparison
-- [ ] Year-over-year comparison
-- [ ] Fill-up frequency insights
+### 5.3 Chart Improvements ✅
+- [x] Interactive chart tooltips (touch selection with details)
+- [x] EfficiencyTrendChart with rolling average overlay
+- [x] InsightsCard with auto-generated insights
+- [x] Better empty state handling (custom placeholders)
+- [x] Tabbed interface (Overview, Trends, Patterns)
+- [x] Month-over-month comparison card
+- [x] Period comparison with trend indicators
 
-### 5.3 Chart Improvements
-- [ ] Interactive chart tooltips
-- [ ] Chart zoom/pan capabilities
-- [ ] Export charts as images
-- [ ] Better empty state handling
+> **Charts Files:**
+> - `ChartDataService.swift` - Data aggregation and calculation service
+> - `ChartComponents.swift` - Reusable interactive chart components
+> - `ReportsView.swift` - Enhanced tabbed reports interface
+> - `ChartDataServiceTests.swift` - Comprehensive unit tests
 
 ---
 

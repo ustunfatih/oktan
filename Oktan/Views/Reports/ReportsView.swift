@@ -6,22 +6,59 @@ struct ReportsView: View {
     @Environment(AppSettings.self) private var settings
     @State private var showingExportSheet = false
     @State private var csvFileURL: URL?
+    @State private var selectedTab: ReportTab = .overview
+    
+    enum ReportTab: String, CaseIterable {
+        case overview = "Overview"
+        case trends = "Trends"
+        case patterns = "Patterns"
+    }
 
     var body: some View {
         NavigationStack {
             let summary = repository.summary()
-            ScrollView {
-                VStack(spacing: DesignSystem.Spacing.large) {
-                    metricsGrid(summary: summary)
-                    efficiencyChart
-                    costChart
-                    driveModeBreakdown(summary: summary)
-                    exportSection
+            
+            VStack(spacing: 0) {
+                // Tab Picker
+                Picker("Report Type", selection: $selectedTab) {
+                    ForEach(ReportTab.allCases, id: \.self) { tab in
+                        Text(tab.rawValue).tag(tab)
+                    }
                 }
-                .padding(DesignSystem.Spacing.large)
+                .pickerStyle(.segmented)
+                .padding(.horizontal, DesignSystem.Spacing.large)
+                .padding(.top, DesignSystem.Spacing.medium)
+                
+                ScrollView {
+                    VStack(spacing: DesignSystem.Spacing.large) {
+                        switch selectedTab {
+                        case .overview:
+                            overviewContent(summary: summary)
+                        case .trends:
+                            trendsContent()
+                        case .patterns:
+                            patternsContent()
+                        }
+                    }
+                    .padding(DesignSystem.Spacing.large)
+                }
             }
             .background(DesignSystem.ColorPalette.background.ignoresSafeArea())
             .navigationTitle("Reports")
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Menu {
+                        Button(action: exportData) {
+                            Label("Export to CSV", systemImage: "doc.text")
+                        }
+                        .disabled(repository.entries.isEmpty)
+                    } label: {
+                        Image(systemName: "square.and.arrow.up")
+                    }
+                    .accessibilityLabel("Export options")
+                    .accessibilityIdentifier(AccessibilityID.reportsExportButton)
+                }
+            }
             .sheet(isPresented: $showingExportSheet) {
                 if let url = csvFileURL {
                     ShareSheet(items: [url])
@@ -29,23 +66,71 @@ struct ReportsView: View {
             }
         }
     }
-
+    
+    // MARK: - Overview Tab
+    
+    @ViewBuilder
+    private func overviewContent(summary: FuelSummary) -> some View {
+        // Metrics Grid
+        metricsGrid(summary: summary)
+        
+        // Month-over-Month Comparison
+        PeriodComparisonCard(entries: repository.entries, settings: settings)
+        
+        // Insights
+        InsightsCard(entries: repository.entries)
+        
+        // Export Section
+        exportSection
+    }
+    
+    // MARK: - Trends Tab
+    
+    @ViewBuilder
+    private func trendsContent() -> some View {
+        // Interactive Efficiency Chart
+        EfficiencyTrendChart(entries: repository.entries, settings: settings)
+        
+        // Monthly Cost Chart
+        MonthlyCostChart(entries: repository.entries, settings: settings)
+        
+        // Cost per km trend
+        costPerKMChart
+    }
+    
+    // MARK: - Patterns Tab
+    
+    @ViewBuilder
+    private func patternsContent() -> some View {
+        // Drive Mode Comparison
+        DriveModeComparisonChart(entries: repository.entries, settings: settings)
+        
+        // Fill-up Frequency
+        FillupFrequencyChart(entries: repository.entries)
+        
+        // Drive Mode Breakdown
+        driveModeBreakdown(summary: repository.summary())
+    }
+    
+    // MARK: - Metrics Grid
+    
     private func metricsGrid(summary: FuelSummary) -> some View {
         VStack(alignment: .leading, spacing: DesignSystem.Spacing.medium) {
-            Text("At a glance")
+            Text("At a Glance")
                 .font(.title2.weight(.semibold))
+                .foregroundStyle(DesignSystem.ColorPalette.label)
 
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: DesignSystem.Spacing.medium) {
                 MetricCard(
-                    title: "Total distance",
+                    title: "Total Distance",
                     value: settings.formatDistance(summary.totalDistance),
-                    trend: "Based on completed odometer entries",
+                    trend: "\(repository.entries.filter { $0.distance != nil }.count) tracked trips",
                     icon: "point.topleft.down.curvedto.point.bottomright.up",
                     tint: DesignSystem.ColorPalette.primaryBlue
                 )
 
                 MetricCard(
-                    title: "Total fuel",
+                    title: "Total Fuel",
                     value: settings.formatVolume(summary.totalLiters),
                     trend: summary.averageLitersPer100KM.map { "Avg: \(settings.formatEfficiency($0))" },
                     icon: "drop.fill",
@@ -53,7 +138,7 @@ struct ReportsView: View {
                 )
 
                 MetricCard(
-                    title: "Total cost",
+                    title: "Total Spent",
                     value: settings.formatCost(summary.totalCost),
                     trend: summary.averageCostPerKM.map { "Avg: \(settings.formatCostPerDistance($0))" },
                     icon: "creditcard.fill",
@@ -61,7 +146,7 @@ struct ReportsView: View {
                 )
 
                 MetricCard(
-                    title: "Recent efficiency",
+                    title: "Recent Efficiency",
                     value: summary.recentAverageLitersPer100KM.map { settings.formatEfficiency($0) } ?? "N/A",
                     trend: summary.recentAverageCostPerKM.map { "Cost: \(settings.formatCostPerDistance($0))" },
                     icon: "waveform.path.ecg.rectangle",
@@ -70,116 +155,180 @@ struct ReportsView: View {
             }
         }
     }
-
-    private var efficiencyChart: some View {
-        let entries = repository.entries.compactMap { entry -> FuelEntry? in
-            guard entry.litersPer100KM != nil else { return nil }
-            return entry
-        }
-
-        return VStack(alignment: .leading, spacing: DesignSystem.Spacing.medium) {
-            Text("Efficiency trend (\(settings.efficiencyUnit.rawValue))")
-                .font(.title2.weight(.semibold))
-
-            if entries.isEmpty {
-                placeholder("Add odometer start/end to chart efficiency")
-            } else {
-                Chart(entries) { entry in
-                    LineMark(
-                        x: .value("Date", entry.date),
-                        y: .value(settings.efficiencyUnit.rawValue, settings.convertEfficiency(entry.litersPer100KM ?? 0))
-                    )
-                    .foregroundStyle(DesignSystem.ColorPalette.primaryBlue)
-                    .interpolationMethod(.catmullRom)
-                    
-                    PointMark(
-                        x: .value("Date", entry.date),
-                        y: .value(settings.efficiencyUnit.rawValue, settings.convertEfficiency(entry.litersPer100KM ?? 0))
-                    )
-                    .foregroundStyle(DesignSystem.ColorPalette.primaryBlue)
-                }
-                .chartXAxis { AxisMarks(values: .stride(by: .month)) }
-                .frame(height: 200)
-                .glassCard()
-            }
-        }
-    }
-
-    private var costChart: some View {
-        let entries = repository.entries.compactMap { entry -> FuelEntry? in
-            guard entry.costPerKM != nil else { return nil }
-            return entry
-        }
-
+    
+    // MARK: - Cost per KM Chart
+    
+    private var costPerKMChart: some View {
+        let entries = repository.entries.filter { $0.costPerKM != nil }
+        
         return VStack(alignment: .leading, spacing: DesignSystem.Spacing.medium) {
             Text("Cost per \(settings.distanceUnit.rawValue)")
                 .font(.title2.weight(.semibold))
+                .foregroundStyle(DesignSystem.ColorPalette.label)
 
             if entries.isEmpty {
-                placeholder("Track odometer values to unlock cost insights")
+                emptyChartState("Track odometer values to see cost trends")
             } else {
                 Chart(entries) { entry in
-                    BarMark(
-                        x: .value("Date", entry.date, unit: .day),
-                        y: .value("\(settings.currencyCode)/\(settings.distanceUnit.rawValue)", settings.convertCostPerDistance(entry.costPerKM ?? 0))
+                    AreaMark(
+                        x: .value("Date", entry.date),
+                        y: .value("Cost", settings.convertCostPerDistance(entry.costPerKM ?? 0))
                     )
-                    .foregroundStyle(DesignSystem.ColorPalette.deepPurple.gradient)
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [
+                                DesignSystem.ColorPalette.successGreen.opacity(0.4),
+                                DesignSystem.ColorPalette.successGreen.opacity(0.1)
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .interpolationMethod(.catmullRom)
+                    
+                    LineMark(
+                        x: .value("Date", entry.date),
+                        y: .value("Cost", settings.convertCostPerDistance(entry.costPerKM ?? 0))
+                    )
+                    .foregroundStyle(DesignSystem.ColorPalette.successGreen)
+                    .lineStyle(StrokeStyle(lineWidth: 2))
+                    .interpolationMethod(.catmullRom)
                 }
-                .frame(height: 200)
-                .glassCard()
+                .chartXAxis {
+                    AxisMarks(values: .stride(by: .month)) { _ in
+                        AxisGridLine()
+                        AxisValueLabel(format: .dateTime.month(.abbreviated))
+                    }
+                }
+                .frame(height: 180)
+                .accessibilityLabel("Cost per kilometer trend chart")
             }
         }
+        .glassCard()
     }
-
+    
+    // MARK: - Drive Mode Breakdown
+    
     private func driveModeBreakdown(summary: FuelSummary) -> some View {
         VStack(alignment: .leading, spacing: DesignSystem.Spacing.medium) {
-            Text("Drive modes")
+            Text("Drive Mode Details")
                 .font(.title2.weight(.semibold))
+                .foregroundStyle(DesignSystem.ColorPalette.label)
 
             if summary.driveModeBreakdown.isEmpty {
-                placeholder("Log drive modes to see performance deltas")
+                emptyChartState("Log different drive modes to compare performance")
             } else {
                 VStack(spacing: DesignSystem.Spacing.small) {
                     ForEach(FuelEntry.DriveMode.allCases) { mode in
                         if let breakdown = summary.driveModeBreakdown[mode] {
                             HStack {
+                                Circle()
+                                    .fill(colorForMode(mode))
+                                    .frame(width: 10, height: 10)
+                                
                                 Text(mode.rawValue)
                                     .font(.headline)
+                                    .foregroundStyle(DesignSystem.ColorPalette.label)
+                                
                                 Spacer()
-                                if let lPer100 = breakdown.lPer100KM {
-                                    Text(settings.formatEfficiency(lPer100))
-                                        .font(.subheadline)
-                                        .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
+                                
+                                VStack(alignment: .trailing, spacing: 2) {
+                                    if let lPer100 = breakdown.lPer100KM {
+                                        Text(settings.formatEfficiency(lPer100))
+                                            .font(.subheadline.weight(.medium))
+                                            .foregroundStyle(DesignSystem.ColorPalette.label)
+                                    }
+                                    if let cost = breakdown.costPerKM {
+                                        Text(settings.formatCostPerDistance(cost))
+                                            .font(.caption)
+                                            .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
+                                    }
                                 }
-                                if let cost = breakdown.costPerKM {
-                                    Text(settings.formatCostPerDistance(cost))
-                                        .font(.subheadline)
-                                        .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
-                                }
+                                
+                                Text("\(settings.formatDistance(breakdown.distance))")
+                                    .font(.caption)
+                                    .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
+                                    .frame(width: 60, alignment: .trailing)
                             }
                             .padding(.vertical, DesignSystem.Spacing.xsmall)
+                            .accessibilityElement(children: .combine)
                         }
                     }
                 }
-                .glassCard()
             }
+        }
+        .glassCard()
+    }
+    
+    private func colorForMode(_ mode: FuelEntry.DriveMode) -> Color {
+        switch mode {
+        case .eco: return DesignSystem.ColorPalette.successGreen
+        case .normal: return DesignSystem.ColorPalette.primaryBlue
+        case .sport: return DesignSystem.ColorPalette.warningOrange
         }
     }
-
+    
+    // MARK: - Export Section
+    
     private var exportSection: some View {
         VStack(alignment: .leading, spacing: DesignSystem.Spacing.medium) {
-            Text("Export")
+            Text("Data Export")
                 .font(.title2.weight(.semibold))
-
-            Button(action: exportData) {
-                Label("Export to CSV", systemImage: "square.and.arrow.up")
-                    .font(.headline)
+                .foregroundStyle(DesignSystem.ColorPalette.label)
+            
+            HStack(spacing: DesignSystem.Spacing.medium) {
+                Button(action: exportData) {
+                    VStack(spacing: DesignSystem.Spacing.small) {
+                        Image(systemName: "doc.text")
+                            .font(.title2)
+                        Text("CSV")
+                            .font(.caption)
+                    }
                     .frame(maxWidth: .infinity)
+                    .padding()
+                }
+                .buttonStyle(.bordered)
+                .tint(DesignSystem.ColorPalette.primaryBlue)
+                .disabled(repository.entries.isEmpty)
+                
+                Button(action: {}) {
+                    VStack(spacing: DesignSystem.Spacing.small) {
+                        Image(systemName: "doc.richtext")
+                            .font(.title2)
+                        Text("PDF")
+                            .font(.caption)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                }
+                .buttonStyle(.bordered)
+                .tint(DesignSystem.ColorPalette.deepPurple)
+                .disabled(true) // Coming soon
             }
-            .buttonStyle(.borderedProminent)
-            .tint(DesignSystem.ColorPalette.primaryBlue)
-            .disabled(repository.entries.isEmpty)
+            
+            if repository.entries.isEmpty {
+                Text("Add some fill-ups to enable export")
+                    .font(.caption)
+                    .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
+            }
         }
+        .glassCard()
+    }
+    
+    // MARK: - Helpers
+    
+    private func emptyChartState(_ message: String) -> some View {
+        VStack(spacing: DesignSystem.Spacing.small) {
+            Image(systemName: "chart.bar.xaxis")
+                .font(.largeTitle)
+                .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
+            Text(message)
+                .font(.subheadline)
+                .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: 150)
     }
 
     private func exportData() {
@@ -188,15 +337,9 @@ struct ReportsView: View {
             showingExportSheet = true
         }
     }
-
-    private func placeholder(_ text: String) -> some View {
-        Text(text)
-            .font(.footnote)
-            .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .glassCard()
-    }
 }
+
+// MARK: - Preview
 
 #Preview {
     ReportsView()
