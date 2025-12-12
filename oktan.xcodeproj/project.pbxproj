@@ -10,6 +10,10 @@
 		BC6127002EECAB780025A96B /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC6126FF2EECAB780025A96B /* WidgetKit.framework */; };
 		BC6127022EECAB780025A96B /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC6127012EECAB780025A96B /* SwiftUI.framework */; };
 		BC6127132EECAB7A0025A96B /* OktanWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BC6126FD2EECAB780025A96B /* OktanWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		BC61271F2EECB0590025A96B /* ReceiptParser in Frameworks */ = {isa = PBXBuildFile; productRef = BC61271E2EECB0590025A96B /* ReceiptParser */; };
+		BC6127212EECB0590025A96B /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = BC6127202EECB0590025A96B /* RevenueCat */; };
+		BC6127232EECB0590025A96B /* RevenueCatUI in Frameworks */ = {isa = PBXBuildFile; productRef = BC6127222EECB0590025A96B /* RevenueCatUI */; };
+		BC6127252EECB0590025A96B /* RevenueCat_CustomEntitlementComputation in Frameworks */ = {isa = PBXBuildFile; productRef = BC6127242EECB0590025A96B /* RevenueCat_CustomEntitlementComputation */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -107,6 +111,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC6127212EECB0590025A96B /* RevenueCat in Frameworks */,
+				BC61271F2EECB0590025A96B /* ReceiptParser in Frameworks */,
+				BC6127232EECB0590025A96B /* RevenueCatUI in Frameworks */,
+				BC6127252EECB0590025A96B /* RevenueCat_CustomEntitlementComputation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -181,6 +189,10 @@
 			);
 			name = oktan;
 			packageProductDependencies = (
+				BC61271E2EECB0590025A96B /* ReceiptParser */,
+				BC6127202EECB0590025A96B /* RevenueCat */,
+				BC6127222EECB0590025A96B /* RevenueCatUI */,
+				BC6127242EECB0590025A96B /* RevenueCat_CustomEntitlementComputation */,
 			);
 			productName = oktan;
 			productReference = BC5E9A952EE9D52800489193 /* oktan.app */;
@@ -263,6 +275,9 @@
 			);
 			mainGroup = BC5E9A8C2EE9D52800489193;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				BC61271D2EECB0590025A96B /* XCRemoteSwiftPackageReference "purchases-ios-spm" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = BC5E9A962EE9D52800489193 /* Products */;
 			projectDirPath = "";
@@ -666,6 +681,40 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		BC61271D2EECB0590025A96B /* XCRemoteSwiftPackageReference "purchases-ios-spm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RevenueCat/purchases-ios-spm.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.50.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		BC61271E2EECB0590025A96B /* ReceiptParser */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BC61271D2EECB0590025A96B /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
+			productName = ReceiptParser;
+		};
+		BC6127202EECB0590025A96B /* RevenueCat */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BC61271D2EECB0590025A96B /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
+			productName = RevenueCat;
+		};
+		BC6127222EECB0590025A96B /* RevenueCatUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BC61271D2EECB0590025A96B /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
+			productName = RevenueCatUI;
+		};
+		BC6127242EECB0590025A96B /* RevenueCat_CustomEntitlementComputation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BC61271D2EECB0590025A96B /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
+			productName = RevenueCat_CustomEntitlementComputation;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = BC5E9A8D2EE9D52800489193 /* Project object */;
 }
