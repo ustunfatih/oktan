@@ -69,10 +69,18 @@ enum DataContainer {
         let context = container.mainContext
         
         // Add sample fuel entries
-        for entry in SeedData.entries {
-            let sdEntry = FuelEntrySD(from: entry)
-            context.insert(sdEntry)
-        }
+        // Create a manual sample entry to avoid dependency on SeedData
+        let sampleEntry = FuelEntrySD(
+            date: Date(),
+            odometerStart: 10000,
+            odometerEnd: 10500,
+            totalLiters: 45.0,
+            pricePerLiter: 1.50,
+            gasStation: "Shell",
+            driveMode: .normal,
+            isFullRefill: true
+        )
+        context.insert(sampleEntry)
         
         // Add sample car
         let sampleCar = CarSD(

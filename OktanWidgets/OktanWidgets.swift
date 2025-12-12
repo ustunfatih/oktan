@@ -32,7 +32,8 @@ struct QuickStatsProvider: TimelineProvider {
             let entries = try context.fetch(descriptor)
             
             if let last = entries.first {
-                let eff = last.efficiency > 0 ? String(format: "%.1f L/100km", last.efficiency) : "—"
+                let effValue = last.litersPer100KM ?? 0
+                let eff = effValue > 0 ? String(format: "%.1f L/100km", effValue) : "—"
                 let date = last.date.formatted(date: .abbreviated, time: .omitted)
                 let cost = String(format: "%.2f", last.totalCost)
                 return QuickStatsEntry(date: Date(), efficiency: eff, lastFillup: date, cost: cost)

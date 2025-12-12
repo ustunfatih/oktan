@@ -78,6 +78,7 @@
 				Data/SwiftData/FuelEntrySD.swift,
 				Models/Car.swift,
 				Models/FuelEntry.swift,
+				Services/OktanError.swift,
 			);
 			target = BC6126FC2EECAB780025A96B /* OktanWidgetsExtension */;
 		};
