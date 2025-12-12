@@ -238,6 +238,14 @@ Strengthen the codebase before adding major features.
 - [ ] Description (EN & TR)
 - [ ] Keywords
 - [ ] Category selection
+- [ ] **Data Management**:
+    - [ ] Solve "CarID" issue in FuelEntrySD (currently all entries are shared).
+    - [ ] Implement proper migration for multi-car support.
+- [ ] **UI Polish**:
+    - [ ] Fix misaligned titles in Report/Stats boxes.
+    - [ ] Review Drive Mode UX (ensure users understand how to input it).
+- [ ] **Tests**:
+    - [ ] Add UI Tests for the new RevenueCat paywall flow.n
 - [ ] Privacy policy URL
 - [ ] Support URL
 
