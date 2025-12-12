@@ -193,7 +193,7 @@ extension AuthenticationManager: ASAuthorizationControllerDelegate {
                 errorMessage = String(localized: "An unknown error occurred.")
             case .notInteractive:
                 errorMessage = String(localized: "Sign in requires user interaction.")
-            @unknown default:
+            default:
                 errorMessage = error.localizedDescription
             }
         } else {

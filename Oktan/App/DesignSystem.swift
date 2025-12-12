@@ -15,7 +15,6 @@ enum DesignSystem {
         static let background = Color(uiColor: .systemGroupedBackground)
         
         static var glassTint: Color {
-            Color("GlassTint") // We can't easily create asset, so let's use a conditional or system color
             // Fallback to blue-ish tint that adapts?
             // Actually, let's use a custom logic or simply .blue.opacity(0.1) for now
             return Color.blue.opacity(0.1)
