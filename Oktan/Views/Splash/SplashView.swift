@@ -38,8 +38,9 @@ struct SplashView: View {
             GeometryReader { geometry in
                 let centerX = geometry.size.width / 2
                 let centerY = geometry.size.height / 2
-                // Dynamic Island approximate bottom + margin
-                let startY: CGFloat = 59
+                // Dynamic Island covers approx 0-54pt.
+                // Start Y at 20 ensures drops emerge from "behind/inside" the island.
+                let startY: CGFloat = 20
                 
                 ForEach(drops.indices, id: \.self) { index in
                     let config = drops[index]
