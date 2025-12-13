@@ -94,3 +94,7 @@ iOSInjectionProject/
 
 # Claude Code
 .claude/settings.local.json
+
+# Secrets - API Keys (NEVER COMMIT)
+Secrets.plist
+**/Secrets.plist
