@@ -5,7 +5,7 @@ import UIKit
 /// Service for managing local notifications and reminders
 @MainActor
 @Observable
-final class NotificationService {
+final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
     
     // MARK: - Types
     
@@ -63,9 +63,13 @@ final class NotificationService {
     private enum NotificationID {
         static let fillupReminder = "oktan.reminder.fillup"
         static let inactivityReminder = "oktan.reminder.inactivity"
+        static let smartRefuel = "smart_refuel_nudge"
     }
     
     // MARK: - Properties
+    
+    /// Signal to show add fuel screen (e.g. from notification tap)
+    var shouldShowAddFuel = false
     
     /// Whether notifications are authorized
     private(set) var isAuthorized = false
@@ -118,7 +122,7 @@ final class NotificationService {
     
     // MARK: - Initialization
     
-    init() {
+    override init() {
         // Load saved settings
         if let frequencyRaw = UserDefaults.standard.string(forKey: "reminderFrequency"),
            let frequency = ReminderFrequency(rawValue: frequencyRaw) {
@@ -138,7 +142,27 @@ final class NotificationService {
         let savedInactivityDays = UserDefaults.standard.integer(forKey: "inactivityDays")
         self.inactivityDays = savedInactivityDays > 0 ? savedInactivityDays : 14
         
+        super.init()
+        
+        // Set delegate
+        UNUserNotificationCenter.current().delegate = self
+        
         Task { await checkAuthorizationStatus() }
+    }
+    
+    // MARK: - UNUserNotificationCenterDelegate
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        if response.notification.request.identifier == NotificationID.smartRefuel {
+            // Signal to show add fuel screen
+            self.shouldShowAddFuel = true
+        }
+        completionHandler()
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        // Show banner even when app is in foreground
+        completionHandler([.banner, .sound])
     }
     
     // MARK: - Authorization

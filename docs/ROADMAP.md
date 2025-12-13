@@ -229,7 +229,7 @@ Strengthen the codebase before adding major features.
 **Priority: FINAL** | **Status: IN PROGRESS**
 
 ### 11.1 Assets
-- [ ] App icon (all sizes) - **(Next Step)**
+- [x] App icon (all sizes)
 - [ ] App Store screenshots (6.7", 6.5", 5.5")
 - [ ] App preview video (optional)
 
@@ -250,11 +250,11 @@ Strengthen the codebase before adding major features.
 - [ ] Support URL
 
 ## 🚀 Future "Killer" Features
-- [ ] **Smart Refuel Detection**:
-    - [ ] Detect CarPlay disconnection (indicating car turned off).
-    - [ ] Check GPS location against known Gas Station POIs.
-    - [ ] Send local notification: "At a gas station? Tap to log."
-    - [ ] Requires "Always On" Location permission strategy.
+- [x] **Smart Refuel Detection**:
+    - [x] Detect CarPlay disconnection (indicating car turned off).
+    - [x] Check GPS location against known Gas Station POIs.
+    - [x] Send local notification: "At a gas station? Tap to log."
+    - [x] Requires "Always On" Location permission strategy.
 
 ### 11.3 Technical (Deferred)
 - [ ] Archive & upload to App Store Connect

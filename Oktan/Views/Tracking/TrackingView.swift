@@ -3,6 +3,7 @@ import SwiftUI
 struct TrackingView: View {
     @EnvironmentObject private var repository: FuelRepository
     @Environment(AppSettings.self) private var settings
+    @Environment(NotificationService.self) private var notificationService
     @State private var isPresentingForm = false
     @State private var entryToEdit: FuelEntry?
 
@@ -37,6 +38,12 @@ struct TrackingView: View {
             .sheet(item: $entryToEdit) { entry in
                 FuelEntryFormView(existingEntry: entry)
                     .presentationDetents([.medium, .large])
+            }
+            .onChange(of: notificationService.shouldShowAddFuel) { _, shouldShow in
+                if shouldShow {
+                    isPresentingForm = true
+                    notificationService.shouldShowAddFuel = false
+                }
             }
         }
     }

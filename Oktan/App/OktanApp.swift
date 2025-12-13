@@ -9,6 +9,8 @@ private let useSwiftData = true
 
 @main
 struct OktanApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    
     // MARK: - SwiftData Container
     
     /// SwiftData model container (always created for migration support)
@@ -143,35 +145,48 @@ struct OktanApp: App {
 
 struct MainTabView: View {
     @EnvironmentObject private var repository: FuelRepository
+    @Environment(NotificationService.self) private var notificationService
     var appSettings: AppSettings
+    
+    @State private var selectedTab = 0
 
     var body: some View {
-        TabView {
+        TabView(selection: $selectedTab) {
             HomeView()
                 .tabItem {
                     Label("Home", systemImage: "house.fill")
                 }
+                .tag(0)
 
             TrackingView()
                 .tabItem {
                     Label("Tracking", systemImage: "fuelpump.fill")
                 }
+                .tag(1)
 
             ReportsView()
                 .tabItem {
                     Label("Reports", systemImage: "chart.bar.fill")
                 }
+                .tag(2)
             
             ProfileView()
                 .tabItem {
                     Label("Profile", systemImage: "person.fill")
                 }
+                .tag(3)
             
             SettingsView(settings: appSettings)
                 .tabItem {
                     Label("Settings", systemImage: "gearshape.fill")
                 }
+                .tag(4)
         }
         .tint(DesignSystem.ColorPalette.primaryBlue)
+        .onChange(of: notificationService.shouldShowAddFuel) { _, shouldShow in
+            if shouldShow {
+                selectedTab = 1
+            }
+        }
     }
 }
