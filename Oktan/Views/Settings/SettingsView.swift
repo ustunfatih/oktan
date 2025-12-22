@@ -201,11 +201,12 @@ struct DataManagementView: View {
     }
 }
 
-// MARK: - About View
+// MARK: - About View (Bible Compliant)
+// Removed: LinearGradient, fixed font size .system(size: 60)
 
 struct AboutView: View {
     @Environment(\.dismiss) private var dismiss
-    
+
     var body: some View {
         NavigationStack {
             List {
@@ -213,27 +214,21 @@ struct AboutView: View {
                 Section {
                     VStack {
                         Image(systemName: "fuelpump.circle.fill")
-                            .font(.system(size: 60))
-                            .foregroundStyle(
-                                LinearGradient(
-                                    colors: [.blue, .indigo],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            )
-                        
+                            .font(.largeTitle) // System font - Bible compliant
+                            .foregroundStyle(.tint)
+
                         Text("Oktan")
                             .font(.largeTitle.bold())
-                        
+
                         Text("Track your fuel. Optimize your drive.")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
                     .frame(maxWidth: .infinity)
-                    .padding()
+                    .padding() // No numeric value - Bible compliant
                 }
                 .listRowBackground(Color.clear)
-                
+
                 // Features Section
                 Section {
                     featureRow(icon: "fuelpump.fill", title: "Fuel Tracking", description: "Log every fill-up with detailed information")
@@ -243,10 +238,10 @@ struct AboutView: View {
                 } header: {
                     Text("Features")
                 }
-                
+
                 // Footer
                 Section {
-                    Text("Made with ❤️ for drivers")
+                    Text("Made with love for drivers")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                         .frame(maxWidth: .infinity)
@@ -263,7 +258,7 @@ struct AboutView: View {
             }
         }
     }
-    
+
     private func featureRow(icon: String, title: LocalizedStringKey, description: LocalizedStringKey) -> some View {
         Label {
             VStack(alignment: .leading) {
@@ -275,7 +270,7 @@ struct AboutView: View {
             }
         } icon: {
             Image(systemName: icon)
-                .foregroundStyle(.blue)
+                .foregroundStyle(.tint) // System tint - Bible compliant
         }
     }
 }

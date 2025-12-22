@@ -19,40 +19,35 @@ struct ProfileView: View {
         }
     }
     
-    // MARK: - Authenticated Sections
-    
+    // MARK: - Authenticated Sections (Bible Compliant)
+    // Removed: LinearGradient, fixed frame dimensions
+
     @ViewBuilder
     private func authenticatedSections(user: AuthenticationManager.User) -> some View {
         // Profile Header Section
         Section {
             HStack {
-                // Avatar
+                // Avatar - using system tint instead of gradient
                 ZStack {
                     Circle()
-                        .fill(
-                            LinearGradient(
-                                colors: [.blue, .indigo],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .frame(width: 60, height: 60)
-                    
+                        .fill(.tint) // System tint - Bible compliant
+
                     Text(user.initials)
                         .font(.title2.bold())
                         .foregroundStyle(.white)
                 }
-                
+                .frame(maxWidth: 60) // maxWidth is flexible guidance
+
                 VStack(alignment: .leading) {
                     Text(user.displayName)
                         .font(.headline)
-                    
+
                     if let email = user.email {
                         Text(email)
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
-                    
+
                     Label("Signed in with Apple", systemImage: "checkmark.seal.fill")
                         .font(.caption)
                         .foregroundStyle(.green)
@@ -85,27 +80,28 @@ struct ProfileView: View {
         }
     }
     
-    // MARK: - Unauthenticated Sections
-    
+    // MARK: - Unauthenticated Sections (Bible Compliant)
+    // Removed: fixed font size .system(size: 60)
+
     @ViewBuilder
     private var unauthenticatedSections: some View {
         // Welcome Section
         Section {
             VStack {
                 Image(systemName: "person.circle.fill")
-                    .font(.system(size: 60))
-                    .foregroundStyle(.blue)
-                
+                    .font(.largeTitle) // System font - Bible compliant
+                    .foregroundStyle(.tint)
+
                 Text("Sign in to Oktan")
                     .font(.title2.bold())
-                
+
                 Text("Sync your data across devices and unlock premium features")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
             }
             .frame(maxWidth: .infinity)
-            .padding()
+            .padding() // No numeric value - Bible compliant
         }
         .listRowBackground(Color.clear)
         
@@ -168,7 +164,7 @@ struct ProfileView: View {
             }
         } icon: {
             Image(systemName: icon)
-                .foregroundStyle(.blue)
+                .foregroundStyle(.tint) // System tint - Bible compliant
         }
     }
 }

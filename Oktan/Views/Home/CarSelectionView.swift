@@ -140,43 +140,44 @@ struct CarConfirmationView: View {
         _tankCapacity = State(initialValue: model.tankCapacity)
     }
     
+    // MARK: - Body (Bible Compliant)
+    // Removed: .frame(height: 200), .frame(width: 80), .padding(.trailing, 8), .font(.system(size: 80))
+
     var body: some View {
         Form {
             Section {
                 HStack {
                     Spacer()
                     carImageSection
-                        .frame(height: 200)
+                        .aspectRatio(1.5, contentMode: .fit) // Use aspect ratio instead of fixed height
                     Spacer()
                 }
                 .listRowBackground(Color.clear)
             }
-            
+
             Section("Vehicle Details") {
                 LabeledContent("Make", value: make.name)
                 LabeledContent("Model", value: model.name)
                 LabeledContent("Year", value: String(year))
             }
-            
+
             Section("Fuel Configuration") {
-                HStack {
-                    Text("Tank Capacity")
-                    Spacer()
-                    TextField("Liters", value: $tankCapacity, format: .number)
-                        .keyboardType(.decimalPad)
-                        .multilineTextAlignment(.trailing)
-                        .frame(width: 80)
-                    Text("L")
-                        .foregroundStyle(.secondary)
+                LabeledContent("Tank Capacity") {
+                    HStack {
+                        TextField("Liters", value: $tankCapacity, format: .number)
+                            .keyboardType(.decimalPad)
+                            .multilineTextAlignment(.trailing)
+                        Text("L")
+                            .foregroundStyle(.secondary)
+                    }
                 }
             }
-            
+
             Section {
                 Button(action: confirmSelection) {
                     if isGeneratingImage {
                         HStack {
                             ProgressView()
-                                .padding(.trailing, 8)
                             Text("Generating Image...")
                         }
                     } else {
@@ -193,7 +194,7 @@ struct CarConfirmationView: View {
             generateCarImage()
         }
     }
-    
+
     private var carImageSection: some View {
         ZStack {
             if let image = carImage {
@@ -209,8 +210,8 @@ struct CarConfirmationView: View {
                 }
             } else {
                 Image(systemName: "car.fill")
-                    .font(.system(size: 80))
-                    .foregroundStyle(.blue.opacity(0.3))
+                    .font(.largeTitle) // System font - Bible compliant
+                    .foregroundStyle(.tertiary)
             }
         }
     }

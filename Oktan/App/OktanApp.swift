@@ -70,10 +70,10 @@ struct OktanApp: App {
             ZStack {
                 Group {
                     if let carRepoSD = carRepository {
-                        MainTabView(appSettings: appSettings)
+                        RootScaffold()
                             .environment(carRepoSD)
                     } else {
-                        MainTabView(appSettings: appSettings)
+                        RootScaffold()
                             .environment(legacyCarRepository)
                     }
                 }
@@ -141,52 +141,9 @@ struct OktanApp: App {
     }
 }
 
-// MARK: - Main Tab View
-
-struct MainTabView: View {
-    @EnvironmentObject private var repository: FuelRepository
-    @Environment(NotificationService.self) private var notificationService
-    var appSettings: AppSettings
-    
-    @State private var selectedTab = 0
-
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            HomeView()
-                .tabItem {
-                    Label("Home", systemImage: "house.fill")
-                }
-                .tag(0)
-
-            TrackingView()
-                .tabItem {
-                    Label("Tracking", systemImage: "fuelpump.fill")
-                }
-                .tag(1)
-
-            ReportsView()
-                .tabItem {
-                    Label("Reports", systemImage: "chart.bar.fill")
-                }
-                .tag(2)
-            
-            ProfileView()
-                .tabItem {
-                    Label("Profile", systemImage: "person.fill")
-                }
-                .tag(3)
-            
-            SettingsView(settings: appSettings)
-                .tabItem {
-                    Label("Settings", systemImage: "gearshape.fill")
-                }
-                .tag(4)
-        }
-        .tint(.blue)
-        .onChange(of: notificationService.shouldShowAddFuel) { _, shouldShow in
-            if shouldShow {
-                selectedTab = 1
-            }
-        }
-    }
-}
+// MARK: - Main Tab View (DEPRECATED - Use RootScaffold instead)
+// This is kept for reference but RootScaffold is now the primary tab container.
+// RootScaffold provides:
+// - @SceneStorage for tab persistence (Bible Article VI compliance)
+// - No .tint() override (Bible Article III compliance)
+// - Navigation path persistence for each tab

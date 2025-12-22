@@ -105,24 +105,24 @@ struct HomeView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
             }
-            
+
             // Car info
             Text("\(car.year) \(car.make)")
                 .font(.headline)
             Text(car.model)
                 .font(.title2.weight(.bold))
-            
+
             // Tank capacity
             Text("Tank: \(settings.formatVolume(car.tankCapacity))")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
-            
+
             Button(action: { isPresentingCarSelection = true }) {
                 Label("Change Car", systemImage: "arrow.triangle.2.circlepath")
                     .font(.subheadline)
             }
         }
-        .padding()
+        .padding() // No numeric value - Bible compliant
         .background(.ultraThinMaterial)
     }
     
@@ -130,82 +130,76 @@ struct HomeView: View {
         Button(action: { isPresentingCarSelection = true }) {
             VStack {
                 Image(systemName: "car.badge.gearshape")
-                    .font(.system(size: 48))
-                    .foregroundStyle(.blue)
-                
+                    .font(.largeTitle) // System font size - Bible compliant
+                    .foregroundStyle(.tint)
+
                 Text("Add Your Car")
                     .font(.headline)
-                
+
                 Text("Set up your car to track fuel efficiency")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
             }
-            .padding()
+            .padding() // No numeric value - Bible compliant
             .frame(maxWidth: .infinity)
             .background(.ultraThinMaterial)
         }
         .accessibilityIdentifier("add-car-button")
     }
     
-    // MARK: - Hero Card
-    
+    // MARK: - Hero Card (Bible Compliant)
+    // Removed: LinearGradient, RoundedRectangle, fixed font sizes, custom opacity
+
     private var heroCard: some View {
         VStack(alignment: .leading) {
             HStack {
                 VStack(alignment: .leading) {
                     Text("Total Distance")
                         .font(.subheadline)
-                        .foregroundStyle(.white.opacity(0.8))
-                    
+                        .foregroundStyle(.secondary)
+
                     Text(settings.formatDistance(summary.totalDistance))
-                        .font(.system(size: 36, weight: .bold))
-                        .foregroundStyle(.white)
+                        .font(.largeTitle.bold())
+                        .foregroundStyle(.primary)
                 }
-                
+
                 Spacer()
-                
+
                 Image(systemName: "point.topleft.down.curvedto.point.bottomright.up")
-                    .font(.system(size: 48))
-                    .foregroundStyle(.white.opacity(0.3))
+                    .font(.largeTitle)
+                    .foregroundStyle(.tertiary)
                     .accessibilityHidden(true)
             }
-            
+
             Divider()
-                .background(.white.opacity(0.3))
                 .accessibilityHidden(true)
-            
+
             HStack {
                 VStack(alignment: .leading) {
                     Text("Total Spent")
                         .font(.caption)
-                        .foregroundStyle(.white.opacity(0.7))
+                        .foregroundStyle(.secondary)
                     Text(settings.formatCost(summary.totalCost))
                         .font(.headline)
-                        .foregroundStyle(.white)
+                        .foregroundStyle(.primary)
                 }
-                
+
                 Spacer()
-                
+
                 VStack(alignment: .leading) {
                     Text("Fill-ups")
                         .font(.caption)
-                        .foregroundStyle(.white.opacity(0.7))
+                        .foregroundStyle(.secondary)
                     Text("\(repository.entries.count)")
                         .font(.headline)
-                        .foregroundStyle(.white)
+                        .foregroundStyle(.primary)
                 }
             }
         }
         .padding()
-        .background(
-            LinearGradient(
-                colors: [.blue, .indigo],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-        )
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .background(.tint.opacity(0.1)) // System tint with low opacity
+        .background(.ultraThinMaterial)
         // Accessibility
         .accessibilityElement(children: .combine)
         .accessibilityLabel("Fuel summary")
