@@ -7,23 +7,40 @@ struct TrackingView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: DesignSystem.Spacing.large) {
-                    header
-                    entriesSection
+            List {
+                Section {
+                    Text("Log each refuel with a few taps. We calculate distance, efficiency, and cost automatically.")
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
                 }
-                .padding(DesignSystem.Spacing.large)
-                .frame(maxWidth: .infinity, alignment: .leading)
+
+                Section {
+                    if repository.entries.isEmpty {
+                        ContentUnavailableView {
+                            Label("No Entries Yet", systemImage: "fuelpump")
+                        } description: {
+                            Text("Tap Add Fill-up to start tracking your fuel efficiency.")
+                        }
+                    } else {
+                        ForEach(repository.entries.sorted(by: { $0.date > $1.date })) { entry in
+                            FuelEntryRow(
+                                entry: entry,
+                                onEdit: { entryToEdit = entry },
+                                onDelete: { repository.delete(entry) }
+                            )
+                        }
+                    }
+                } header: {
+                    Text("Recent fill-ups")
+                }
             }
-            .background(DesignSystem.ColorPalette.background.ignoresSafeArea())
+            .listStyle(.insetGrouped)
             .navigationTitle("Tracking")
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button(action: { isPresentingForm = true }) {
                         Label("Add Fill-up", systemImage: "plus.circle.fill")
-                            .font(.headline)
                     }
-                    .tint(DesignSystem.ColorPalette.primaryBlue)
                     .accessibilityIdentifier("add-fillup-button")
                 }
             }
@@ -37,53 +54,6 @@ struct TrackingView: View {
             }
         }
     }
-
-    private var header: some View {
-        VStack(alignment: .leading, spacing: DesignSystem.Spacing.small) {
-            Text("Log each refuel with a few taps. We calculate distance, L/100km, and cost automatically.")
-                .font(.callout)
-                .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-    }
-
-    private var entriesSection: some View {
-        VStack(alignment: .leading, spacing: DesignSystem.Spacing.medium) {
-            Text("Recent fill-ups")
-                .font(.title2.weight(.semibold))
-                .foregroundStyle(DesignSystem.ColorPalette.label)
-
-            if repository.entries.isEmpty {
-                emptyState
-            } else {
-                VStack(spacing: DesignSystem.Spacing.medium) {
-                    ForEach(repository.entries.sorted(by: { $0.date > $1.date })) { entry in
-                        FuelEntryRow(
-                            entry: entry,
-                            onEdit: { entryToEdit = entry },
-                            onDelete: { repository.delete(entry) }
-                        )
-                    }
-                }
-            }
-        }
-    }
-
-    private var emptyState: some View {
-        VStack(spacing: DesignSystem.Spacing.small) {
-            Image(systemName: "fuelpump")
-                .font(.system(size: 48))
-                .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
-            Text("No entries yet")
-                .font(.headline)
-            Text("Tap Add Fill-up to start tracking your fuel efficiency.")
-                .font(.footnote)
-                .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
-                .multilineTextAlignment(.center)
-        }
-        .padding()
-        .frame(maxWidth: .infinity)
-    }
 }
 
 private struct FuelEntryRow: View {
@@ -94,74 +64,55 @@ private struct FuelEntryRow: View {
     @State private var showDeleteConfirmation = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: DesignSystem.Spacing.small) {
+        VStack(alignment: .leading) {
             HStack {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading) {
                     Text(entry.date.formatted(date: .abbreviated, time: .omitted))
                         .font(.headline)
                     Text(entry.gasStation)
                         .font(.subheadline)
-                        .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
+                        .foregroundStyle(.secondary)
                 }
-                Spacer()
-                Text(entry.driveMode.rawValue)
-                    .font(.caption)
-                    .padding(.horizontal, DesignSystem.Spacing.small)
-                    .padding(.vertical, 6)
-                    .background(DesignSystem.ColorPalette.glassTint)
-                    .clipShape(Capsule())
-            }
 
-            HStack(spacing: DesignSystem.Spacing.medium) {
-                if let distance = entry.distance {
-                    valueChip(title: "Distance", value: distance, suffix: "km")
-                }
-                valueChip(title: "Fuel", value: entry.totalLiters, suffix: "L")
+                Spacer()
+
                 Text(entry.totalCost, format: .currency(code: AppConfiguration.currencyCode))
                     .font(.headline)
-                    .foregroundStyle(DesignSystem.ColorPalette.label)
             }
 
-            if let lPer100 = entry.litersPer100KM {
-                Text("\(lPer100, specifier: "%.2f") L / 100 km")
-                    .font(.footnote)
-                    .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
-            }
+            HStack {
+                Label("\(entry.totalLiters, specifier: "%.1f") L", systemImage: "fuelpump.fill")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
 
-            // Action buttons
-            HStack(spacing: DesignSystem.Spacing.medium) {
-                Button(action: onEdit) {
-                    Label("Edit", systemImage: "pencil")
-                        .font(.subheadline)
+                if let distance = entry.distance {
+                    Spacer()
+                    Label("\(distance, specifier: "%.0f") km", systemImage: "road.lanes")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
-                .tint(DesignSystem.ColorPalette.primaryBlue)
 
-                Spacer()
-
-                Button(action: { showDeleteConfirmation = true }) {
-                    Label("Delete", systemImage: "trash")
-                        .font(.subheadline)
+                if let lPer100 = entry.litersPer100KM {
+                    Spacer()
+                    Label("\(lPer100, specifier: "%.1f") L/100 km", systemImage: "leaf.fill")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
-                .tint(DesignSystem.ColorPalette.errorRed)
             }
-            .padding(.top, DesignSystem.Spacing.xsmall)
         }
-        .glassCard()
+        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+            Button(role: .destructive, action: { showDeleteConfirmation = true }) {
+                Label("Delete", systemImage: "trash")
+            }
+            Button(action: onEdit) {
+                Label("Edit", systemImage: "pencil")
+            }
+        }
         .confirmationDialog("Delete this fill-up?", isPresented: $showDeleteConfirmation, titleVisibility: .visible) {
             Button("Delete", role: .destructive, action: onDelete)
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("This action cannot be undone.")
-        }
-    }
-
-    private func valueChip(title: String, value: Double, suffix: String) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(title)
-                .font(.caption)
-                .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
-            Text("\(value, specifier: "%.0f") \(suffix)")
-                .font(.headline)
         }
     }
 }

@@ -1,0 +1,89 @@
+{
+  "ignore_paths": [
+    ".git/",
+    "DerivedData/",
+    "Pods/",
+    "Carthage/",
+    ".build/",
+    "ios26-design-bible/"
+  ],
+  "allow_numeric_padding_paths": [
+    "Tests/"
+  ],
+  "require_pr_declaration": true,
+  "pr_declaration_path": "swiftui-starter-repo/COMPLIANCE/PR_DECLARATION.md",
+  "required_declaration_phrases": [
+    "Accessibility Contract",
+    "Accessibility Evidence",
+    "App Store Review Simulation",
+    "Dynamic Type Evidence",
+    "I certify this PR complies",
+    "Lifecycle & State",
+    "Numeric Inference",
+    "System Components Only",
+    "VoiceOver Evidence"
+  ],
+  "forbidden_swiftui_patterns": [
+    "\\.cornerRadius\\(",
+    "\\.shadow\\(",
+    "RoundedRectangle\\s*\\(\\s*cornerRadius\\s*:",
+    "Capsule\\s*\\(",
+    "Circle\\s*\\(\\s*\\)\\s*\\.stroke",
+    "\\.stroke\\(",
+    "\\.animation\\(",
+    "\\.transition\\(",
+    "\\.toolbarBackground\\(",
+    "\\.toolbarColorScheme\\(",
+    "\\.tint\\(",
+    "\\.accentColor\\("
+  ],
+  "forbidden_uikit_patterns": [
+    "UINavigationBarAppearance",
+    "setBackgroundImage\\(",
+    "shadowImage\\s*=",
+    "layer\\.shadow",
+    "layer\\.cornerRadius",
+    "UIAppearance",
+    "appearance\\(\\)",
+    "barTintColor\\s*=",
+    "tintColor\\s*="
+  ],
+  "allow_forbidden_patterns_paths": [
+    "Tests/",
+    "ci/"
+  ],
+  "component_rules": {
+    "forbid_scrollview_vstack_forms": true,
+    "forbid_custom_list_separators": true,
+    "forbid_gesture_buttons": true,
+    "allowlist_swiftui_primitives": [
+      "NavigationStack",
+      "TabView",
+      "List",
+      "Form",
+      "Section",
+      "NavigationLink",
+      "Text",
+      "Image",
+      "Button",
+      "Toggle",
+      "TextField",
+      "SecureField",
+      "DatePicker",
+      "Picker",
+      "Menu",
+      "ProgressView",
+      "HStack",
+      "VStack",
+      "ZStack",
+      "Spacer",
+      "Rectangle"
+    ],
+    "allowlist_enforcement_mode": "fail",
+    "allowlist_exempt_paths": [
+      "Tests/",
+      "Previews/",
+      "ios26-design-bible/"
+    ]
+  }
+}

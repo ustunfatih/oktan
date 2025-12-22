@@ -20,8 +20,10 @@ def iter_screens():
         for fn in filenames:
             if fn.endswith("Screen.swift"):
                 full = os.path.join(dirpath, fn)
-                rel = os.path.relpath(full, ROOT).replace("\\\\", "/")
-                yield fn[:-5], rel  # NameScreen, path
+                rel = os.path.relpath(full, ROOT).replace("\\", "/")
+                if any(rel.startswith(p) for p in CFG.get("component_rules", {}).get("allowlist_exempt_paths", [])):
+                    continue
+                yield fn[:-6], rel  # NameScreen, path
 
 def parse_matrix(text):
     blocks = {}

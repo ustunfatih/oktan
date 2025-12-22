@@ -172,9 +172,6 @@ struct HomeView: View {
                     .accessibilityHidden(true)
             }
 
-            Divider()
-                .accessibilityHidden(true)
-
             HStack {
                 VStack(alignment: .leading) {
                     Text("Total Spent")

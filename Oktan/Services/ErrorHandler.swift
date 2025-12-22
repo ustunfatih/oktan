@@ -192,17 +192,16 @@ struct ErrorBannerView: View {
         HStack {
             Image(systemName: error.systemIcon)
                 .font(.title2)
-                .foregroundStyle(.white)
+                .foregroundStyle(.red)
             
             VStack(alignment: .leading) {
                 Text(error.errorDescription ?? "An error occurred")
                     .font(.subheadline.weight(.medium))
-                    .foregroundStyle(.white)
                 
                 if let suggestion = error.recoverySuggestion {
                     Text(suggestion)
                         .font(.caption)
-                        .foregroundStyle(.white.opacity(0.8))
+                        .foregroundStyle(.secondary)
                 }
             }
             
@@ -218,11 +217,9 @@ struct ErrorBannerView: View {
                 } label: {
                     if isRetrying {
                         ProgressView()
-                            .tint(.white)
                     } else {
                         Text("Retry")
                             .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(.white)
                     }
                 }
                 .disabled(isRetrying)
@@ -231,12 +228,11 @@ struct ErrorBannerView: View {
             Button(action: onDismiss) {
                 Image(systemName: "xmark")
                     .font(.caption.weight(.bold))
-                    .foregroundStyle(.white.opacity(0.8))
+                    .foregroundStyle(.secondary)
             }
         }
         .padding()
-        .background(Color.red.gradient)
-        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(Color(uiColor: .secondarySystemGroupedBackground))
         .padding()
     }
 }

@@ -149,7 +149,7 @@ struct CarConfirmationView: View {
                 HStack {
                     Spacer()
                     carImageSection
-                        .aspectRatio(1.5, contentMode: .fit) // Use aspect ratio instead of fixed height
+                        .aspectRatio(contentMode: .fit) // Use system sizing without numeric aspect ratio
                     Spacer()
                 }
                 .listRowBackground(Color.clear)

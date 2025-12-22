@@ -90,7 +90,6 @@ struct OktanApp: App {
                 
                 if showSplash {
                     SplashView()
-                        .transition(.opacity)
                 }
             }
             .task {
@@ -100,12 +99,9 @@ struct OktanApp: App {
                 // Check credential state on app launch
                 authManager.checkCredentialState()
                 
-                // Dismiss splash after animation completes
-                // Wait for animation to complete
+                // Dismiss splash after startup tasks complete
                 try? await Task.sleep(for: .seconds(5.0))
-                withAnimation(.easeInOut(duration: 0.5)) {
-                    showSplash = false
-                }
+                showSplash = false
             }
             .onChange(of: scenePhase) { _, newPhase in
                 if newPhase == .active {

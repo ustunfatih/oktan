@@ -156,7 +156,7 @@ enum CarImageService {
             bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
         ) else { return true }
         
-        context.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
+        context.draw(cgImage, in: .init(x: 0, y: 0, width: width, height: height))
         
         // Sample the center of the image for the dominant color
         var totalRed: Int = 0

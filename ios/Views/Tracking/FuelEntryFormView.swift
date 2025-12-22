@@ -64,12 +64,10 @@ struct FuelEntryFormView: View {
                 if let message = errorMessage {
                     Section {
                         Text(message)
-                            .foregroundStyle(DesignSystem.ColorPalette.errorRed)
+                            .foregroundStyle(.red)
                     }
                 }
             }
-            .scrollContentBackground(.hidden)
-            .background(DesignSystem.ColorPalette.background)
             .navigationTitle(isEditing ? "Edit Fill-up" : "Add Fill-up")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -79,7 +77,6 @@ struct FuelEntryFormView: View {
                     Button(action: save) {
                         Label("Save", systemImage: "checkmark.circle.fill")
                     }
-                    .tint(DesignSystem.ColorPalette.primaryBlue)
                     .disabled(!isValidForm)
                 }
             }

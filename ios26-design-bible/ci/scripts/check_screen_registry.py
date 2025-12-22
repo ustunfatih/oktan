@@ -35,7 +35,7 @@ def main():
     index_text = open(SCREEN_INDEX, "r", encoding="utf-8").read()
     missing = []
     for fn, rel in iter_swift():
-        name = fn[:-5]  # strip .swift
+        name = fn[:-6]  # strip .swift
         if name not in index_text:
             missing.append(rel)
 

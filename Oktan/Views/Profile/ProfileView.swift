@@ -27,16 +27,11 @@ struct ProfileView: View {
         // Profile Header Section
         Section {
             HStack {
-                // Avatar - using system tint instead of gradient
-                ZStack {
-                    Circle()
-                        .fill(.tint) // System tint - Bible compliant
-
-                    Text(user.initials)
-                        .font(.title2.bold())
-                        .foregroundStyle(.white)
-                }
-                .frame(maxWidth: 60) // maxWidth is flexible guidance
+                Text(user.initials)
+                    .font(.headline)
+                    .foregroundStyle(.white)
+                    .padding()
+                    .background(Circle().fill(.tint))
 
                 VStack(alignment: .leading) {
                     Text(user.displayName)

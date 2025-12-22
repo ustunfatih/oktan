@@ -8,22 +8,24 @@ struct MetricCard: View {
     let tint: Color
 
     var body: some View {
-        VStack(alignment: .leading, spacing: DesignSystem.Spacing.small) {
+        VStack(alignment: .leading) {
             Label(title, systemImage: icon)
                 .font(.headline)
                 .foregroundStyle(tint)
 
             Text(value)
-                .metricValueStyle()
+                .font(.title2.weight(.semibold))
+                .foregroundStyle(.primary)
 
             if let trend {
                 Text(trend)
                     .font(.footnote)
-                    .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
+                    .foregroundStyle(.secondary)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .glassCard()
+        .padding()
+        .background(.ultraThinMaterial)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(title). \(value). \(trend ?? "")")
     }
