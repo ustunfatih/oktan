@@ -1,0 +1,34 @@
+name: iOS 26 Bible Compliance
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  bible-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Run Bible checker
+        run: |
+          python3 ci/scripts/ios26_bible_check.py
+          python3 ci/scripts/ios26_api_forbid_check.py
+          python3 ci/scripts/ios26_component_allowlist_check.py
+          python3 ci/scripts/check_screen_registry.py
+          python3 ci/scripts/check_shell_usage.py
+          python3 ci/scripts/check_traceability_matrix.py
+
+  pr-declaration:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Enforce PR Compliance Declaration
+        env:
+          GITHUB_BASE_REF: ${{ github.base_ref }}
+        run: |
+          python3 ci/scripts/check_pr_declaration.py

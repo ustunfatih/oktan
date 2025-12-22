@@ -15,11 +15,10 @@ struct SettingsView: View {
                 Section {
                     if premiumManager.isPremium {
                         Label("Oktan Pro Active", systemImage: "crown.fill")
-                            .foregroundStyle(DesignSystem.ColorPalette.deepPurple)
+                            .foregroundStyle(.indigo)
                     } else {
                         Button(action: { showingPaywall = true }) {
                             Label("Unlock Oktan Pro", systemImage: "crown")
-                                .foregroundStyle(DesignSystem.ColorPalette.primaryBlue)
                         }
                     }
                 }
@@ -113,7 +112,7 @@ struct SettingsView: View {
                                 .foregroundStyle(.secondary)
                         }
                     }
-                    .foregroundStyle(DesignSystem.ColorPalette.label)
+                    .foregroundStyle(.primary)
                     
                     Link(destination: URL(string: "https://github.com/ustunfatih/oktan")!) {
                         Label("GitHub Repository", systemImage: "link")
@@ -209,20 +208,20 @@ struct AboutView: View {
     
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: DesignSystem.Spacing.xlarge) {
-                    // App Icon
-                    Image(systemName: "fuelpump.circle.fill")
-                        .font(.system(size: 80))
-                        .foregroundStyle(
-                            LinearGradient(
-                                colors: [DesignSystem.ColorPalette.primaryBlue, DesignSystem.ColorPalette.deepPurple],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
+            List {
+                // App Header Section
+                Section {
+                    VStack {
+                        Image(systemName: "fuelpump.circle.fill")
+                            .font(.system(size: 60))
+                            .foregroundStyle(
+                                LinearGradient(
+                                    colors: [.blue, .indigo],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
                             )
-                        )
-                    
-                    VStack(spacing: DesignSystem.Spacing.small) {
+                        
                         Text("Oktan")
                             .font(.largeTitle.bold())
                         
@@ -230,23 +229,31 @@ struct AboutView: View {
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
-                    
-                    VStack(alignment: .leading, spacing: DesignSystem.Spacing.medium) {
-                        featureRow(icon: "fuelpump.fill", title: "Fuel Tracking", description: "Log every fill-up with detailed information")
-                        featureRow(icon: "chart.line.uptrend.xyaxis", title: "Analytics", description: "Track efficiency trends and costs over time")
-                        featureRow(icon: "car.fill", title: "Multiple Cars", description: "Manage fuel logs for all your vehicles")
-                        featureRow(icon: "icloud.fill", title: "Cloud Sync", description: "Keep your data synced across devices")
-                    }
-                    .padding(.horizontal)
-                    
-                    Spacer()
-                    
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                }
+                .listRowBackground(Color.clear)
+                
+                // Features Section
+                Section {
+                    featureRow(icon: "fuelpump.fill", title: "Fuel Tracking", description: "Log every fill-up with detailed information")
+                    featureRow(icon: "chart.line.uptrend.xyaxis", title: "Analytics", description: "Track efficiency trends and costs over time")
+                    featureRow(icon: "car.fill", title: "Multiple Cars", description: "Manage fuel logs for all your vehicles")
+                    featureRow(icon: "icloud.fill", title: "Cloud Sync", description: "Keep your data synced across devices")
+                } header: {
+                    Text("Features")
+                }
+                
+                // Footer
+                Section {
                     Text("Made with ❤️ for drivers")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity)
                 }
-                .padding()
+                .listRowBackground(Color.clear)
             }
+            .listStyle(.insetGrouped)
             .navigationTitle("About")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -258,19 +265,17 @@ struct AboutView: View {
     }
     
     private func featureRow(icon: String, title: LocalizedStringKey, description: LocalizedStringKey) -> some View {
-        HStack(spacing: DesignSystem.Spacing.medium) {
-            Image(systemName: icon)
-                .font(.title2)
-                .foregroundStyle(DesignSystem.ColorPalette.primaryBlue)
-                .frame(width: 40)
-            
-            VStack(alignment: .leading, spacing: 4) {
+        Label {
+            VStack(alignment: .leading) {
                 Text(title)
                     .font(.headline)
                 Text(description)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
+        } icon: {
+            Image(systemName: icon)
+                .foregroundStyle(.blue)
         }
     }
 }

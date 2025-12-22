@@ -189,12 +189,12 @@ struct ErrorBannerView: View {
     @State private var isRetrying = false
     
     var body: some View {
-        HStack(spacing: DesignSystem.Spacing.medium) {
+        HStack {
             Image(systemName: error.systemIcon)
                 .font(.title2)
                 .foregroundStyle(.white)
             
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading) {
                 Text(error.errorDescription ?? "An error occurred")
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(.white)
@@ -234,12 +234,10 @@ struct ErrorBannerView: View {
                     .foregroundStyle(.white.opacity(0.8))
             }
         }
-        .padding(DesignSystem.Spacing.medium)
-        .background(
-            RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.medium, style: .continuous)
-                .fill(Color.red.gradient)
-        )
-        .padding(.horizontal, DesignSystem.Spacing.medium)
+        .padding()
+        .background(Color.red.gradient)
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .padding()
     }
 }
 
@@ -253,36 +251,18 @@ struct ErrorStateView: View {
     @State private var isRetrying = false
     
     var body: some View {
-        VStack(spacing: DesignSystem.Spacing.large) {
-            Image(systemName: error.systemIcon)
-                .font(.system(size: 64))
-                .foregroundStyle(
-                    LinearGradient(
-                        colors: [.red.opacity(0.8), .orange.opacity(0.8)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-            
-            VStack(spacing: DesignSystem.Spacing.small) {
-                Text("Something went wrong")
-                    .font(.title2.weight(.bold))
-                    .foregroundStyle(DesignSystem.ColorPalette.label)
-                
+        ContentUnavailableView {
+            Label("Something went wrong", systemImage: error.systemIcon)
+        } description: {
+            VStack(spacing: 8) {
                 Text(error.errorDescription ?? "An unexpected error occurred")
-                    .font(.body)
-                    .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
-                    .multilineTextAlignment(.center)
-                
                 if let suggestion = error.recoverySuggestion {
                     Text(suggestion)
                         .font(.caption)
-                        .foregroundStyle(DesignSystem.ColorPalette.tertiaryLabel)
-                        .multilineTextAlignment(.center)
+                        .foregroundStyle(.secondary)
                 }
             }
-            .padding(.horizontal, DesignSystem.Spacing.xlarge)
-            
+        } actions: {
             if error.isRecoverable, let retry = onRetry {
                 Button {
                     isRetrying = true
@@ -291,27 +271,16 @@ struct ErrorStateView: View {
                         isRetrying = false
                     }
                 } label: {
-                    HStack {
-                        if isRetrying {
-                            ProgressView()
-                                .tint(.white)
-                        } else {
-                            Image(systemName: "arrow.clockwise")
-                        }
+                    if isRetrying {
+                        ProgressView()
+                    } else {
                         Text("Try Again")
                     }
-                    .font(.headline)
-                    .frame(minWidth: 120)
-                    .padding(.vertical, DesignSystem.Spacing.medium)
-                    .padding(.horizontal, DesignSystem.Spacing.xlarge)
                 }
                 .buttonStyle(.borderedProminent)
-                .tint(DesignSystem.ColorPalette.primaryBlue)
                 .disabled(isRetrying)
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(DesignSystem.ColorPalette.background)
     }
 }
 
@@ -326,7 +295,6 @@ struct ErrorStateView: View {
             onRetry: { try? await Task.sleep(for: .seconds(1)) }
         )
     }
-    .background(DesignSystem.ColorPalette.background)
 }
 
 #Preview("Error State") {

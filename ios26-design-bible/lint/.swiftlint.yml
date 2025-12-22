@@ -1,0 +1,53 @@
+# SwiftLint baseline for iOS 26 Design Bible projects
+# Keep strictness targeted to prevent UI drift.
+
+disabled_rules:
+  - trailing_whitespace
+  - line_length
+
+opt_in_rules:
+  - explicit_init
+  - force_unwrapping
+  - empty_count
+  - first_where
+
+# Custom regex-based rules that mirror Bible constraints
+custom_rules:
+  no_numeric_padding:
+    name: "No numeric padding"
+    regex: "\.padding\(\s*\d"
+    message: "Bible: Do not use numeric padding. Use .padding() with defaults."
+    severity: error
+
+  no_geometry_reader:
+    name: "No GeometryReader"
+    regex: "\bGeometryReader\b"
+    message: "Bible: Do not use GeometryReader for layout tuning."
+    severity: error
+
+  no_custom_corner_radius:
+    name: "No custom corner radius"
+    regex: "\.cornerRadius\("
+    message: "Bible: Do not set custom corner radius."
+    severity: error
+
+  no_custom_shadows:
+    name: "No custom shadows"
+    regex: "\.shadow\("
+    message: "Bible: Do not add custom shadows/elevation."
+    severity: error
+
+  no_toolbar_background_customization:
+    name: "No toolbar background customization"
+    regex: "\.toolbarBackground\("
+    message: "Bible: Do not customize navigation chrome."
+    severity: error
+
+included:
+  - swiftui-starter-repo
+  - Sources
+excluded:
+  - Pods
+  - Carthage
+  - DerivedData
+  - .build

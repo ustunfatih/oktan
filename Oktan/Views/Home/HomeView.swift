@@ -34,18 +34,41 @@ struct HomeView: View {
     
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: DesignSystem.Spacing.large) {
+            List {
+                // Car Section
+                Section {
                     carSection
                         .id(refreshID)
+                }
+                .listRowBackground(Color.clear)
+                
+                // Hero Card Section
+                Section {
                     heroCard
-                    quickStats
-                    recentActivity
+                }
+                .listRowBackground(Color.clear)
+                
+                // Efficiency Section
+                Section {
+                    efficiencySection
+                } header: {
+                    Text("Efficiency")
+                }
+                
+                // Recent Activity Section
+                Section {
+                    recentActivitySection
+                } header: {
+                    Text("Recent Activity")
+                }
+                
+                // Quick Add Section
+                Section {
                     quickAddButton
                 }
-                .padding(DesignSystem.Spacing.large)
+                .listRowBackground(Color.clear)
             }
-            .background(DesignSystem.ColorPalette.background.ignoresSafeArea())
+            .listStyle(.insetGrouped)
             .navigationTitle("Home")
             .sheet(isPresented: $isPresentingForm) {
                 FuelEntryFormView()
@@ -58,7 +81,6 @@ struct HomeView: View {
                 }
                 refreshID = UUID()
             }) {
-                // Pass a local CarRepository for the legacy case
                 CarSelectionView(carRepository: localCarRepository ?? CarRepository())
             }
         }
@@ -69,96 +91,59 @@ struct HomeView: View {
     @ViewBuilder
     private var carSection: some View {
         if let car = carRepository.selectedCar {
-            carDetailsCard(car)
+            carDetailsView(car)
         } else {
             addCarButton
         }
     }
     
-    private func carDetailsCard(_ car: Car) -> some View {
-        VStack(spacing: DesignSystem.Spacing.medium) {
-            // Car image - displayed as fit, not cropped
+    private func carDetailsView(_ car: Car) -> some View {
+        VStack(alignment: .leading) {
+            // Car image
             if let imageData = car.imageData, let uiImage = UIImage(data: imageData) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.medium, style: .continuous)
-                        .fill(
-                            LinearGradient(
-                                colors: [
-                                    DesignSystem.ColorPalette.glassTint.opacity(0.8),
-                                    DesignSystem.ColorPalette.primaryBlue.opacity(0.05)
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .frame(height: 180)
-                    
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 160)
-                        .padding(.horizontal, DesignSystem.Spacing.medium)
-                }
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
             }
             
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("\(car.year) \(car.make)")
-                        .font(.headline)
-                        .foregroundStyle(DesignSystem.ColorPalette.label)
-                    Text(car.model)
-                        .font(.title2.weight(.bold))
-                        .foregroundStyle(DesignSystem.ColorPalette.label)
-                }
-                
-                Spacer()
-                
-                VStack(alignment: .trailing, spacing: 4) {
-                    Text("Tank")
-                        .font(.caption)
-                        .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
-                    Text(settings.formatVolume(car.tankCapacity))
-                        .font(.headline)
-                        .foregroundStyle(DesignSystem.ColorPalette.primaryBlue)
-                }
-            }
+            // Car info
+            Text("\(car.year) \(car.make)")
+                .font(.headline)
+            Text(car.model)
+                .font(.title2.weight(.bold))
+            
+            // Tank capacity
+            Text("Tank: \(settings.formatVolume(car.tankCapacity))")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
             
             Button(action: { isPresentingCarSelection = true }) {
                 Label("Change Car", systemImage: "arrow.triangle.2.circlepath")
                     .font(.subheadline)
             }
-            .tint(DesignSystem.ColorPalette.secondaryLabel)
         }
-        .padding(DesignSystem.Spacing.medium)
-        .glassCard()
+        .padding()
+        .background(.ultraThinMaterial)
     }
     
     private var addCarButton: some View {
         Button(action: { isPresentingCarSelection = true }) {
-            VStack(spacing: DesignSystem.Spacing.medium) {
+            VStack {
                 Image(systemName: "car.badge.gearshape")
                     .font(.system(size: 48))
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: [DesignSystem.ColorPalette.primaryBlue, DesignSystem.ColorPalette.deepPurple],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
+                    .foregroundStyle(.blue)
                 
                 Text("Add Your Car")
                     .font(.headline)
-                    .foregroundStyle(DesignSystem.ColorPalette.label)
                 
                 Text("Set up your car to track fuel efficiency")
                     .font(.subheadline)
-                    .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
+                    .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
             }
+            .padding()
             .frame(maxWidth: .infinity)
-            .padding(DesignSystem.Spacing.large)
-            .glassCard()
+            .background(.ultraThinMaterial)
         }
         .accessibilityIdentifier("add-car-button")
     }
@@ -166,9 +151,9 @@ struct HomeView: View {
     // MARK: - Hero Card
     
     private var heroCard: some View {
-        VStack(alignment: .leading, spacing: DesignSystem.Spacing.medium) {
+        VStack(alignment: .leading) {
             HStack {
-                VStack(alignment: .leading, spacing: DesignSystem.Spacing.xsmall) {
+                VStack(alignment: .leading) {
                     Text("Total Distance")
                         .font(.subheadline)
                         .foregroundStyle(.white.opacity(0.8))
@@ -190,8 +175,8 @@ struct HomeView: View {
                 .background(.white.opacity(0.3))
                 .accessibilityHidden(true)
             
-            HStack(spacing: DesignSystem.Spacing.xlarge) {
-                VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                VStack(alignment: .leading) {
                     Text("Total Spent")
                         .font(.caption)
                         .foregroundStyle(.white.opacity(0.7))
@@ -200,7 +185,9 @@ struct HomeView: View {
                         .foregroundStyle(.white)
                 }
                 
-                VStack(alignment: .leading, spacing: 4) {
+                Spacer()
+                
+                VStack(alignment: .leading) {
                     Text("Fill-ups")
                         .font(.caption)
                         .foregroundStyle(.white.opacity(0.7))
@@ -210,19 +197,15 @@ struct HomeView: View {
                 }
             }
         }
-        .padding(DesignSystem.Spacing.large)
+        .padding()
         .background(
             LinearGradient(
-                colors: [
-                    DesignSystem.ColorPalette.primaryBlue,
-                    DesignSystem.ColorPalette.deepPurple
-                ],
+                colors: [.blue, .indigo],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
         )
-        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.large, style: .continuous))
-        .shadow(color: DesignSystem.ColorPalette.primaryBlue.opacity(0.3), radius: 12, x: 0, y: 6)
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         // Accessibility
         .accessibilityElement(children: .combine)
         .accessibilityLabel("Fuel summary")
@@ -230,68 +213,67 @@ struct HomeView: View {
         .accessibilityIdentifier(AccessibilityID.homeHeroCard)
     }
     
-    // MARK: - Quick Stats
+    // MARK: - Efficiency Section
     
-    private var quickStats: some View {
-        VStack(alignment: .leading, spacing: DesignSystem.Spacing.medium) {
-            Text("Efficiency")
-                .font(.title2.weight(.semibold))
-                .foregroundStyle(DesignSystem.ColorPalette.label)
-            
-            HStack(spacing: DesignSystem.Spacing.medium) {
-                StatCard(
-                    title: "Average",
-                    value: summary.averageLitersPer100KM.map { settings.formatEfficiency($0) } ?? "—",
-                    subtitle: "all time",
-                    icon: "gauge.with.needle",
-                    color: DesignSystem.ColorPalette.successGreen
-                )
-                
-                StatCard(
-                    title: "Recent",
-                    value: summary.recentAverageLitersPer100KM.map { settings.formatEfficiency($0) } ?? "—",
-                    subtitle: "last 5 fill-ups",
-                    icon: "clock.arrow.circlepath",
-                    color: DesignSystem.ColorPalette.warningOrange
-                )
-            }
-        }
-    }
-    
-    // MARK: - Recent Activity
-    
-    private var recentActivity: some View {
-        VStack(alignment: .leading, spacing: DesignSystem.Spacing.medium) {
-            Text("Recent Activity")
-                .font(.title2.weight(.semibold))
-                .foregroundStyle(DesignSystem.ColorPalette.label)
-            
-            if repository.entries.isEmpty {
-                emptyState
-            } else {
-                VStack(spacing: DesignSystem.Spacing.small) {
-                    ForEach(repository.entries.sorted(by: { $0.date > $1.date }).prefix(3)) { entry in
-                        RecentEntryRow(entry: entry, settings: settings)
-                    }
+    private var efficiencySection: some View {
+        Group {
+            // Average efficiency row
+            HStack {
+                Image(systemName: "gauge.with.needle")
+                    .foregroundStyle(.green)
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading) {
+                    Text("Average")
+                        .font(.headline)
+                    Text("all time")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
+                Spacer()
+                Text(summary.averageLitersPer100KM.map { settings.formatEfficiency($0) } ?? "—")
+                    .font(.title3.weight(.semibold))
             }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel("Average efficiency, all time")
+            .accessibilityValue(summary.averageLitersPer100KM.map { settings.formatEfficiency($0) } ?? "Not available")
+            
+            // Recent efficiency row
+            HStack {
+                Image(systemName: "clock.arrow.circlepath")
+                    .foregroundStyle(.orange)
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading) {
+                    Text("Recent")
+                        .font(.headline)
+                    Text("last 5 fill-ups")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+                Text(summary.recentAverageLitersPer100KM.map { settings.formatEfficiency($0) } ?? "—")
+                    .font(.title3.weight(.semibold))
+            }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel("Recent efficiency, last 5 fill-ups")
+            .accessibilityValue(summary.recentAverageLitersPer100KM.map { settings.formatEfficiency($0) } ?? "Not available")
         }
     }
     
-    private var emptyState: some View {
-        VStack(spacing: DesignSystem.Spacing.small) {
-            Image(systemName: "fuelpump")
-                .font(.system(size: 36))
-                .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
-            Text("No entries yet")
-                .font(.headline)
-            Text("Start tracking your fuel consumption")
-                .font(.footnote)
-                .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
+    // MARK: - Recent Activity Section
+    
+    @ViewBuilder
+    private var recentActivitySection: some View {
+        if repository.entries.isEmpty {
+            ContentUnavailableView {
+                Label("No Entries Yet", systemImage: "fuelpump")
+            } description: {
+                Text("Start tracking your fuel consumption")
+            }
+        } else {
+            ForEach(repository.entries.sorted(by: { $0.date > $1.date }).prefix(3)) { entry in
+                RecentEntryRow(entry: entry, settings: settings)
+            }
         }
-        .frame(maxWidth: .infinity)
-        .padding(DesignSystem.Spacing.large)
-        .glassCard()
     }
     
     private var quickAddButton: some View {
@@ -299,50 +281,13 @@ struct HomeView: View {
             Label("Add Fill-up", systemImage: "plus.circle.fill")
                 .font(.headline)
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, DesignSystem.Spacing.medium)
         }
         .buttonStyle(.borderedProminent)
-        .tint(DesignSystem.ColorPalette.primaryBlue)
         .accessibilityIdentifier("home-add-fillup-button")
     }
 }
 
 // MARK: - Supporting Views
-
-private struct StatCard: View {
-    let title: String
-    let value: String
-    let subtitle: String
-    let icon: String
-    let color: Color
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: DesignSystem.Spacing.small) {
-            HStack {
-                Image(systemName: icon)
-                    .foregroundStyle(color)
-                    .accessibilityHidden(true)
-                Text(title)
-                    .font(.subheadline)
-                    .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
-            }
-            
-            Text(value)
-                .font(.title2.weight(.bold))
-                .foregroundStyle(DesignSystem.ColorPalette.label)
-            
-            Text(subtitle)
-                .font(.caption)
-                .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .glassCard()
-        // Accessibility
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(title) efficiency")
-        .accessibilityValue("\(value), \(subtitle)")
-    }
-}
 
 private struct RecentEntryRow: View {
     let entry: FuelEntry
@@ -350,29 +295,26 @@ private struct RecentEntryRow: View {
     
     var body: some View {
         HStack {
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading) {
                 Text(entry.date.formatted(date: .abbreviated, time: .omitted))
                     .font(.headline)
                 Text(entry.gasStation)
                     .font(.subheadline)
-                    .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
+                    .foregroundStyle(.secondary)
             }
             
             Spacer()
             
-            VStack(alignment: .trailing, spacing: 4) {
+            VStack(alignment: .trailing) {
                 Text(settings.formatCost(entry.totalCost))
                     .font(.headline)
                 if let lPer100 = entry.litersPer100KM {
                     Text(settings.formatEfficiency(lPer100))
                         .font(.caption)
-                        .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
+                        .foregroundStyle(.secondary)
                 }
             }
         }
-        .padding(DesignSystem.Spacing.medium)
-        .background(DesignSystem.ColorPalette.glassTint.opacity(0.5))
-        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.medium, style: .continuous))
         // Accessibility
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Fill-up on \(AccessibilityHelper.speakableDate(entry.date)) at \(entry.gasStation)")

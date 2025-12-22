@@ -182,7 +182,7 @@ struct MainTabView: View {
                 }
                 .tag(4)
         }
-        .tint(DesignSystem.ColorPalette.primaryBlue)
+        .tint(.blue)
         .onChange(of: notificationService.shouldShowAddFuel) { _, shouldShow in
             if shouldShow {
                 selectedTab = 1

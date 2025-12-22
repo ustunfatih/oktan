@@ -13,7 +13,6 @@ struct CSVImportView: View {
     @State private var importResult: CSVImportService.ImportResult?
     
     // UI State
-    @State private var isLoading = false
     @State private var showingFilePicker = false
     @State private var errorMessage: String?
     @State private var skipDuplicates = true
@@ -24,47 +23,33 @@ struct CSVImportView: View {
         case preview
         case importing
         case complete
-        
-        var title: String {
-            switch self {
-            case .selectFile: return "Select File"
-            case .mapFields: return "Map Fields"
-            case .preview: return "Preview"
-            case .importing: return "Importing"
-            case .complete: return "Complete"
-            }
-        }
     }
     
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                // Progress indicator
-                progressIndicator
-                
-                // Content based on step
-                Group {
-                    switch currentStep {
-                    case .selectFile:
-                        selectFileContent
-                    case .mapFields:
-                        mapFieldsContent
-                    case .preview:
-                        previewContent
-                    case .importing:
-                        importingContent
-                    case .complete:
-                        completeContent
-                    }
+            Group {
+                switch currentStep {
+                case .selectFile:
+                    selectFileView
+                case .mapFields:
+                    mapFieldsView
+                case .preview:
+                    previewView
+                case .importing:
+                    importingView
+                case .complete:
+                    completeView
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .background(DesignSystem.ColorPalette.background)
-            .navigationTitle("Import Data")
+            .navigationTitle(stepTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    if currentStep != .complete && currentStep != .importing {
+                        Button("Cancel") { dismiss() }
+                    } else if currentStep == .complete {
+                         Button("Done") { dismiss() }
+                    }
                 }
             }
             .fileImporter(
@@ -77,382 +62,279 @@ struct CSVImportView: View {
         }
     }
     
-    // MARK: - Progress Indicator
-    
-    private var progressIndicator: some View {
-        HStack(spacing: 0) {
-            ForEach(ImportStep.allCases, id: \.self) { step in
-                if step.rawValue > 0 {
-                    Rectangle()
-                        .fill(step.rawValue <= currentStep.rawValue ? DesignSystem.ColorPalette.primaryBlue : DesignSystem.ColorPalette.secondaryLabel.opacity(0.3))
-                        .frame(height: 2)
-                }
-                
-                Circle()
-                    .fill(step.rawValue <= currentStep.rawValue ? DesignSystem.ColorPalette.primaryBlue : DesignSystem.ColorPalette.secondaryLabel.opacity(0.3))
-                    .frame(width: 12, height: 12)
-                    .overlay {
-                        if step.rawValue < currentStep.rawValue {
-                            Image(systemName: "checkmark")
-                                .font(.system(size: 8, weight: .bold))
-                                .foregroundStyle(.white)
-                        }
-                    }
-            }
+    private var stepTitle: String {
+        switch currentStep {
+        case .selectFile: return "Import Data"
+        case .mapFields: return "Map Fields"
+        case .preview: return "Preview"
+        case .importing: return "Importing"
+        case .complete: return "Complete"
         }
-        .padding(.horizontal, DesignSystem.Spacing.xlarge)
-        .padding(.vertical, DesignSystem.Spacing.medium)
     }
     
     // MARK: - Step 1: Select File
     
-    private var selectFileContent: some View {
-        VStack(spacing: DesignSystem.Spacing.xlarge) {
-            Spacer()
+    private var selectFileView: some View {
+        List {
+            Section {
+                VStack(spacing: 16) {
+                    Image(systemName: "doc.text.fill")
+                        .font(.system(size: 60))
+                        .foregroundStyle(.blue)
+                    
+                    Text("Import from CSV")
+                        .font(.title2.bold())
+                    
+                    Text("Select a CSV file containing your fuel records. We'll help you map the columns to the correct fields.")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical)
+            }
+            .listRowBackground(Color.clear)
             
-            Image(systemName: "doc.text.fill")
-                .font(.system(size: 80))
-                .foregroundStyle(
-                    LinearGradient(
-                        colors: [DesignSystem.ColorPalette.primaryBlue, DesignSystem.ColorPalette.deepPurple],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-            
-            VStack(spacing: DesignSystem.Spacing.small) {
-                Text("Import from CSV")
-                    .font(.title.weight(.bold))
-                    .foregroundStyle(DesignSystem.ColorPalette.label)
+            Section {
+                Button(action: { showingFilePicker = true }) {
+                    Label("Choose File", systemImage: "folder")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
                 
-                Text("Select a CSV file containing your fuel records. We'll help you map the columns to the correct fields.")
-                    .font(.body)
-                    .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, DesignSystem.Spacing.xlarge)
+                if let error = errorMessage {
+                    Text(error)
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                }
             }
+            .listRowBackground(Color.clear)
             
-            Button(action: { showingFilePicker = true }) {
-                Label("Choose File", systemImage: "folder")
-                    .font(.headline)
-                    .frame(minWidth: 200)
-                    .padding()
-            }
-            .buttonStyle(.borderedProminent)
-            .tint(DesignSystem.ColorPalette.primaryBlue)
-            
-            if let error = errorMessage {
-                Text(error)
-                    .font(.caption)
-                    .foregroundStyle(DesignSystem.ColorPalette.errorRed)
-                    .padding()
-            }
-            
-            // Sample format info
-            VStack(alignment: .leading, spacing: DesignSystem.Spacing.small) {
-                Text("Supported columns:")
-                    .font(.caption.weight(.medium))
-                    .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
-                
+            Section("Supported Columns") {
                 Text("Date, Odometer Start, Odometer End, Liters, Price per Liter, Station, Drive Mode, Full Refill, Notes")
                     .font(.caption)
-                    .foregroundStyle(DesignSystem.ColorPalette.tertiaryLabel)
+                    .foregroundStyle(.secondary)
             }
-            .padding()
-            .background(DesignSystem.ColorPalette.glassTint)
-            .clipShape(RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.medium))
-            .padding(.horizontal)
-            
-            Spacer()
         }
     }
     
     // MARK: - Step 2: Map Fields
     
-    private var mapFieldsContent: some View {
-        ScrollView {
-            VStack(spacing: DesignSystem.Spacing.large) {
-                // File info
-                if let result = parseResult {
-                    HStack {
-                        Image(systemName: "doc.text")
-                            .foregroundStyle(DesignSystem.ColorPalette.primaryBlue)
-                        Text("\(result.totalRows) rows found")
-                            .font(.headline)
-                        Spacer()
-                    }
-                    .padding()
-                    .background(DesignSystem.ColorPalette.glassTint)
-                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.medium))
+    private var mapFieldsView: some View {
+        Form {
+            if let result = parseResult {
+                Section {
+                    Label("\(result.totalRows) rows found", systemImage: "doc.text")
+                }
+            }
+            
+            Section("Required Fields") {
+                mappingPicker("Date", selection: $fieldMapping.dateColumn, required: true)
+                mappingPicker("Liters", selection: $fieldMapping.litersColumn, required: true)
+                mappingPicker("Price / Liter", selection: $fieldMapping.pricePerLiterColumn, required: true)
+            }
+            
+            Section("Optional Fields") {
+                mappingPicker("Odometer Start", selection: $fieldMapping.odometerStartColumn)
+                mappingPicker("Odometer End", selection: $fieldMapping.odometerEndColumn)
+                mappingPicker("Station", selection: $fieldMapping.gasStationColumn)
+                mappingPicker("Drive Mode", selection: $fieldMapping.driveModeColumn)
+                mappingPicker("Notes", selection: $fieldMapping.notesColumn)
+            }
+            
+            Section("Options") {
+                Picker("Date Format", selection: $fieldMapping.dateFormat) {
+                    Text("YYYY-MM-DD").tag("yyyy-MM-dd")
+                    Text("DD/MM/YYYY").tag("dd/MM/yyyy")
+                    Text("MM/DD/YYYY").tag("MM/dd/yyyy")
+                    Text("DD.MM.YYYY").tag("dd.MM.yyyy")
                 }
                 
-                // Required fields
-                VStack(alignment: .leading, spacing: DesignSystem.Spacing.medium) {
-                    Text("Required Fields")
-                        .font(.headline)
-                        .foregroundStyle(DesignSystem.ColorPalette.label)
-                    
-                    FieldMappingRow(
-                        label: "Date",
-                        isRequired: true,
-                        selectedColumn: $fieldMapping.dateColumn,
-                        headers: parseResult?.headers ?? []
-                    )
-                    
-                    FieldMappingRow(
-                        label: "Liters",
-                        isRequired: true,
-                        selectedColumn: $fieldMapping.litersColumn,
-                        headers: parseResult?.headers ?? []
-                    )
-                    
-                    FieldMappingRow(
-                        label: "Price per Liter",
-                        isRequired: true,
-                        selectedColumn: $fieldMapping.pricePerLiterColumn,
-                        headers: parseResult?.headers ?? []
-                    )
+                Toggle("Comma decimal (1,5)", isOn: $fieldMapping.useCommaDecimal)
+                Toggle("Skip duplicates", isOn: $skipDuplicates)
+            }
+            
+            Section {
+                Button("Preview Import") {
+                    generatePreview()
                 }
-                .glassCard()
-                
-                // Optional fields
-                VStack(alignment: .leading, spacing: DesignSystem.Spacing.medium) {
-                    Text("Optional Fields")
-                        .font(.headline)
-                        .foregroundStyle(DesignSystem.ColorPalette.label)
-                    
-                    FieldMappingRow(
-                        label: "Odometer Start",
-                        isRequired: false,
-                        selectedColumn: $fieldMapping.odometerStartColumn,
-                        headers: parseResult?.headers ?? []
-                    )
-                    
-                    FieldMappingRow(
-                        label: "Odometer End",
-                        isRequired: false,
-                        selectedColumn: $fieldMapping.odometerEndColumn,
-                        headers: parseResult?.headers ?? []
-                    )
-                    
-                    FieldMappingRow(
-                        label: "Gas Station",
-                        isRequired: false,
-                        selectedColumn: $fieldMapping.gasStationColumn,
-                        headers: parseResult?.headers ?? []
-                    )
-                    
-                    FieldMappingRow(
-                        label: "Drive Mode",
-                        isRequired: false,
-                        selectedColumn: $fieldMapping.driveModeColumn,
-                        headers: parseResult?.headers ?? []
-                    )
-                    
-                    FieldMappingRow(
-                        label: "Notes",
-                        isRequired: false,
-                        selectedColumn: $fieldMapping.notesColumn,
-                        headers: parseResult?.headers ?? []
-                    )
-                }
-                .glassCard()
-                
-                // Import options
-                VStack(alignment: .leading, spacing: DesignSystem.Spacing.medium) {
-                    Text("Options")
-                        .font(.headline)
-                        .foregroundStyle(DesignSystem.ColorPalette.label)
-                    
-                    Picker("Date Format", selection: $fieldMapping.dateFormat) {
-                        Text("YYYY-MM-DD").tag("yyyy-MM-dd")
-                        Text("DD/MM/YYYY").tag("dd/MM/yyyy")
-                        Text("MM/DD/YYYY").tag("MM/dd/yyyy")
-                        Text("DD.MM.YYYY").tag("dd.MM.yyyy")
-                    }
-                    
-                    Toggle("Comma as decimal separator (1,5 instead of 1.5)", isOn: $fieldMapping.useCommaDecimal)
-                    
-                    Toggle("Skip duplicate entries (same date)", isOn: $skipDuplicates)
-                }
-                .glassCard()
-                
-                // Continue button
-                Button(action: generatePreview) {
-                    Text("Preview Import")
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                }
-                .buttonStyle(.borderedProminent)
-                .tint(DesignSystem.ColorPalette.primaryBlue)
                 .disabled(!fieldMapping.isValid)
             }
-            .padding(DesignSystem.Spacing.large)
+        }
+    }
+    
+    private func mappingPicker(_ label: String, selection: Binding<Int?>, required: Bool = false) -> some View {
+        Picker(selection: Binding(
+            get: { selection.wrappedValue ?? -1 },
+            set: { selection.wrappedValue = $0 == -1 ? nil : $0 }
+        )) {
+            Text("Not mapped").tag(-1)
+            if let headers = parseResult?.headers {
+                ForEach(Array(headers.enumerated()), id: \.offset) { index, header in
+                    Text(header).tag(index)
+                }
+            }
+        } label: {
+            HStack {
+                Text(label)
+                if required {
+                    Text("*").foregroundStyle(.red)
+                }
+            }
         }
     }
     
     // MARK: - Step 3: Preview
     
-    private var previewContent: some View {
-        VStack(spacing: DesignSystem.Spacing.medium) {
-            // Summary
-            HStack(spacing: DesignSystem.Spacing.large) {
-                SummaryBadge(
-                    count: previewEntries.filter { $0.isValid }.count,
-                    label: "Valid",
-                    color: DesignSystem.ColorPalette.successGreen
-                )
-                
-                SummaryBadge(
-                    count: previewEntries.filter { !$0.isValid }.count,
-                    label: "Invalid",
-                    color: DesignSystem.ColorPalette.errorRed
-                )
-            }
-            .padding(.horizontal)
-            
-            // Preview list
-            ScrollView {
-                LazyVStack(spacing: DesignSystem.Spacing.small) {
-                    ForEach(previewEntries) { entry in
-                        PreviewEntryRow(entry: entry)
-                    }
-                    
-                    if let result = parseResult, result.totalRows > previewEntries.count {
-                        Text("... and \(result.totalRows - previewEntries.count) more rows")
+    private var previewView: some View {
+        List {
+            Section {
+                HStack {
+                    VStack {
+                        Text("\(previewEntries.filter { $0.isValid }.count)")
+                            .font(.title)
+                            .bold()
+                            .foregroundStyle(.green)
+                        Text("Valid")
                             .font(.caption)
-                            .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
-                            .padding()
+                    }
+                    .frame(maxWidth: .infinity)
+                    
+                    VStack {
+                        Text("\(previewEntries.filter { !$0.isValid }.count)")
+                            .font(.title)
+                            .bold()
+                            .foregroundStyle(.red)
+                        Text("Invalid")
+                            .font(.caption)
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+            }
+            
+            Section("Entries") {
+                ForEach(previewEntries) { entry in
+                    HStack {
+                        VStack(alignment: .leading) {
+                            if let date = entry.date {
+                                Text(date.formatted(date: .abbreviated, time: .omitted))
+                            } else {
+                                Text("Invalid Date")
+                                    .foregroundStyle(.red)
+                            }
+                            
+                            if !entry.errors.isEmpty {
+                                Text(entry.errors.joined(separator: ", "))
+                                    .font(.caption)
+                                    .foregroundStyle(.red)
+                            }
+                        }
+                        
+                        Spacer()
+                        
+                        if let liters = entry.liters {
+                            Text(String(format: "%.2f L", liters))
+                        }
                     }
                 }
-                .padding(.horizontal)
             }
             
-            // Action buttons
-            HStack(spacing: DesignSystem.Spacing.medium) {
+            Section {
+                Button("Import Entries") {
+                    performImport()
+                }
+                .disabled(previewEntries.filter { $0.isValid }.isEmpty)
+                
                 Button("Back") {
                     currentStep = .mapFields
                 }
-                .buttonStyle(.bordered)
-                
-                Button(action: performImport) {
-                    Text("Import \(previewEntries.filter { $0.isValid }.count) Entries")
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.borderedProminent)
-                .tint(DesignSystem.ColorPalette.primaryBlue)
-                .disabled(previewEntries.filter { $0.isValid }.isEmpty)
             }
-            .padding()
         }
     }
     
     // MARK: - Step 4: Importing
     
-    private var importingContent: some View {
-        VStack(spacing: DesignSystem.Spacing.xlarge) {
-            Spacer()
-            
+    private var importingView: some View {
+        VStack(spacing: 20) {
             ProgressView()
-                .scaleEffect(2)
-            
+                .scaleEffect(1.5)
             Text("Importing entries...")
                 .font(.headline)
-                .foregroundStyle(DesignSystem.ColorPalette.label)
-            
-            Spacer()
         }
     }
     
     // MARK: - Step 5: Complete
     
-    private var completeContent: some View {
-        VStack(spacing: DesignSystem.Spacing.xlarge) {
-            Spacer()
-            
-            if let result = importResult {
-                if result.isFullSuccess {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 80))
-                        .foregroundStyle(DesignSystem.ColorPalette.successGreen)
-                } else {
-                    Image(systemName: "exclamationmark.triangle.fill")
-                        .font(.system(size: 80))
-                        .foregroundStyle(DesignSystem.ColorPalette.warningOrange)
-                }
-                
-                VStack(spacing: DesignSystem.Spacing.small) {
-                    Text(result.isFullSuccess ? "Import Complete!" : "Import Complete with Issues")
-                        .font(.title2.weight(.bold))
-                        .foregroundStyle(DesignSystem.ColorPalette.label)
-                    
-                    HStack(spacing: DesignSystem.Spacing.large) {
-                        if result.successCount > 0 {
-                            Label("\(result.successCount) imported", systemImage: "checkmark.circle")
-                                .foregroundStyle(DesignSystem.ColorPalette.successGreen)
-                        }
+    private var completeView: some View {
+        List {
+            Section {
+                VStack(spacing: 16) {
+                    if let result = importResult {
+                        Image(systemName: result.isFullSuccess ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
+                            .font(.system(size: 60))
+                            .foregroundStyle(result.isFullSuccess ? .green : .orange)
                         
-                        if result.duplicateCount > 0 {
-                            Label("\(result.duplicateCount) skipped", systemImage: "arrow.triangle.2.circlepath")
-                                .foregroundStyle(DesignSystem.ColorPalette.warningOrange)
-                        }
+                        Text(result.isFullSuccess ? "Import Complete" : "Completed with Issues")
+                            .font(.title2.bold())
                         
-                        if result.failedCount > 0 {
-                            Label("\(result.failedCount) failed", systemImage: "xmark.circle")
-                                .foregroundStyle(DesignSystem.ColorPalette.errorRed)
-                        }
-                    }
-                    .font(.subheadline)
-                }
-                
-                if !result.errors.isEmpty {
-                    ScrollView {
-                        VStack(alignment: .leading, spacing: 4) {
-                            ForEach(result.errors.prefix(5), id: \.self) { error in
-                                Text("• \(error)")
-                                    .font(.caption)
-                                    .foregroundStyle(DesignSystem.ColorPalette.errorRed)
+                        HStack(spacing: 20) {
+                            labelCount(result.successCount, "Imported", .green)
+                            if result.duplicateCount > 0 {
+                                labelCount(result.duplicateCount, "Skipped", .orange)
+                            }
+                            if result.failedCount > 0 {
+                                labelCount(result.failedCount, "Failed", .red)
                             }
                         }
                     }
-                    .frame(maxHeight: 100)
-                    .padding()
-                    .background(DesignSystem.ColorPalette.glassTint)
-                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.medium))
-                    .padding(.horizontal)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical)
+            }
+            .listRowBackground(Color.clear)
+            
+            if let result = importResult, !result.errors.isEmpty {
+                Section("Errors") {
+                    ForEach(result.errors.prefix(10), id: \.self) { error in
+                        Text(error)
+                            .font(.caption)
+                            .foregroundStyle(.red)
+                    }
                 }
             }
             
-            Button("Done") {
-                dismiss()
+            Section {
+                Button("Done") {
+                    dismiss()
+                }
             }
-            .buttonStyle(.borderedProminent)
-            .tint(DesignSystem.ColorPalette.primaryBlue)
-            
-            Spacer()
         }
     }
     
-    // MARK: - Actions
+    private func labelCount(_ count: Int, _ label: String, _ color: Color) -> some View {
+        VStack {
+            Text("\(count)")
+                .font(.headline)
+                .foregroundStyle(color)
+            Text(label)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+    }
     
+    // Actions match originals...
     private func handleFileSelection(_ result: Result<[URL], Error>) {
         switch result {
         case .success(let urls):
             guard let url = urls.first else { return }
-            
-            // Start accessing security-scoped resource
             guard url.startAccessingSecurityScopedResource() else {
                 errorMessage = "Unable to access the file"
                 return
             }
-            
             defer { url.stopAccessingSecurityScopedResource() }
             
             do {
                 parseResult = try CSVImportService.parseCSV(from: url)
-                
                 if let result = parseResult, !result.isEmpty {
                     fieldMapping = CSVImportService.suggestMapping(for: result.headers)
                     currentStep = .mapFields
@@ -463,7 +345,6 @@ struct CSVImportView: View {
             } catch {
                 errorMessage = "Failed to read file: \(error.localizedDescription)"
             }
-            
         case .failure(let error):
             errorMessage = "Failed to select file: \(error.localizedDescription)"
         }
@@ -477,10 +358,7 @@ struct CSVImportView: View {
     
     private func performImport() {
         guard let result = parseResult else { return }
-        
         currentStep = .importing
-        
-        // Slight delay for UI feedback
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             importResult = CSVImportService.importEntries(
                 from: result,
@@ -492,124 +370,6 @@ struct CSVImportView: View {
         }
     }
 }
-
-// MARK: - Supporting Views
-
-private struct FieldMappingRow: View {
-    let label: String
-    let isRequired: Bool
-    @Binding var selectedColumn: Int?
-    let headers: [String]
-    
-    var body: some View {
-        HStack {
-            HStack(spacing: 4) {
-                Text(label)
-                    .font(.subheadline)
-                if isRequired {
-                    Text("*")
-                        .foregroundStyle(DesignSystem.ColorPalette.errorRed)
-                }
-            }
-            
-            Spacer()
-            
-            Picker("", selection: Binding(
-                get: { selectedColumn ?? -1 },
-                set: { selectedColumn = $0 == -1 ? nil : $0 }
-            )) {
-                Text("Not mapped").tag(-1)
-                ForEach(Array(headers.enumerated()), id: \.offset) { index, header in
-                    Text(header).tag(index)
-                }
-            }
-            .pickerStyle(.menu)
-            .tint(selectedColumn != nil ? DesignSystem.ColorPalette.primaryBlue : DesignSystem.ColorPalette.secondaryLabel)
-        }
-    }
-}
-
-private struct SummaryBadge: View {
-    let count: Int
-    let label: String
-    let color: Color
-    
-    var body: some View {
-        VStack(spacing: 4) {
-            Text("\(count)")
-                .font(.title.weight(.bold))
-                .foregroundStyle(color)
-            Text(label)
-                .font(.caption)
-                .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
-        }
-        .frame(maxWidth: .infinity)
-        .padding()
-        .background(color.opacity(0.1))
-        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.medium))
-    }
-}
-
-private struct PreviewEntryRow: View {
-    let entry: CSVImportService.PreviewEntry
-    
-    var body: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 4) {
-                HStack {
-                    Text("Row \(entry.rowNumber)")
-                        .font(.caption)
-                        .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
-                    
-                    if entry.isValid {
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundStyle(DesignSystem.ColorPalette.successGreen)
-                            .font(.caption)
-                    } else {
-                        Image(systemName: "exclamationmark.circle.fill")
-                            .foregroundStyle(DesignSystem.ColorPalette.errorRed)
-                            .font(.caption)
-                    }
-                }
-                
-                if let date = entry.date {
-                    Text(date.formatted(date: .abbreviated, time: .omitted))
-                        .font(.subheadline.weight(.medium))
-                }
-                
-                if !entry.errors.isEmpty {
-                    Text(entry.errors.joined(separator: ", "))
-                        .font(.caption)
-                        .foregroundStyle(DesignSystem.ColorPalette.errorRed)
-                }
-            }
-            
-            Spacer()
-            
-            VStack(alignment: .trailing, spacing: 4) {
-                if let liters = entry.liters {
-                    Text(String(format: "%.2f L", liters))
-                        .font(.subheadline)
-                }
-                
-                if let price = entry.pricePerLiter, let liters = entry.liters {
-                    Text(String(format: "%.2f", price * liters))
-                        .font(.caption)
-                        .foregroundStyle(DesignSystem.ColorPalette.secondaryLabel)
-                }
-            }
-        }
-        .padding()
-        .background(
-            entry.isValid
-                ? DesignSystem.ColorPalette.glassTint
-                : DesignSystem.ColorPalette.errorRed.opacity(0.1)
-        )
-        .clipShape(RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.small))
-    }
-}
-
-// MARK: - Preview
 
 #Preview {
     CSVImportView()
