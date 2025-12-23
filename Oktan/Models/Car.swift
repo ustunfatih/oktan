@@ -39,12 +39,30 @@ enum CarDatabase {
         let id = UUID()
         let name: String
         let tankCapacity: Double // liters
+
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(name)
+            hasher.combine(tankCapacity)
+        }
+
+        static func == (lhs: CarModel, rhs: CarModel) -> Bool {
+            lhs.name == rhs.name && lhs.tankCapacity == rhs.tankCapacity
+        }
     }
-    
+
     struct CarMake: Identifiable, Hashable {
         let id = UUID()
         let name: String
         let models: [CarModel]
+
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(name)
+            hasher.combine(models)
+        }
+
+        static func == (lhs: CarMake, rhs: CarMake) -> Bool {
+            lhs.name == rhs.name && lhs.models == rhs.models
+        }
     }
     
     static let makes: [CarMake] = [
