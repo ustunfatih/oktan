@@ -1,16 +1,7 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "" : {
-
-    },
-    "... and %lld more rows" : {
-
-    },
     "*" : {
-
-    },
-    "%@" : {
 
     },
     "%@ %@" : {
@@ -33,21 +24,8 @@
         }
       }
     },
-    "%@ efficiency" : {
-
-    },
     "%@ is not available on this device." : {
 
-    },
-    "%@, %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@, %2$@"
-          }
-        }
-      }
     },
     "%@. %@. %@" : {
       "localizations" : {
@@ -65,28 +43,16 @@
     "%lld" : {
 
     },
-    "%lld failed" : {
-
-    },
-    "%lld fill-ups" : {
-
-    },
-    "%lld imported" : {
-
-    },
     "%lld models" : {
 
     },
     "%lld rows found" : {
 
     },
-    "%lld skipped" : {
+    "%lld tracked trips" : {
 
     },
     "%lldL" : {
-
-    },
-    "• %@" : {
 
     },
     "7 days" : {
@@ -131,6 +97,9 @@
         }
       }
     },
+    "Account Benefits" : {
+
+    },
     "Add Fill-up" : {
       "localizations" : {
         "tr" : {
@@ -140,9 +109,6 @@
           }
         }
       }
-    },
-    "Add more fill-ups to see patterns" : {
-
     },
     "Add new fill-up" : {
 
@@ -160,9 +126,6 @@
           }
         }
       }
-    },
-    "Add optional notes about driving conditions" : {
-
     },
     "Add some fill-ups to enable export" : {
 
@@ -188,7 +151,6 @@
       }
     },
     "all time" : {
-      "extractionState" : "stale",
       "localizations" : {
         "tr" : {
           "stringUnit" : {
@@ -265,6 +227,15 @@
         }
       }
     },
+    "Average efficiency, all time" : {
+
+    },
+    "Average Interval" : {
+
+    },
+    "Avg: %@" : {
+
+    },
     "Back" : {
       "localizations" : {
         "tr" : {
@@ -285,6 +256,9 @@
           }
         }
       }
+    },
+    "Benefits" : {
+
     },
     "Cancel" : {
       "localizations" : {
@@ -358,11 +332,13 @@
         }
       }
     },
-    "Comma as decimal separator (1,5 instead of 1.5)" : {
+    "Comma decimal (1,5)" : {
+
+    },
+    "Completed with Issues" : {
 
     },
     "Confirm" : {
-      "extractionState" : "stale",
       "localizations" : {
         "tr" : {
           "stringUnit" : {
@@ -383,6 +359,7 @@
       }
     },
     "Continue" : {
+      "extractionState" : "stale",
       "localizations" : {
         "tr" : {
           "stringUnit" : {
@@ -408,6 +385,12 @@
     "Cost per kilometer trend chart" : {
 
     },
+    "Cost: %@" : {
+
+    },
+    "Cost/km" : {
+
+    },
     "Could not generate image: %@" : {
 
     },
@@ -418,9 +401,6 @@
 
     },
     "Count" : {
-
-    },
-    "CSV" : {
 
     },
     "Currency" : {
@@ -599,6 +579,7 @@
       }
     },
     "Edit Fill-up" : {
+      "extractionState" : "stale",
       "localizations" : {
         "tr" : {
           "stringUnit" : {
@@ -664,19 +645,7 @@
         }
       }
     },
-    "Enter the amount of fuel in liters" : {
-
-    },
-    "Enter the cost per liter" : {
-
-    },
-    "Enter the current odometer reading" : {
-
-    },
-    "Enter the name of the gas station" : {
-
-    },
-    "Enter the odometer reading at the start of this tank" : {
+    "Entries" : {
 
     },
     "Error" : {
@@ -685,7 +654,7 @@
     "Error: %@" : {
 
     },
-    "Every %lld days" : {
+    "Errors" : {
 
     },
     "Export" : {
@@ -714,6 +683,9 @@
         }
       }
     },
+    "Export to PDF" : {
+
+    },
     "Failed to delete: %@" : {
 
     },
@@ -721,6 +693,9 @@
 
     },
     "Failed to save: %@" : {
+
+    },
+    "Features" : {
 
     },
     "File not found: %@" : {
@@ -779,6 +754,9 @@
         }
       }
     },
+    "Fuel Configuration" : {
+
+    },
     "Fuel summary" : {
 
     },
@@ -836,6 +814,7 @@
       }
     },
     "Generating image..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "tr" : {
           "stringUnit" : {
@@ -844,6 +823,9 @@
           }
         }
       }
+    },
+    "Generating Image..." : {
+
     },
     "Get a gentle nudge when you haven't logged entries in a while." : {
 
@@ -875,6 +857,7 @@
       }
     },
     "Image will be generated" : {
+      "extractionState" : "stale",
       "localizations" : {
         "tr" : {
           "stringUnit" : {
@@ -884,19 +867,13 @@
         }
       }
     },
-    "Import %lld Entries" : {
-
-    },
-    "Import Complete with Issues" : {
-
-    },
-    "Import Complete!" : {
-
-    },
-    "Import Data" : {
+    "Import Complete" : {
 
     },
     "Import data from other fuel tracking apps or manage your existing data." : {
+
+    },
+    "Import Entries" : {
 
     },
     "Import failed: %@" : {
@@ -914,6 +891,9 @@
     "Insights" : {
 
     },
+    "Invalid" : {
+
+    },
     "Invalid %@: %@" : {
       "localizations" : {
         "en" : {
@@ -923,6 +903,9 @@
           }
         }
       }
+    },
+    "Invalid Date" : {
+
     },
     "Invalid response from Apple." : {
       "localizations" : {
@@ -957,6 +940,9 @@
         }
       }
     },
+    "L" : {
+
+    },
     "Language" : {
       "localizations" : {
         "tr" : {
@@ -968,7 +954,6 @@
       }
     },
     "last 5 fill-ups" : {
-      "extractionState" : "stale",
       "localizations" : {
         "tr" : {
           "stringUnit" : {
@@ -982,6 +967,7 @@
 
     },
     "liters" : {
+      "extractionState" : "stale",
       "localizations" : {
         "tr" : {
           "stringUnit" : {
@@ -1001,7 +987,7 @@
         }
       }
     },
-    "Log different drive modes to compare efficiency" : {
+    "Log different drive modes to compare performance" : {
 
     },
     "Log drive modes to see performance deltas" : {
@@ -1036,6 +1022,7 @@
       }
     },
     "Made with ❤️ for drivers" : {
+      "extractionState" : "stale",
       "localizations" : {
         "tr" : {
           "stringUnit" : {
@@ -1044,6 +1031,12 @@
           }
         }
       }
+    },
+    "Made with love for drivers" : {
+
+    },
+    "Make" : {
+
     },
     "Make sure the file format is correct." : {
 
@@ -1075,6 +1068,9 @@
 
     },
     "Mode" : {
+
+    },
+    "Model" : {
 
     },
     "models" : {
@@ -1118,6 +1114,7 @@
       }
     },
     "No entries yet" : {
+      "extractionState" : "stale",
       "localizations" : {
         "tr" : {
           "stringUnit" : {
@@ -1126,6 +1123,9 @@
           }
         }
       }
+    },
+    "No Entries Yet" : {
+
     },
     "No internet connection. Please check your network settings." : {
 
@@ -1190,9 +1190,6 @@
     "Oktan Pro Active" : {
 
     },
-    "on average" : {
-
-    },
     "Open Settings" : {
 
     },
@@ -1216,9 +1213,6 @@
       }
     },
     "Options" : {
-
-    },
-    "PDF" : {
 
     },
     "PDF Export" : {
@@ -1311,7 +1305,6 @@
 
     },
     "Recent" : {
-      "extractionState" : "stale",
       "localizations" : {
         "tr" : {
           "stringUnit" : {
@@ -1341,6 +1334,12 @@
           }
         }
       }
+    },
+    "Recent Efficiency" : {
+
+    },
+    "Recent efficiency, last 5 fill-ups" : {
+
     },
     "Recent fill-ups" : {
       "localizations" : {
@@ -1387,9 +1386,6 @@
     "Retry" : {
 
     },
-    "Row %lld" : {
-
-    },
     "Save" : {
       "localizations" : {
         "tr" : {
@@ -1417,6 +1413,7 @@
 
     },
     "Search makes..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "tr" : {
           "stringUnit" : {
@@ -1439,9 +1436,6 @@
     "Select a CSV file containing your fuel records. We'll help you map the columns to the correct fields." : {
 
     },
-    "Select how you drove, such as city, highway, or mixed" : {
-
-    },
     "Select Make" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1454,6 +1448,7 @@
       }
     },
     "Select Model Year" : {
+      "extractionState" : "stale",
       "localizations" : {
         "tr" : {
           "stringUnit" : {
@@ -1463,10 +1458,7 @@
         }
       }
     },
-    "Select the date of your fill-up" : {
-
-    },
-    "Selected" : {
+    "Select Year" : {
 
     },
     "Server error (%lld). Please try again later." : {
@@ -1546,6 +1538,9 @@
         }
       }
     },
+    "Sign in with Apple" : {
+
+    },
     "Sign Out" : {
       "localizations" : {
         "tr" : {
@@ -1569,7 +1564,7 @@
         }
       }
     },
-    "Skip duplicate entries (same date)" : {
+    "Skip duplicates" : {
 
     },
     "Smart Reminders" : {
@@ -1598,7 +1593,7 @@
         }
       }
     },
-    "Supported columns:" : {
+    "Supported Columns" : {
 
     },
     "Sync your data across devices and unlock premium features" : {
@@ -1622,6 +1617,7 @@
       }
     },
     "Tank" : {
+      "extractionState" : "stale",
       "localizations" : {
         "tr" : {
           "stringUnit" : {
@@ -1640,6 +1636,9 @@
           }
         }
       }
+    },
+    "Tank: %@" : {
+
     },
     "Tap Add Fill-up to start tracking your fuel efficiency." : {
       "localizations" : {
@@ -1749,6 +1748,9 @@
         }
       }
     },
+    "Total Fuel" : {
+
+    },
     "Total liters purchased" : {
       "localizations" : {
         "tr" : {
@@ -1778,9 +1780,6 @@
           }
         }
       }
-    },
-    "Track fill-ups to see monthly spending" : {
-
     },
     "Track odometer values to unlock cost insights" : {
       "extractionState" : "stale",
@@ -1825,9 +1824,6 @@
     "Try selecting a different image." : {
 
     },
-    "Turn on if you filled the tank completely" : {
-
-    },
     "Units & Currency" : {
       "localizations" : {
         "tr" : {
@@ -1848,6 +1844,12 @@
 
     },
     "Update to the latest iOS version if available." : {
+
+    },
+    "Valid" : {
+
+    },
+    "Vehicle Details" : {
 
     },
     "Volume" : {
@@ -1872,6 +1874,9 @@
           }
         }
       }
+    },
+    "Year" : {
+
     },
     "You need to sign in to access this feature." : {
 
