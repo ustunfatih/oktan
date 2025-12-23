@@ -13,32 +13,39 @@ struct ReportsView: View {
     @State private var showingPaywall = false
     @State private var showingPDFAlert = false
     @State private var csvFileURL: URL?
-    @State private var selectedTab: ReportTab = .overview
+    @SceneStorage("reportsSelectedTab") private var selectedTabRaw: String = ReportTab.overview.rawValue
 
     enum ReportTab: String, CaseIterable {
         case overview = "Overview"
         case trends = "Trends"
         case patterns = "Patterns"
     }
+    
+    private var selectedTab: Binding<ReportTab> {
+        Binding(
+            get: { ReportTab(rawValue: selectedTabRaw) ?? .overview },
+            set: { selectedTabRaw = $0.rawValue }
+        )
+    }
 
     var body: some View {
         let summary = repository.summary()
 
         ListShell(title: "Reports") {
-            // Tab Picker Section
-            Section {
-                Picker("Report Type", selection: $selectedTab) {
-                    ForEach(ReportTab.allCases, id: \.self) { tab in
-                        Text(tab.rawValue).tag(tab)
+                // Tab Picker Section
+                Section {
+                    Picker("Report Type", selection: selectedTab) {
+                        ForEach(ReportTab.allCases, id: \.self) { tab in
+                            Text(tab.rawValue).tag(tab)
+                        }
                     }
+                    .pickerStyle(.segmented)
+                    .listRowBackground(Color.clear)
+                    .listRowInsets(EdgeInsets())
                 }
-                .pickerStyle(.segmented)
-                .listRowBackground(Color.clear)
-                .listRowInsets(EdgeInsets())
-            }
 
             // Content based on selected tab
-            switch selectedTab {
+            switch selectedTab.wrappedValue {
             case .overview:
                 overviewContent(summary: summary)
             case .trends:
