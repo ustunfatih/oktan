@@ -19,7 +19,7 @@ struct TrackingView: View {
         var currentTitle = ""
         var currentEntries: [FuelEntry] = []
 
-        for entry in repository.entries.reversed() {
+        for entry in repository.visibleEntries.reversed() {
             let title = entry.date.formatted(.dateTime.month(.wide).year())
             if title != currentTitle {
                 if !currentEntries.isEmpty {
@@ -46,7 +46,7 @@ struct TrackingView: View {
             }
             
             // Entries, newest first, grouped by month
-            if repository.entries.isEmpty {
+            if repository.visibleEntries.isEmpty {
                 Section {
                     ContentUnavailableView {
                         Label("No Entries Yet", systemImage: "fuelpump")

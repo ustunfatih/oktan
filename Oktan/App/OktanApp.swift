@@ -115,6 +115,9 @@ struct OktanApp: App {
                     notificationService.clearBadge()
                 }
             }
+            .onChange(of: carRepository?.selectedCar?.id) { _, newCarId in
+                repository.activeCarId = newCarId
+            }
         }
     }
     
@@ -139,7 +142,13 @@ struct OktanApp: App {
         
         // Bootstrap with seed data if empty
         repository.bootstrapIfNeeded()
-        
+
+        // Multi-car: scope stats to the selected car and adopt legacy entries.
+        if let selectedCarId = carRepository?.selectedCar?.id {
+            repository.activeCarId = selectedCarId
+            repository.assignOrphanEntries(to: selectedCarId)
+        }
+
         isInitialized = true
     }
 }

@@ -136,67 +136,113 @@ enum CSVImportService {
     
     // MARK: - Field Mapping Suggestions
     
-    /// Suggests field mappings based on header names
+    /// Exact header names (lowercased) from Oktan's own export format and the
+    /// documented sample CSV. These take precedence over fuzzy matching so a
+    /// round-trip (export -> import) always maps correctly.
+    private static let exactHeaderFields: [String: WritableKeyPath<FieldMapping, Int?>] = [
+        "date": \.dateColumn,
+        "odometer_start": \.odometerStartColumn,
+        "odometer_pre": \.odometerStartColumn,
+        "odometer_end": \.odometerEndColumn,
+        "odometer_post": \.odometerEndColumn,
+        "total_liters": \.litersColumn,
+        "total_litres": \.litersColumn,
+        "price_per_liter": \.pricePerLiterColumn,
+        "price_per_litre": \.pricePerLiterColumn,
+        "full_refill": \.isFullRefillColumn,
+        "full_depot": \.isFullRefillColumn,
+        "drive_mode": \.driveModeColumn,
+        "gas_station": \.gasStationColumn,
+        "notes": \.notesColumn
+    ]
+
+    /// Suggests field mappings based on header names.
+    /// Exact known headers are matched first; fuzzy matching then only fills
+    /// columns that are still unmapped (so derived columns like "Cost_per_KM"
+    /// can't steal the price field).
     static func suggestMapping(for headers: [String]) -> FieldMapping {
         var mapping = FieldMapping()
-        
+
         let normalizedHeaders = headers.map { $0.lowercased().trimmingCharacters(in: .whitespaces) }
-        
+        var consumedColumns = Set<Int>()
+
+        // Pass 1: exact matches from the known export/sample vocabulary
         for (index, header) in normalizedHeaders.enumerated() {
-            // Date column
-            if header.contains("date") || header.contains("tarih") {
-                mapping.dateColumn = index
+            if let field = Self.exactHeaderFields[header], mapping[keyPath: field] == nil {
+                mapping[keyPath: field] = index
+                consumedColumns.insert(index)
             }
-            
+        }
+
+        // Pass 2: fuzzy matches for anything still unmapped
+        for (index, header) in normalizedHeaders.enumerated() {
+            guard !consumedColumns.contains(index) else { continue }
+
+            // Date column
+            if mapping.dateColumn == nil, header.contains("date") || header.contains("tarih") {
+                mapping.dateColumn = index
+                continue
+            }
+
             // Odometer columns
             if header.contains("odometer") || header.contains("km") || header.contains("mileage") {
                 if header.contains("start") || header.contains("başlangıç") {
-                    mapping.odometerStartColumn = index
+                    if mapping.odometerStartColumn == nil { mapping.odometerStartColumn = index; continue }
                 } else if header.contains("end") || header.contains("bitiş") {
-                    mapping.odometerEndColumn = index
-                } else if mapping.odometerStartColumn == nil {
+                    if mapping.odometerEndColumn == nil { mapping.odometerEndColumn = index; continue }
+                } else if mapping.odometerStartColumn == nil, !header.contains("per") {
                     mapping.odometerStartColumn = index
-                } else if mapping.odometerEndColumn == nil {
+                    continue
+                } else if mapping.odometerEndColumn == nil, !header.contains("per") {
                     mapping.odometerEndColumn = index
+                    continue
                 }
             }
-            
-            // Liters column
-            if header.contains("liter") || header.contains("litre") || header.contains("fuel") || 
+
+            // Liters column ("per" excluded so Price_per_Liter can't match)
+            if mapping.litersColumn == nil, !header.contains("per"),
+               header.contains("liter") || header.contains("litre") || header.contains("fuel") ||
                header.contains("gallon") || header.contains("yakıt") {
                 mapping.litersColumn = index
+                continue
             }
-            
+
             // Price column
-            if header.contains("price") || header.contains("cost") || header.contains("per") ||
-               header.contains("fiyat") || header.contains("birim") {
-                if header.contains("per") || header.contains("birim") {
-                    mapping.pricePerLiterColumn = index
-                }
+            if mapping.pricePerLiterColumn == nil,
+               header.contains("price") || header.contains("fiyat") || header.contains("birim") {
+                mapping.pricePerLiterColumn = index
+                continue
             }
-            
+
             // Gas station
-            if header.contains("station") || header.contains("location") || header.contains("istasyon") ||
+            if mapping.gasStationColumn == nil,
+               header.contains("station") || header.contains("location") || header.contains("istasyon") ||
                header.contains("brand") || header.contains("name") {
                 mapping.gasStationColumn = index
+                continue
             }
-            
+
             // Drive mode
-            if header.contains("mode") || header.contains("type") || header.contains("sürüş") {
+            if mapping.driveModeColumn == nil,
+               header.contains("mode") || header.contains("type") || header.contains("sürüş") {
                 mapping.driveModeColumn = index
+                continue
             }
-            
+
             // Full refill
-            if header.contains("full") || header.contains("complete") || header.contains("tam") {
+            if mapping.isFullRefillColumn == nil,
+               header.contains("full") || header.contains("complete") || header.contains("tam") {
                 mapping.isFullRefillColumn = index
+                continue
             }
-            
+
             // Notes
-            if header.contains("note") || header.contains("comment") || header.contains("not") {
+            if mapping.notesColumn == nil,
+               header.contains("note") || header.contains("comment") || header.contains("not") {
                 mapping.notesColumn = index
             }
         }
-        
+
         return mapping
     }
     

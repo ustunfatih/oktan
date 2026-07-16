@@ -53,19 +53,71 @@ final class MilestoneService {
             ))
         }
         
-        // 4. Road Warrior (Total Distance)
+        // 4. Road Warrior (Total Distance) - highest tier reached
         let totalDist = summary.totalDistance
-        if totalDist >= 1000 {
+        let distanceTiers: [(threshold: Double, tier: String)] = [
+            (25_000, "IV"), (10_000, "III"), (5_000, "II"), (1_000, "I")
+        ]
+        if let tier = distanceTiers.first(where: { totalDist >= $0.threshold }) {
             newMilestones.append(Milestone(
-                id: "road_warrior_1000",
-                title: "Road Warrior I",
-                description: "Reached 1,000 km total distance!",
+                id: "road_warrior_\(Int(tier.threshold))",
+                title: "Road Warrior \(tier.tier)",
+                description: "Reached \(Int(tier.threshold).formatted()) km total distance!",
                 icon: "crown.fill",
                 color: .purple,
                 dateAchieved: Date() // Simplified for now
             ))
         }
-        
+
+        // 5. Bargain Hunter (cheapest full fill)
+        let fullFills = entries.filter { $0.isFullRefill }
+        if let cheapest = fullFills.min(by: { $0.pricePerLiter < $1.pricePerLiter }),
+           fullFills.count >= 3 {
+            newMilestones.append(Milestone(
+                id: "bargain_hunter",
+                title: "Bargain Hunter",
+                description: "Cheapest fill: \(String(format: "%.2f", cheapest.pricePerLiter))/L at \(cheapest.gasStation)",
+                icon: "tag.fill",
+                color: .teal,
+                dateAchieved: cheapest.date
+            ))
+        }
+
+        // 6. Best Month (lowest average efficiency in a calendar month)
+        let calendar = Calendar.current
+        let byMonth = Dictionary(grouping: entries.filter { $0.litersPer100KM != nil }) {
+            calendar.dateComponents([.year, .month], from: $0.date)
+        }
+        let monthAverages = byMonth.compactMapValues { group -> Double? in
+            let values = group.compactMap { $0.litersPer100KM }
+            guard values.count >= 2 else { return nil }
+            return values.reduce(0, +) / Double(values.count)
+        }
+        if let best = monthAverages.min(by: { $0.value < $1.value }),
+           let monthDate = calendar.date(from: best.key) {
+            newMilestones.append(Milestone(
+                id: "best_month",
+                title: "Peak Performance",
+                description: "Best month: \(monthDate.formatted(.dateTime.month(.wide).year())) at \(String(format: "%.1f", best.value)) L/100km",
+                icon: "trophy.fill",
+                color: .yellow,
+                dateAchieved: monthDate
+            ))
+        }
+
+        // 7. Dedicated Logger (fill-up count) - highest tier reached
+        let countTiers = [100, 50, 25, 10]
+        if let tier = countTiers.first(where: { entries.count >= $0 }) {
+            newMilestones.append(Milestone(
+                id: "dedicated_logger_\(tier)",
+                title: "Dedicated Logger",
+                description: "Logged \(tier)+ fill-ups!",
+                icon: "checklist.checked",
+                color: .indigo,
+                dateAchieved: Date()
+            ))
+        }
+
         self.milestones = newMilestones
     }
 }

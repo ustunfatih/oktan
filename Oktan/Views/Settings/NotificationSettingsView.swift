@@ -144,7 +144,7 @@ struct NotificationSettingsView: View {
     private var inactivitySection: some View {
         Section {
             Toggle("Inactivity Reminder", isOn: $notificationService.inactivityReminderEnabled)
-            
+
             if notificationService.inactivityReminderEnabled {
                 Picker("Remind after", selection: $notificationService.inactivityDays) {
                     Text("7 days").tag(7)
@@ -153,10 +153,14 @@ struct NotificationSettingsView: View {
                     Text("30 days").tag(30)
                 }
             }
+
+            Toggle("Next Fill-up Prediction", isOn: $notificationService.nextFillupReminderEnabled)
         } header: {
             Text("Smart Reminders")
         } footer: {
-            if notificationService.inactivityReminderEnabled {
+            if notificationService.nextFillupReminderEnabled {
+                Text("You'll be reminded on the day your next fill-up is predicted to be due, based on your average interval.")
+            } else if notificationService.inactivityReminderEnabled {
                 Text("You'll receive a reminder if you haven't logged a fill-up in \(notificationService.inactivityDays) days.")
             } else {
                 Text("Get a gentle nudge when you haven't logged entries in a while.")

@@ -215,7 +215,31 @@ enum ChartDataService {
         
         return Double(totalDays) / Double(sorted.count - 1)
     }
-    
+
+    /// Prediction for the next fill-up
+    struct FillupPrediction {
+        let date: Date
+        let estimatedCost: Double?
+    }
+
+    /// Predicts when the next fill-up is due and its likely cost,
+    /// based on the average interval and recent fill-up costs.
+    static func predictNextFillup(from entries: [FuelEntry], now: Date = Date()) -> FillupPrediction? {
+        guard let averageDays = averageDaysBetweenFillups(from: entries), averageDays > 0,
+              let last = entries.max(by: { $0.date < $1.date }) else { return nil }
+
+        var predicted = last.date.addingTimeInterval(averageDays * 86_400)
+        // If the prediction is already in the past, the next fill-up is due now.
+        if predicted < now {
+            predicted = now
+        }
+
+        let recentCosts = entries.sorted { $0.date < $1.date }.suffix(5).map(\.totalCost)
+        let estimatedCost = recentCosts.isEmpty ? nil : recentCosts.reduce(0, +) / Double(recentCosts.count)
+
+        return FillupPrediction(date: predicted, estimatedCost: estimatedCost)
+    }
+
     /// Gets fill-up frequency by day of week
     static func fillupsByDayOfWeek(from entries: [FuelEntry]) -> [ComparisonPoint] {
         let calendar = Calendar.current

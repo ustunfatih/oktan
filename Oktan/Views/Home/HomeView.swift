@@ -68,7 +68,16 @@ struct HomeView: View {
             } header: {
                 Text("Efficiency")
             }
-            
+
+            // Planning Section (prediction + budget)
+            if nextFillupPrediction != nil || settings.monthlyBudget != nil {
+                Section {
+                    planningSection
+                } header: {
+                    Text("Planning")
+                }
+            }
+
             // Recent Activity Section
             Section {
                 recentActivitySection
@@ -95,11 +104,11 @@ struct HomeView: View {
                 CarSelectionView(carRepository: envCarRepository ?? localCarRepository ?? CarRepository())
             }
         }
-        .onChange(of: repository.entries) { _, entries in
+        .onChange(of: repository.visibleEntries) { _, entries in
             milestoneService.checkMilestones(entries: entries, summary: summary)
         }
         .onAppear {
-            milestoneService.checkMilestones(entries: repository.entries, summary: summary)
+            milestoneService.checkMilestones(entries: repository.visibleEntries, summary: summary)
         }
     }
     
@@ -228,7 +237,7 @@ struct HomeView: View {
                     Text("Fill-ups")
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                    Text("\(repository.entries.count)")
+                    Text("\(repository.visibleEntries.count)")
                         .font(.headline)
                         .foregroundStyle(.primary)
                 }
@@ -248,7 +257,7 @@ struct HomeView: View {
         // Accessibility
         .accessibilityElement(children: .combine)
         .accessibilityLabel("Fuel summary")
-        .accessibilityValue("Total distance \(settings.formatDistance(summary.totalDistance)), total spent \(settings.formatCost(summary.totalCost)), \(repository.entries.count) fill-ups")
+        .accessibilityValue("Total distance \(settings.formatDistance(summary.totalDistance)), total spent \(settings.formatCost(summary.totalCost)), \(repository.visibleEntries.count) fill-ups")
         .accessibilityIdentifier(AccessibilityID.homeHeroCard)
     }
     
@@ -298,18 +307,80 @@ struct HomeView: View {
         }
     }
     
+    // MARK: - Planning Section
+
+    private var nextFillupPrediction: ChartDataService.FillupPrediction? {
+        ChartDataService.predictNextFillup(from: repository.visibleEntries)
+    }
+
+    /// Total spend for the current calendar month
+    private var currentMonthSpend: Double {
+        let calendar = Calendar.current
+        return repository.visibleEntries
+            .filter { calendar.isDate($0.date, equalTo: Date(), toGranularity: .month) }
+            .reduce(0) { $0 + $1.totalCost }
+    }
+
+    @ViewBuilder
+    private var planningSection: some View {
+        if let prediction = nextFillupPrediction {
+            HStack {
+                Image(systemName: "calendar.badge.clock")
+                    .foregroundStyle(.tint)
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading) {
+                    Text("Next fill-up")
+                        .font(.headline)
+                    Text("estimated from your history")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+                VStack(alignment: .trailing) {
+                    Text(prediction.date.formatted(date: .abbreviated, time: .omitted))
+                        .font(.title3.weight(.semibold))
+                    if let cost = prediction.estimatedCost {
+                        Text("~\(settings.formatCost(cost))")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel("Next fill-up estimated \(prediction.date.formatted(date: .long, time: .omitted))")
+        }
+
+        if let budget = settings.monthlyBudget, budget > 0 {
+            VStack(alignment: .leading) {
+                HStack {
+                    Text("Monthly budget")
+                        .font(.headline)
+                    Spacer()
+                    Text("\(settings.formatCost(currentMonthSpend)) of \(settings.formatCost(budget))")
+                        .font(.caption)
+                        .foregroundStyle(currentMonthSpend > budget ? .red : .secondary)
+                }
+                ProgressView(value: min(currentMonthSpend / budget, 1.0))
+                    .tint(currentMonthSpend > budget ? .red : .green)
+            }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel("Monthly budget")
+            .accessibilityValue("\(settings.formatCost(currentMonthSpend)) spent of \(settings.formatCost(budget))")
+        }
+    }
+
     // MARK: - Recent Activity Section
     
     @ViewBuilder
     private var recentActivitySection: some View {
-        if repository.entries.isEmpty {
+        if repository.visibleEntries.isEmpty {
             ContentUnavailableView {
                 Label("No Entries Yet", systemImage: "fuelpump")
             } description: {
                 Text("Start tracking your fuel consumption")
             }
         } else {
-            ForEach(repository.entries.suffix(3).reversed()) { entry in
+            ForEach(repository.visibleEntries.suffix(3).reversed()) { entry in
                 RecentEntryRow(entry: entry, settings: settings)
             }
         }

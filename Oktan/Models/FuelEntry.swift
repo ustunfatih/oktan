@@ -20,6 +20,10 @@ struct FuelEntry: Identifiable, Codable, Equatable {
     var isFullRefill: Bool
     var notes: String?
 
+    /// The car this fill-up belongs to. nil = recorded before multi-car
+    /// support (treated as belonging to every car).
+    var carId: UUID?
+
     init(
         id: UUID = UUID(),
         date: Date,
@@ -30,7 +34,8 @@ struct FuelEntry: Identifiable, Codable, Equatable {
         gasStation: String,
         driveMode: DriveMode,
         isFullRefill: Bool,
-        notes: String? = nil
+        notes: String? = nil,
+        carId: UUID? = nil
     ) {
         self.id = id
         self.date = date
@@ -42,6 +47,7 @@ struct FuelEntry: Identifiable, Codable, Equatable {
         self.driveMode = driveMode
         self.isFullRefill = isFullRefill
         self.notes = notes
+        self.carId = carId
     }
 }
 

@@ -63,6 +63,7 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
     private enum NotificationID {
         static let fillupReminder = "oktan.reminder.fillup"
         static let inactivityReminder = "oktan.reminder.inactivity"
+        static let nextFillupReminder = "oktan.reminder.nextfillup"
         static let smartRefuel = "smart_refuel_nudge"
     }
     
@@ -119,6 +120,17 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
             UserDefaults.standard.set(inactivityDays, forKey: "inactivityDays")
         }
     }
+
+    /// Whether the predicted next fill-up reminder is enabled
+    var nextFillupReminderEnabled: Bool {
+        didSet {
+            UserDefaults.standard.set(nextFillupReminderEnabled, forKey: "nextFillupReminderEnabled")
+            if !nextFillupReminderEnabled {
+                UNUserNotificationCenter.current()
+                    .removePendingNotificationRequests(withIdentifiers: [NotificationID.nextFillupReminder])
+            }
+        }
+    }
     
     // MARK: - Initialization
     
@@ -141,6 +153,8 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
         
         let savedInactivityDays = UserDefaults.standard.integer(forKey: "inactivityDays")
         self.inactivityDays = savedInactivityDays > 0 ? savedInactivityDays : 14
+
+        self.nextFillupReminderEnabled = UserDefaults.standard.bool(forKey: "nextFillupReminderEnabled")
         
         super.init()
         
@@ -310,6 +324,39 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
         }
     }
     
+    /// Schedules a one-off reminder on the predicted next fill-up day.
+    /// Replaces any previously scheduled prediction reminder.
+    func scheduleNextFillupReminder(predictedDate: Date, estimatedCost: String?) async {
+        guard isAuthorized, nextFillupReminderEnabled else { return }
+
+        let center = UNUserNotificationCenter.current()
+        center.removePendingNotificationRequests(withIdentifiers: [NotificationID.nextFillupReminder])
+
+        guard predictedDate > Date() else { return }
+
+        let content = UNMutableNotificationContent()
+        content.title = "Fill-up due soon ⛽"
+        content.body = estimatedCost.map { "Based on your history, your next fill-up is due around today (~\($0))." }
+            ?? "Based on your history, your next fill-up is due around today."
+        content.sound = .default
+
+        var components = Calendar.current.dateComponents([.year, .month, .day], from: predictedDate)
+        components.hour = reminderHour
+
+        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
+        let request = UNNotificationRequest(
+            identifier: NotificationID.nextFillupReminder,
+            content: content,
+            trigger: trigger
+        )
+
+        do {
+            try await center.add(request)
+        } catch {
+            print("Failed to schedule next fill-up reminder: \(error)")
+        }
+    }
+
     /// Cancels all scheduled reminders
     func cancelAllReminders() async {
         let center = UNUserNotificationCenter.current()

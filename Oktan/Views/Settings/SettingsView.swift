@@ -7,7 +7,28 @@ struct SettingsView: View {
     @State private var showingLanguageNote = false
     @State private var showingCSVImport = false
     @State private var showingPaywall = false
-    
+
+    private var budgetEnabled: Binding<Bool> {
+        Binding(
+            get: { settings.monthlyBudget != nil },
+            set: { enabled in
+                settings.monthlyBudget = enabled ? (settings.monthlyBudget ?? 400) : nil
+            }
+        )
+    }
+
+    private var budgetText: Binding<String> {
+        Binding(
+            get: { settings.monthlyBudget.map { $0.formatted(.number.precision(.fractionLength(0))) } ?? "" },
+            set: { text in
+                // Only accept valid positive amounts; the toggle is the way to disable.
+                if let value = Double(text), value > 0 {
+                    settings.monthlyBudget = value
+                }
+            }
+        )
+    }
+
     var body: some View {
         ListShell(title: "Settings") {
             // Premium Section
@@ -69,7 +90,22 @@ struct SettingsView: View {
             } footer: {
                 Text("Choose your preferred units for tracking fuel consumption.")
             }
-            
+
+            // Budget Section
+            Section {
+                Toggle("Monthly budget", isOn: budgetEnabled)
+
+                if settings.monthlyBudget != nil {
+                    TextField("Budget amount", text: budgetText)
+                        .keyboardType(.decimalPad)
+                        .accessibilityLabel("Monthly budget amount in \(settings.currencyCode)")
+                }
+            } header: {
+                Text("Budget")
+            } footer: {
+                Text("Set a monthly fuel budget to track your spending on the Home screen.")
+            }
+
             // Appearance Section
             Section("Appearance") {
                 Picker("Theme", selection: $settings.theme) {

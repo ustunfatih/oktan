@@ -7,8 +7,8 @@ struct ReportsView: View {
     @Environment(PremiumManager.self) private var premiumManager
     @State private var showingExportSheet = false
     @State private var showingPaywall = false
-    @State private var showingPDFAlert = false
-    @State private var csvFileURL: URL?
+    @State private var showingPDFError = false
+    @State private var exportFileURL: URL?
     @SceneStorage("reportsSelectedTab") private var selectedTabRaw: String = ReportTab.overview.rawValue
     
     // Interactive Chart State
@@ -33,7 +33,7 @@ struct ReportsView: View {
     @State private var chartData = ChartData()
 
     private func rebuildChartData() {
-        let entries = repository.entries
+        let entries = repository.visibleEntries
         chartData = ChartData(
             insights: ChartDataService.generateInsights(from: entries),
             comparison: ChartDataService.monthOverMonthComparison(from: entries),
@@ -93,7 +93,12 @@ struct ReportsView: View {
                     Button(action: exportData) {
                         Label("Export to CSV", systemImage: "doc.text")
                     }
-                    .disabled(repository.entries.isEmpty)
+                    .disabled(repository.visibleEntries.isEmpty)
+
+                    Button(action: exportPDF) {
+                        Label("Export to PDF", systemImage: "doc.richtext")
+                    }
+                    .disabled(repository.visibleEntries.isEmpty)
                 } label: {
                     Image(systemName: "square.and.arrow.up")
                 }
@@ -102,14 +107,14 @@ struct ReportsView: View {
             }
         }
         .sheet(isPresented: $showingExportSheet) {
-            if let url = csvFileURL {
+            if let url = exportFileURL {
                 ShareSheet(items: [url])
             }
         }
-        .alert("PDF Export", isPresented: $showingPDFAlert) {
+        .alert("PDF Export Failed", isPresented: $showingPDFError) {
             Button("OK", role: .cancel) { }
         } message: {
-            Text("PDF export will be available in the next update. Please use CSV export for now.")
+            Text("The PDF could not be created. Please try again.")
         }
         .sheet(isPresented: $showingPaywall) {
             PaywallView()
@@ -117,7 +122,7 @@ struct ReportsView: View {
         .onAppear {
             rebuildChartData()
         }
-        .onChange(of: repository.entries) { _, _ in
+        .onChange(of: repository.visibleEntries) { _, _ in
             rebuildChartData()
         }
     }
@@ -228,7 +233,7 @@ struct ReportsView: View {
                 VStack(alignment: .trailing) {
                     Text(settings.formatDistance(summary.totalDistance))
                         .font(.headline)
-                    Text("\(repository.entries.filter { $0.distance != nil }.count) tracked trips")
+                    Text("\(repository.visibleEntries.filter { $0.distance != nil }.count) tracked trips")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -359,13 +364,14 @@ struct ReportsView: View {
             Button(action: exportData) {
                 Label("Export to CSV", systemImage: "doc.text")
             }
-            .disabled(repository.entries.isEmpty)
+            .disabled(repository.visibleEntries.isEmpty)
 
-            Button(action: { showingPDFAlert = true }) {
+            Button(action: exportPDF) {
                 Label("Export to PDF", systemImage: "doc.richtext")
             }
+            .disabled(repository.visibleEntries.isEmpty)
 
-            if repository.entries.isEmpty {
+            if repository.visibleEntries.isEmpty {
                 Text("Add some fill-ups to enable export")
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -546,7 +552,7 @@ struct ReportsView: View {
                 LabeledContent("Average Interval", value: "Every \(Int(avg)) days")
             }
 
-            if dayOfWeekData.isEmpty || repository.entries.count < 3 {
+            if dayOfWeekData.isEmpty || repository.visibleEntries.count < 3 {
                 emptyChartLabel("Add more fill-ups to see patterns")
             } else {
                 Chart(dayOfWeekData) { point in
@@ -642,9 +648,22 @@ struct ReportsView: View {
     // MARK: - Export Action
 
     private func exportData() {
-        csvFileURL = repository.createCSVFile()
-        if csvFileURL != nil {
+        exportFileURL = repository.createCSVFile()
+        if exportFileURL != nil {
             showingExportSheet = true
+        }
+    }
+
+    private func exportPDF() {
+        exportFileURL = PDFExportService.createReportPDF(
+            entries: repository.visibleEntries,
+            summary: repository.summary(),
+            settings: settings
+        )
+        if exportFileURL != nil {
+            showingExportSheet = true
+        } else {
+            showingPDFError = true
         }
     }
 }
