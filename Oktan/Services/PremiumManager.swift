@@ -5,11 +5,29 @@ import RevenueCat
 @Observable
 class PremiumManager {
     var isPremium = false
-    
+
+    /// The RevenueCat entitlement that unlocks Oktan Pro features.
+    static let proEntitlementID = "Oktan Pro"
+
+    /// Whether the RevenueCat SDK was configured with a valid API key.
+    private(set) var isConfigured = false
+
     init() {
-        // Initialize RevenueCat
+        #if DEBUG
         Purchases.logLevel = .debug
-        Purchases.configure(withAPIKey: "test_HcxhrgEARdQuoUxajGLEasDwAGm")
+        #else
+        Purchases.logLevel = .warn
+        #endif
+
+        // The API key is injected via Config/Secrets.xcconfig -> Info.plist.
+        guard let apiKey = Bundle.main.object(forInfoDictionaryKey: "RevenueCatAPIKey") as? String,
+              !apiKey.isEmpty, !apiKey.hasPrefix("$(") else {
+            print("PremiumManager: RevenueCatAPIKey missing from Info.plist; premium features disabled.")
+            return
+        }
+
+        Purchases.configure(withAPIKey: apiKey)
+        isConfigured = true
 
         // Seed initial state in case the stream doesn't emit immediately.
         Purchases.shared.getCustomerInfo { [weak self] info, error in
@@ -21,7 +39,7 @@ class PremiumManager {
                 print("Failed to fetch customer info: \(error)")
             }
         }
-        
+
         // Listen for subscription status changes
         Task {
             for await customerInfo in Purchases.shared.customerInfoStream {
@@ -29,18 +47,14 @@ class PremiumManager {
             }
         }
     }
-    
+
     func updatePremiumStatus(_ info: CustomerInfo) {
-        // Prefer a specific entitlement, but fall back to any active entitlement or subscription.
-        let namedEntitlementIsActive = info.entitlements["Oktan Pro"]?.isActive == true
-        let anyEntitlementIsActive = !info.entitlements.active.isEmpty
-        let hasActiveSubscription = !info.activeSubscriptions.isEmpty
-        let hasAnyPurchase = !info.allPurchasedProductIdentifiers.isEmpty
-        self.isPremium = namedEntitlementIsActive || anyEntitlementIsActive || hasActiveSubscription || hasAnyPurchase
+        isPremium = info.entitlements[Self.proEntitlementID]?.isActive == true
     }
-    
+
     /// Restores purchases (called manually if needed, though stream usually handles it)
     func restore() async {
+        guard isConfigured else { return }
         do {
             let info = try await Purchases.shared.restorePurchases()
             updatePremiumStatus(info)

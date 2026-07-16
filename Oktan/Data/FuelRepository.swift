@@ -5,9 +5,13 @@ import SwiftData
 @MainActor
 final class FuelRepository: ObservableObject {
     @Published private(set) var entries: [FuelEntry] = []
-    
+
     /// Last error that occurred (for UI display)
     @Published private(set) var lastError: OktanError?
+
+    /// Cached summary, invalidated whenever entries change.
+    /// Views call summary() from body, so recomputing on every render is wasted work.
+    private var cachedSummary: FuelSummary?
     
     // MARK: - Storage Mode
     
@@ -74,6 +78,7 @@ final class FuelRepository: ObservableObject {
         
         entries.append(entry)
         entries.sort { $0.date < $1.date }
+        cachedSummary = nil
         persistIfJSON()
         return true
     }
@@ -96,6 +101,7 @@ final class FuelRepository: ObservableObject {
         
         entries[index] = entry
         entries.sort { $0.date < $1.date }
+        cachedSummary = nil
         persistIfJSON()
     }
 
@@ -114,10 +120,14 @@ final class FuelRepository: ObservableObject {
         }
         
         entries.removeAll { $0.id == entry.id }
+        cachedSummary = nil
         persistIfJSON()
     }
 
     func summary() -> FuelSummary {
+        if let cachedSummary {
+            return cachedSummary
+        }
         let completed = entries.compactMap { entry -> FuelEntry? in
             guard entry.distance != nil else { return nil }
             return entry
@@ -145,7 +155,7 @@ final class FuelRepository: ObservableObject {
                 return DriveModeBreakdown(distance: modeDistance, lPer100KM: lPer100, costPerKM: costPerKM)
             }
 
-        return FuelSummary(
+        let result = FuelSummary(
             totalDistance: distance,
             totalLiters: liters,
             totalCost: cost,
@@ -155,6 +165,8 @@ final class FuelRepository: ObservableObject {
             recentAverageCostPerKM: recentCostPerKM,
             driveModeBreakdown: modes
         )
+        cachedSummary = result
+        return result
     }
 
     private func validate(_ entry: FuelEntry) -> Bool {
@@ -184,7 +196,8 @@ final class FuelRepository: ObservableObject {
                 return
             }
             entries = decoded
-            
+            cachedSummary = nil
+
         case .swiftData(let context):
             let descriptor = FetchDescriptor<FuelEntrySD>(
                 sortBy: [SortDescriptor(\.date)]
@@ -192,6 +205,7 @@ final class FuelRepository: ObservableObject {
             do {
                 let sdEntries = try context.fetch(descriptor)
                 entries = sdEntries.map { $0.toFuelEntry() }
+                cachedSummary = nil
             } catch {
                 print("Failed to load entries: \(error)")
             }
@@ -206,6 +220,16 @@ final class FuelRepository: ObservableObject {
     }
 
     // MARK: - CSV Export
+
+    /// Escapes a free-text CSV field: strips the delimiter and neutralizes
+    /// leading characters that spreadsheet apps would interpret as formulas.
+    static func csvEscape(_ field: String) -> String {
+        var escaped = field.replacingOccurrences(of: ",", with: ";")
+        if let first = escaped.first, "=+-@".contains(first) {
+            escaped = "'" + escaped
+        }
+        return escaped
+    }
 
     /// Exports all entries to CSV format
     func exportToCSV() -> String {
@@ -223,11 +247,11 @@ final class FuelRepository: ObservableObject {
             let totalCost = String(format: "%.2f", entry.totalCost)
             let fullRefill = entry.isFullRefill ? "true" : "false"
             let driveMode = entry.driveMode.rawValue
-            let station = entry.gasStation.replacingOccurrences(of: ",", with: ";")
+            let station = Self.csvEscape(entry.gasStation)
             let distance = entry.distance.map { String(format: "%.0f", $0) } ?? ""
             let lPer100 = entry.litersPer100KM.map { String(format: "%.2f", $0) } ?? ""
             let costPerKM = entry.costPerKM.map { String(format: "%.3f", $0) } ?? ""
-            let notes = (entry.notes ?? "").replacingOccurrences(of: ",", with: ";")
+            let notes = Self.csvEscape(entry.notes ?? "")
 
             csv += "\(date),\(odometerStart),\(odometerEnd),\(liters),\(price),\(totalCost),\(fullRefill),\(driveMode),\(station),\(distance),\(lPer100),\(costPerKM),\(notes)\n"
         }

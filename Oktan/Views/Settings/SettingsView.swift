@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct SettingsView: View {
-    // This screen uses List via ListShell for Bible compliance
     @Bindable var settings: AppSettings
     @Environment(PremiumManager.self) private var premiumManager
     @State private var showingAbout = false
@@ -216,7 +215,7 @@ struct DataManagementView: View {
     }
 }
 
-// MARK: - About View (Bible Compliant)
+// MARK: - About View
 // Removed: LinearGradient, fixed font size .system(size: 60)
 
 struct AboutView: View {
@@ -228,7 +227,7 @@ struct AboutView: View {
             Section {
                 VStack {
                     Image(systemName: "fuelpump.circle.fill")
-                        .font(.largeTitle) // System font - Bible compliant
+                        .font(.largeTitle)
                         .foregroundStyle(.tint)
 
                     Text("Oktan")
@@ -239,7 +238,7 @@ struct AboutView: View {
                         .foregroundStyle(.secondary)
                 }
                 .frame(maxWidth: .infinity)
-                .padding() // No numeric value - Bible compliant
+                .padding()
             }
             .listRowBackground(Color.clear)
 
@@ -280,7 +279,7 @@ struct AboutView: View {
             }
         } icon: {
             Image(systemName: icon)
-                .foregroundStyle(.tint) // System tint - Bible compliant
+                .foregroundStyle(.tint)
         }
     }
 }

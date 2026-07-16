@@ -1,12 +1,7 @@
 import SwiftUI
 
-// MARK: - iOS 26 Design Bible Compliant Root Scaffold
-// This is the main tab container with state restoration.
-//
-// Compliance:
-// - Uses @SceneStorage for tab persistence (Article VI)
-// - No color overrides (Article III)
-// - System TabView with system styling
+// MARK: - Root Scaffold
+// The main tab container with state restoration via @SceneStorage.
 
 /// The root scaffold containing the main tab navigation.
 /// Tab selection is persisted via @SceneStorage.
@@ -54,7 +49,6 @@ struct RootScaffold: View {
                 }
                 .tag("settings")
         }
-        // NO color overrides - use system accent color (Bible compliance)
         .onChange(of: notificationService.shouldShowAddFuel) { _, shouldShow in
             if shouldShow {
                 selectedTab = "tracking"
@@ -195,7 +189,7 @@ struct SettingsNav: View {
 
 // MARK: - Type Aliases for Screen Naming Convention
 
-/// Type alias to follow Bible naming convention (*Screen.swift)
+/// Legacy *Screen type aliases kept for compatibility
 typealias HomeScreen = HomeView
 typealias TrackingScreen = TrackingView
 typealias ReportsScreen = ReportsView

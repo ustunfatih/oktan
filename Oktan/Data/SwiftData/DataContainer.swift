@@ -29,8 +29,9 @@ enum DataContainer {
             url = URL.applicationSupportDirectory.appending(path: "Oktan.sqlite")
         }
 
-        // Use the appropriate initializer (schema, url)
-        return ModelConfiguration(schema: schema, url: url)
+        // The app has no iCloud entitlement, so CloudKit is disabled explicitly
+        // instead of letting .automatic fail and fall through at launch.
+        return ModelConfiguration(schema: schema, url: url, cloudKitDatabase: .none)
     }
     
     /// In-memory configuration for testing and previews
@@ -53,15 +54,12 @@ enum DataContainer {
         }
         
         do {
-            // Try enabling CloudKit (default behavior if entitlements exist)
             return try ModelContainer(for: schema, configurations: [localConfiguration])
         } catch {
-            print("CloudKit container failed to initialize: \(error). Falling back to local-only.")
-            
-            // Fallback: Disable CloudKit explicitly
-            let localSchema = Schema([FuelEntrySD.self, CarSD.self])
+            print("Persistent container failed to initialize: \(error). Falling back to default store location.")
+
             let fallbackConfig = ModelConfiguration(
-                schema: localSchema,
+                schema: schema,
                 isStoredInMemoryOnly: false,
                 allowsSave: true,
                 cloudKitDatabase: .none

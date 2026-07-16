@@ -23,22 +23,22 @@ enum QuickStatsWidgetModule {
         
         private func fetchData() -> QuickStatsEntry {
             do {
-                // Attempt to create container. 
-                // Note: For actual data sharing, App Groups must be configured.
+                // Data is shared with the app via the App Group container.
                 let container = try DataContainer.create(inMemory: false)
-                // Create a background context
                 let context = ModelContext(container)
-                
-                let descriptor = FetchDescriptor<FuelEntrySD>(sortBy: [SortDescriptor(\.date, order: .reverse)])
+
+                // Only the most recent entries are needed; avoid fetching the full log.
+                var descriptor = FetchDescriptor<FuelEntrySD>(sortBy: [SortDescriptor(\.date, order: .reverse)])
+                descriptor.fetchLimit = 10
                 let entries = try context.fetch(descriptor)
-                
+
                 if let last = entries.first {
                     // Try to get latest efficiency
                     var effDisplay = "—"
                     if let effValue = last.litersPer100KM, effValue > 0 {
                          effDisplay = String(format: "%.1f L/100km", effValue)
                     } else {
-                        // Fallback: Try global average
+                        // Fallback: average over the recent entries
                         let validEntries = entries.compactMap { $0.litersPer100KM }
                         if !validEntries.isEmpty {
                             let sum = validEntries.reduce(0, +)
@@ -48,7 +48,7 @@ enum QuickStatsWidgetModule {
                              effDisplay = "First Log"
                         }
                     }
-                    
+
                     let date = last.date.formatted(date: .abbreviated, time: .omitted)
                     let cost = String(format: "%.2f", last.totalCost)
                     return QuickStatsEntry(date: Date(), efficiency: effDisplay, lastFillup: date, cost: cost)
@@ -119,7 +119,7 @@ enum QuickStatsWidgetModule {
                 }
             }
             .containerBackground(for: .widget) {
-                Color.white
+                Color(uiColor: .systemBackground)
             }
         }
     }

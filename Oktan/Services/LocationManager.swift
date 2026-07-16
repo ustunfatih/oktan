@@ -18,7 +18,9 @@ final class LocationManager: NSObject, CLLocationManagerDelegate {
     }
     
     func requestPermission() {
-        manager.requestAlwaysAuthorization()
+        // When-in-use is sufficient: the Smart Refuel check runs right after the
+        // CarPlay scene disconnects, within the app's foreground grace period.
+        manager.requestWhenInUseAuthorization()
     }
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {

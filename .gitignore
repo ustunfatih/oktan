@@ -98,3 +98,4 @@ iOSInjectionProject/
 # Secrets - API Keys (NEVER COMMIT)
 Secrets.plist
 **/Secrets.plist
+Config/Secrets.local.xcconfig
