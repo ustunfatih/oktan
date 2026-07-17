@@ -79,7 +79,8 @@ struct CSVImportView: View {
             Section {
                 VStack(spacing: 16) {
                     Image(systemName: "doc.text.fill")
-                        .font(.system(size: 60))
+                        .font(.system(.largeTitle).weight(.light))
+                        .imageScale(.large)
                         .foregroundStyle(.blue)
                     
                     Text("Import from CSV")
@@ -271,7 +272,8 @@ struct CSVImportView: View {
                 VStack(spacing: 16) {
                     if let result = importResult {
                         Image(systemName: result.isFullSuccess ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
-                            .font(.system(size: 60))
+                            .font(.system(.largeTitle).weight(.light))
+                        .imageScale(.large)
                             .foregroundStyle(result.isFullSuccess ? .green : .orange)
                         
                         Text(result.isFullSuccess ? "Import Complete" : "Completed with Issues")

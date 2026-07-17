@@ -31,6 +31,15 @@
     <string>Oktan uses your location to detect nearby gas stations when you finish driving.</string>
     <key>RevenueCatAPIKey</key>
     <string>$(REVENUECAT_API_KEY)</string>
+    <key>UIAppFonts</key>
+    <array>
+        <string>SpaceGrotesk.ttf</string>
+        <string>Archivo.ttf</string>
+        <string>Fraunces.ttf</string>
+        <string>Unbounded.ttf</string>
+        <string>Sora.ttf</string>
+        <string>Manrope.ttf</string>
+    </array>
     <key>UIApplicationSceneManifest</key>
     <dict>
         <key>UIApplicationSupportsMultipleScenes</key>

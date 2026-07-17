@@ -90,12 +90,15 @@ struct OktanApp: App {
                     .errorAlert(errorHandler)
                     .opacity(showSplash ? 0 : 1)
                     .modelContainer(modelContainer)
-                    .preferredColorScheme(appSettings.theme.colorScheme)
                 
                 if showSplash {
                     SplashView()
+                        .transition(.opacity)
                 }
             }
+            .tint(appSettings.currentTheme.accent)
+            .preferredColorScheme(appSettings.effectiveColorScheme)
+            .environment(appSettings)
             .task {
                 // Initialize
                 await initialize()
@@ -103,10 +106,13 @@ struct OktanApp: App {
                 // Check credential state on app launch
                 authManager.checkCredentialState()
 
-                // Dismiss splash once startup work is done, keeping a brief
-                // brand moment instead of a fixed multi-second delay.
-                try? await Task.sleep(for: .seconds(1.5))
-                withAnimation {
+                // Dismiss splash once startup work is done and the oil-drop
+                // animation has completed one full run.
+                let splashDuration = UIAccessibility.isReduceMotionEnabled
+                    ? SplashView.reducedMotionDisplayDuration
+                    : SplashView.minimumDisplayDuration
+                try? await Task.sleep(for: .seconds(splashDuration))
+                withAnimation(.easeOut(duration: 0.4)) {
                     showSplash = false
                 }
             }

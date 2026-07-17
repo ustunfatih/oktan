@@ -107,30 +107,29 @@ struct SettingsView: View {
             }
 
             // Appearance Section
-            Section("Appearance") {
-                Picker("Theme", selection: $settings.theme) {
+            Section {
+                Picker("Mode", selection: $settings.theme) {
                     ForEach(AppSettings.AppTheme.allCases) { theme in
                         Text(theme.displayName).tag(theme)
                     }
                 }
-                
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack {
-                        ForEach(BibleColors.AccentTheme.themes) { theme in
-                            Button(action: {
-                                withAnimation {
-                                    settings.accentColorId = theme.id
-                                }
-                            }) {
-                                Image(systemName: settings.accentColorId == theme.id ? "checkmark.circle.fill" : "circle.fill")
-                                    .font(.title)
-                                    .foregroundStyle(theme.color)
+
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 150), spacing: 12)], spacing: 12) {
+                    ForEach(Theme.all) { theme in
+                        ThemeCard(theme: theme, isSelected: settings.themeId == theme.id) {
+                            withAnimation(.snappy) {
+                                settings.themeId = theme.id
                             }
-                            .padding(.horizontal, 4)
                         }
                     }
-                    .padding(.vertical, 8)
                 }
+                .padding(.vertical, 8)
+                .listRowBackground(Color.clear)
+                .listRowInsets(EdgeInsets())
+            } header: {
+                Text("Appearance")
+            } footer: {
+                Text("Each theme includes light and dark variants and its own display font.")
             }
             
             // Notifications Section

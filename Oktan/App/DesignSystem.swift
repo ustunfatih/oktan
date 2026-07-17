@@ -2,7 +2,7 @@ import SwiftUI
 
 // MARK: - Design System
 // Semantic color references built on system colors.
-// (The theme engine planned for the redesign will supersede AccentTheme.)
+// Theme palettes and display fonts live in Theme.swift.
 
 enum BibleColors {
     // Use semantic system colors only
@@ -38,22 +38,6 @@ enum BibleColors {
         )
     }
 
-    // MARK: - App Themes (Accent Colors)
-
-    struct AccentTheme: Identifiable, Hashable {
-        let id: String
-        let name: String
-        let color: Color
-        
-        static let themes: [AccentTheme] = [
-            AccentTheme(id: "blue", name: "Classic Blue", color: .blue),
-            AccentTheme(id: "indigo", name: "Royal Indigo", color: .indigo),
-            AccentTheme(id: "teal", name: "Modern Teal", color: .teal),
-            AccentTheme(id: "mint", name: "Fresh Mint", color: .mint),
-            AccentTheme(id: "orange", name: "Energetic Orange", color: .orange),
-            AccentTheme(id: "pink", name: "Vibrant Pink", color: .pink)
-        ]
-    }
 }
 
 // MARK: - DesignSystem Namespace for Legacy Compatibility
