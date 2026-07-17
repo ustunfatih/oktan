@@ -97,7 +97,9 @@ final class ChartDataServiceTests: XCTestCase {
             odometerEnd: nil,
             totalLiters: 40,
             pricePerLiter: 1.50,
-            gasStation: "Test"
+            gasStation: "Test",
+            driveMode: .normal,
+            isFullRefill: false
         ))
         
         let trend = ChartDataService.efficiencyTrend(from: entries)
@@ -274,7 +276,9 @@ final class ChartDataServiceTests: XCTestCase {
                 odometerEnd: nil,
                 totalLiters: 40,
                 pricePerLiter: 1.50,
-                gasStation: "Test"
+                gasStation: "Test",
+                driveMode: .normal,
+                isFullRefill: false
             )
         ]
         

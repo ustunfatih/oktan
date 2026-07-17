@@ -70,7 +70,7 @@ final class FuelEntryTests: XCTestCase {
             odometerEnd: 1400,
             totalLiters: 40.0
         )
-        XCTAssertEqual(entry.litersPer100KM, 10.0, accuracy: 0.001, "L/100km should be 10.0")
+        XCTAssertEqual(entry.litersPer100KM ?? -1, 10.0, accuracy: 0.001, "L/100km should be 10.0")
     }
     
     func testLitersPer100KMWithRealWorldData() {
@@ -110,7 +110,7 @@ final class FuelEntryTests: XCTestCase {
             odometerEnd: 500,
             totalLiters: 30.0
         )
-        XCTAssertEqual(entry.litersPer100KM, 6.0, accuracy: 0.001, "High efficiency should calculate correctly")
+        XCTAssertEqual(entry.litersPer100KM ?? -1, 6.0, accuracy: 0.001, "High efficiency should calculate correctly")
     }
     
     func testLitersPer100KMLowEfficiency() {
@@ -120,7 +120,7 @@ final class FuelEntryTests: XCTestCase {
             odometerEnd: 300,
             totalLiters: 60.0
         )
-        XCTAssertEqual(entry.litersPer100KM, 20.0, accuracy: 0.001, "Low efficiency should calculate correctly")
+        XCTAssertEqual(entry.litersPer100KM ?? -1, 20.0, accuracy: 0.001, "Low efficiency should calculate correctly")
     }
     
     // MARK: - Cost Per KM Tests
@@ -133,7 +133,7 @@ final class FuelEntryTests: XCTestCase {
             totalLiters: 40.0,
             pricePerLiter: 2.0
         )
-        XCTAssertEqual(entry.costPerKM, 0.2, accuracy: 0.001, "Cost/km should be 0.2")
+        XCTAssertEqual(entry.costPerKM ?? -1, 0.2, accuracy: 0.001, "Cost/km should be 0.2")
     }
     
     func testCostPerKMWithRealWorldData() {
