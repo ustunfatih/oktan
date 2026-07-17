@@ -105,7 +105,9 @@ enum OilDropAnimation {
 private struct OilDropCanvas: View {
     let oilColor: Color
 
-    private let startDate = Date()
+    /// @State so parent re-renders (e.g. when app init finishes) don't reset
+    /// the animation clock mid-run.
+    @State private var startDate = Date()
 
     var body: some View {
         TimelineView(.animation) { timeline in
