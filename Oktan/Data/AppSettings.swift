@@ -112,13 +112,31 @@ final class AppSettings {
     var theme: AppTheme {
         didSet { UserDefaults.standard.set(theme.rawValue, forKey: "appTheme") }
     }
-    
-    var accentColorId: String {
-        didSet { UserDefaults.standard.set(accentColorId, forKey: "accentColorId") }
+
+    /// Selected app theme (palette + display font)
+    var themeId: String {
+        didSet {
+            UserDefaults.standard.set(themeId, forKey: "themeId")
+            // Shared with the widget via the App Group
+            UserDefaults(suiteName: "group.com.oktan.data")?.set(themeId, forKey: "themeId")
+        }
     }
-    
+
+    var currentTheme: Theme {
+        Theme.theme(id: themeId)
+    }
+
     var accentColor: Color {
-        BibleColors.AccentTheme.themes.first { $0.id == accentColorId }?.color ?? .blue
+        currentTheme.accent
+    }
+
+    /// The color scheme to apply: an explicit light/dark user choice wins;
+    /// under "system", a dark-first theme may express its preference.
+    var effectiveColorScheme: ColorScheme? {
+        if let explicit = theme.colorScheme {
+            return explicit
+        }
+        return currentTheme.preferredScheme
     }
     
     var appLanguage: AppLanguage {
@@ -147,14 +165,37 @@ final class AppSettings {
         self.volumeUnit = VolumeUnit(rawValue: UserDefaults.standard.string(forKey: "volumeUnit") ?? "") ?? .liters
         self.efficiencyUnit = EfficiencyUnit(rawValue: UserDefaults.standard.string(forKey: "efficiencyUnit") ?? "") ?? .litersPer100km
         self.theme = AppTheme(rawValue: UserDefaults.standard.string(forKey: "appTheme") ?? "") ?? .system
-        self.accentColorId = UserDefaults.standard.string(forKey: "accentColorId") ?? "blue"
+        self.themeId = Self.loadOrMigrateThemeId()
         self.appLanguage = AppLanguage(rawValue: UserDefaults.standard.string(forKey: "appLanguage") ?? "") ?? .system
         let savedBudget = UserDefaults.standard.double(forKey: "monthlyBudget")
         self.monthlyBudget = savedBudget > 0 ? savedBudget : nil
     }
     
+    // MARK: - Theme Migration
+
+    /// Loads the stored themeId, migrating from the legacy accentColorId once.
+    private static func loadOrMigrateThemeId() -> String {
+        if let stored = UserDefaults.standard.string(forKey: "themeId") {
+            return stored
+        }
+        // Map legacy accent choices onto the closest new theme.
+        let legacyMap: [String: String] = [
+            "blue": "pearl",
+            "indigo": "royal",
+            "teal": "petrol",
+            "mint": "petrol",
+            "orange": "desert",
+            "pink": "desert"
+        ]
+        let legacy = UserDefaults.standard.string(forKey: "accentColorId")
+        let migrated = legacy.flatMap { legacyMap[$0] } ?? Theme.default.id
+        UserDefaults.standard.set(migrated, forKey: "themeId")
+        UserDefaults(suiteName: "group.com.oktan.data")?.set(migrated, forKey: "themeId")
+        return migrated
+    }
+
     // MARK: - Language
-    
+
     private func applyLanguage() {
         switch appLanguage {
         case .system:

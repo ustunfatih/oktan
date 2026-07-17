@@ -70,12 +70,18 @@ enum QuickStatsWidgetModule {
     fileprivate struct QuickStatsWidgetEntryView : View {
         var entry: QuickStatsProvider.Entry
         @Environment(\.widgetFamily) var family
-        
+
+        /// Accent from the app's selected theme, shared via the App Group
+        private var themeAccent: Color {
+            let themeId = UserDefaults(suiteName: "group.com.oktan.data")?.string(forKey: "themeId") ?? Theme.default.id
+            return Theme.theme(id: themeId).accent
+        }
+
         var body: some View {
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
                     Image(systemName: "fuelpump.fill")
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(themeAccent)
                     Text("Oktan")
                         .font(.caption)
                         .bold()

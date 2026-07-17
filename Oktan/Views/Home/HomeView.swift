@@ -132,7 +132,7 @@ struct HomeView: View {
                         .foregroundStyle(.secondary)
                     
                     Text(car.model)
-                        .font(.title.bold())
+                        .font(settings.currentTheme.displayFont(relativeTo: .title))
                         .foregroundStyle(.primary)
                 }
                 
@@ -209,7 +209,7 @@ struct HomeView: View {
                         .foregroundStyle(.secondary)
 
                     Text(settings.formatDistance(summary.totalDistance))
-                        .font(.largeTitle.bold())
+                        .font(settings.currentTheme.displayFont(relativeTo: .largeTitle))
                         .foregroundStyle(.primary)
                 }
 
@@ -244,7 +244,7 @@ struct HomeView: View {
             }
         }
         .padding()
-        .background(BibleColors.heroGradient(for: settings.accentColor))
+        .background(settings.currentTheme.heroGradient)
         .background(.ultraThinMaterial)
         .clipShape(.rect)
         .offset(y: animateHero ? 0 : 20)

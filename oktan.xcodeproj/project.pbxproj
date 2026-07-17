@@ -73,6 +73,7 @@
 		BC61271A2EECAD9B0025A96B /* Exceptions for "oktan" folder in "OktanWidgetsExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				App/Theme.swift,
 				Data/SwiftData/CarSD.swift,
 				Data/SwiftData/DataContainer.swift,
 				Data/SwiftData/FuelEntrySD.swift,
