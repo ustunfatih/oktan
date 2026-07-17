@@ -285,9 +285,9 @@ final class FuelRepositoryTests: XCTestCase {
         XCTAssertNil(summary.driveModeBreakdown[.normal])
         
         // Eco: 8L/100km
-        XCTAssertEqual(summary.driveModeBreakdown[.eco]?.lPer100KM, 8.0, accuracy: 0.001)
+        XCTAssertEqual(summary.driveModeBreakdown[.eco]?.lPer100KM ?? -1, 8.0, accuracy: 0.001)
         // Sport: 15L/100km
-        XCTAssertEqual(summary.driveModeBreakdown[.sport]?.lPer100KM, 15.0, accuracy: 0.001)
+        XCTAssertEqual(summary.driveModeBreakdown[.sport]?.lPer100KM ?? -1, 15.0, accuracy: 0.001)
     }
     
     // MARK: - CSV Export Tests

@@ -163,7 +163,16 @@ enum CSVImportService {
     static func suggestMapping(for headers: [String]) -> FieldMapping {
         var mapping = FieldMapping()
 
-        let normalizedHeaders = headers.map { $0.lowercased().trimmingCharacters(in: .whitespaces) }
+        // Lowercase + strip diacritics so Turkish headers match reliably
+        // ("İstasyon".lowercased() produces a combining dot that defeats
+        // plain contains(); folding maps ü/ş/ç to ascii). Dotless ı is a
+        // standalone letter, not a diacritic, so it needs an explicit map.
+        let normalizedHeaders = headers.map {
+            $0.lowercased()
+                .folding(options: .diacriticInsensitive, locale: Locale(identifier: "en_US_POSIX"))
+                .replacingOccurrences(of: "\u{0131}", with: "i")
+                .trimmingCharacters(in: .whitespaces)
+        }
         var consumedColumns = Set<Int>()
 
         // Pass 1: exact matches from the known export/sample vocabulary
@@ -186,9 +195,9 @@ enum CSVImportService {
 
             // Odometer columns
             if header.contains("odometer") || header.contains("km") || header.contains("mileage") {
-                if header.contains("start") || header.contains("başlangıç") {
+                if header.contains("start") || header.contains("baslangic") {
                     if mapping.odometerStartColumn == nil { mapping.odometerStartColumn = index; continue }
-                } else if header.contains("end") || header.contains("bitiş") {
+                } else if header.contains("end") || header.contains("bitis") {
                     if mapping.odometerEndColumn == nil { mapping.odometerEndColumn = index; continue }
                 } else if mapping.odometerStartColumn == nil, !header.contains("per") {
                     mapping.odometerStartColumn = index
@@ -202,7 +211,7 @@ enum CSVImportService {
             // Liters column ("per" excluded so Price_per_Liter can't match)
             if mapping.litersColumn == nil, !header.contains("per"),
                header.contains("liter") || header.contains("litre") || header.contains("fuel") ||
-               header.contains("gallon") || header.contains("yakıt") {
+               header.contains("gallon") || header.contains("yakit") {
                 mapping.litersColumn = index
                 continue
             }
@@ -224,7 +233,7 @@ enum CSVImportService {
 
             // Drive mode
             if mapping.driveModeColumn == nil,
-               header.contains("mode") || header.contains("type") || header.contains("sürüş") {
+               header.contains("mode") || header.contains("type") || header.contains("surus") {
                 mapping.driveModeColumn = index
                 continue
             }
