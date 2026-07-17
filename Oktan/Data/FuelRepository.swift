@@ -12,6 +12,18 @@ final class FuelRepository: ObservableObject {
     /// Cached summary, invalidated whenever entries change.
     /// Views call summary() from body, so recomputing on every render is wasted work.
     private var cachedSummary: FuelSummary?
+
+    /// The car whose entries are shown. nil = all cars.
+    @Published var activeCarId: UUID? {
+        didSet { cachedSummary = nil }
+    }
+
+    /// Entries for the active car, kept sorted by date ascending.
+    /// Entries without a carId predate multi-car support and are always shown.
+    var visibleEntries: [FuelEntry] {
+        guard let activeCarId else { return entries }
+        return entries.filter { $0.carId == activeCarId || $0.carId == nil }
+    }
     
     // MARK: - Storage Mode
     
@@ -54,14 +66,29 @@ final class FuelRepository: ObservableObject {
         }
     }
 
+    /// One-time adoption of legacy entries (no carId) by the given car.
+    func assignOrphanEntries(to carId: UUID) {
+        let orphans = entries.filter { $0.carId == nil }
+        for var entry in orphans {
+            entry.carId = carId
+            update(entry)
+        }
+    }
+
     @discardableResult
     func add(_ entry: FuelEntry) -> Bool {
+        var entry = entry
+        // New entries belong to the active car unless explicitly tagged.
+        if entry.carId == nil {
+            entry.carId = activeCarId
+        }
+
         // Validate entry
         if let validationError = validateWithError(entry) {
             lastError = validationError
             return false
         }
-        
+
         switch storageMode {
         case .swiftData(let context):
             let sdEntry = FuelEntrySD(from: entry)
@@ -128,7 +155,7 @@ final class FuelRepository: ObservableObject {
         if let cachedSummary {
             return cachedSummary
         }
-        let completed = entries.compactMap { entry -> FuelEntry? in
+        let completed = visibleEntries.compactMap { entry -> FuelEntry? in
             guard entry.distance != nil else { return nil }
             return entry
         }
@@ -140,7 +167,7 @@ final class FuelRepository: ObservableObject {
         let lPer100 = distance > 0 ? (liters / distance) * 100 : nil
         let costPerKM = distance > 0 ? cost / distance : nil
 
-        let recent = completed.suffix(5)
+        let recent = Array(completed.suffix(5))
         let recentLPer100 = recent.compactMap { $0.litersPer100KM }.average()
         let recentCostPerKM = recent.compactMap { $0.costPerKM }.average()
 

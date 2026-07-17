@@ -37,7 +37,11 @@ final class FuelEntrySD {
     
     /// Optional notes about the fill-up
     var notes: String?
-    
+
+    /// The car this fill-up belongs to (nil = legacy entry before multi-car support).
+    /// Optional so SwiftData can migrate existing stores in place.
+    var carId: UUID?
+
     /// Timestamp for sync conflict resolution
     var lastModified: Date
     
@@ -84,7 +88,8 @@ final class FuelEntrySD {
         gasStation: String,
         driveMode: FuelEntry.DriveMode,
         isFullRefill: Bool,
-        notes: String? = nil
+        notes: String? = nil,
+        carId: UUID? = nil
     ) {
         self.entryId = entryId
         self.date = date
@@ -96,6 +101,7 @@ final class FuelEntrySD {
         self.driveModeRaw = driveMode.rawValue
         self.isFullRefill = isFullRefill
         self.notes = notes
+        self.carId = carId
         self.lastModified = Date()
     }
     
@@ -113,7 +119,8 @@ final class FuelEntrySD {
             gasStation: legacy.gasStation,
             driveMode: legacy.driveMode,
             isFullRefill: legacy.isFullRefill,
-            notes: legacy.notes
+            notes: legacy.notes,
+            carId: legacy.carId
         )
     }
     
@@ -129,7 +136,8 @@ final class FuelEntrySD {
             gasStation: gasStation,
             driveMode: driveMode,
             isFullRefill: isFullRefill,
-            notes: notes
+            notes: notes,
+            carId: carId
         )
     }
     
@@ -144,6 +152,7 @@ final class FuelEntrySD {
         self.driveModeRaw = entry.driveMode.rawValue
         self.isFullRefill = entry.isFullRefill
         self.notes = entry.notes
+        self.carId = entry.carId
         self.lastModified = Date()
     }
 }

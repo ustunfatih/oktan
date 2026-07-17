@@ -4,6 +4,7 @@ struct FuelEntryFormView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var repository: FuelRepository
     @Environment(NotificationService.self) private var notificationService
+    @Environment(AppSettings.self) private var settings
 
     private let existingEntry: FuelEntry?
     private var isEditing: Bool { existingEntry != nil }
@@ -176,10 +177,26 @@ struct FuelEntryFormView: View {
                     TextField("Start", text: odometerStart)
                         .keyboardType(.numberPad)
                         .accessibilityLabel("Odometer start reading")
-                    
+
                     TextField("End", text: odometerEnd)
                         .keyboardType(.numberPad)
                         .accessibilityLabel("Odometer end reading")
+
+                    if let previousEnd = odometerGapWarning {
+                        VStack(alignment: .leading) {
+                            Label(
+                                "Start doesn't match your last recorded reading (\(Int(previousEnd))).",
+                                systemImage: "exclamationmark.triangle"
+                            )
+                            .font(.caption)
+                            .foregroundStyle(.orange)
+
+                            Button("Use \(Int(previousEnd))") {
+                                odometerStart.wrappedValue = String(Int(previousEnd))
+                            }
+                            .font(.caption)
+                        }
+                    }
                 }
 
                 Section("Notes") {
@@ -230,6 +247,16 @@ struct FuelEntryFormView: View {
         .onAppear(perform: setupForm)
     }
 
+    /// The previous entry's end reading when the entered start diverges from it
+    /// (new entries only) — used to warn about odometer gaps or overlaps.
+    private var odometerGapWarning: Double? {
+        guard !isEditing,
+              let previousEnd = repository.visibleEntries.last?.odometerEnd,
+              let start = Double(draftOdometerStart),
+              abs(start - previousEnd) > 0.5 else { return nil }
+        return previousEnd
+    }
+
     private var isValidForm: Bool {
         let litersValue = isEditing ? _liters : draftLiters
         let priceValue = isEditing ? _pricePerLiter : draftPricePerLiter
@@ -263,7 +290,7 @@ struct FuelEntryFormView: View {
     }
 
     private func prefillFromLastEntry() {
-        guard let last = repository.entries.sorted(by: { $0.date < $1.date }).last else { return }
+        guard let last = repository.visibleEntries.last else { return }
         if let end = last.odometerEnd { draftOdometerStart = String(Int(end)) }
         draftPricePerLiter = String(format: "%.2f", last.pricePerLiter)
         draftDriveModeRaw = last.driveMode.rawValue
@@ -352,8 +379,16 @@ struct FuelEntryFormView: View {
             draftNotes = ""
         }
 
-        // Reset inactivity reminder since user just logged an entry
-        Task { await notificationService.scheduleInactivityReminder(lastEntryDate: dateValue) }
+        // Reset inactivity reminder and refresh the next fill-up prediction
+        Task {
+            await notificationService.scheduleInactivityReminder(lastEntryDate: dateValue)
+            if let prediction = ChartDataService.predictNextFillup(from: repository.visibleEntries) {
+                await notificationService.scheduleNextFillupReminder(
+                    predictedDate: prediction.date,
+                    estimatedCost: prediction.estimatedCost.map { settings.formatCost($0) }
+                )
+            }
+        }
         
         triggerHapticFeedback()
         

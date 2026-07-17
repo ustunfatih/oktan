@@ -127,6 +127,17 @@ final class AppSettings {
             applyLanguage()
         }
     }
+
+    /// Optional monthly fuel budget in the selected currency. nil = no budget.
+    var monthlyBudget: Double? {
+        didSet {
+            if let monthlyBudget, monthlyBudget > 0 {
+                UserDefaults.standard.set(monthlyBudget, forKey: "monthlyBudget")
+            } else {
+                UserDefaults.standard.removeObject(forKey: "monthlyBudget")
+            }
+        }
+    }
     
     // MARK: - Initialization
     
@@ -138,6 +149,8 @@ final class AppSettings {
         self.theme = AppTheme(rawValue: UserDefaults.standard.string(forKey: "appTheme") ?? "") ?? .system
         self.accentColorId = UserDefaults.standard.string(forKey: "accentColorId") ?? "blue"
         self.appLanguage = AppLanguage(rawValue: UserDefaults.standard.string(forKey: "appLanguage") ?? "") ?? .system
+        let savedBudget = UserDefaults.standard.double(forKey: "monthlyBudget")
+        self.monthlyBudget = savedBudget > 0 ? savedBudget : nil
     }
     
     // MARK: - Language
