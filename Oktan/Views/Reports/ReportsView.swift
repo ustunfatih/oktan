@@ -49,10 +49,11 @@ struct ReportsView: View {
     
     enum ReportTab: String, CaseIterable {
         case overview = "Overview"
+        case explore = "Explore"
         case trends = "Trends"
         case patterns = "Patterns"
     }
-    
+
     private var selectedTab: Binding<ReportTab> {
         Binding(
             get: { ReportTab(rawValue: selectedTabRaw) ?? .overview },
@@ -60,9 +61,28 @@ struct ReportsView: View {
         )
     }
 
-    var body: some View {
-        let summary = repository.summary()
+    // MARK: - Time Range State
 
+    @SceneStorage("reportsTimeRange") private var timeRangeRaw: String = AnalyticsService.TimeRange.allTime.rawValue
+    @State private var periodOffset = 0
+
+    private var timeRange: Binding<AnalyticsService.TimeRange> {
+        Binding(
+            get: { AnalyticsService.TimeRange(rawValue: timeRangeRaw) ?? .allTime },
+            set: { timeRangeRaw = $0.rawValue }
+        )
+    }
+
+    /// Entries within the selected period (and active car)
+    private var scopedEntries: [FuelEntry] {
+        let range = timeRange.wrappedValue
+        return AnalyticsService.entries(
+            repository.visibleEntries,
+            in: range.interval(offset: periodOffset)
+        )
+    }
+
+    var body: some View {
         ListShell(title: "Reports") {
                 // Tab Picker Section
                 Section {
@@ -79,7 +99,9 @@ struct ReportsView: View {
             // Content based on selected tab
             switch selectedTab.wrappedValue {
             case .overview:
-                overviewContent(summary: summary)
+                overviewContent()
+            case .explore:
+                exploreContent()
             case .trends:
                 trendsContent()
             case .patterns:
@@ -130,19 +152,43 @@ struct ReportsView: View {
     // MARK: - Overview Tab
 
     @ViewBuilder
-    private func overviewContent(summary: FuelSummary) -> some View {
-        // Metrics Section
+    private func overviewContent() -> some View {
+        // Time Range Section
         Section {
-            metricsContent(summary: summary)
+            RangeSelectorView(range: timeRange, offset: $periodOffset)
+                .listRowBackground(Color.clear)
+                .listRowInsets(EdgeInsets())
+        }
+
+        // Stat Tiles Section
+        Section {
+            StatTilesView(
+                comparison: AnalyticsService.compare(
+                    entries: repository.visibleEntries,
+                    range: timeRange.wrappedValue,
+                    offset: periodOffset
+                ),
+                settings: settings
+            )
+            .listRowBackground(Color.clear)
+            .listRowInsets(EdgeInsets())
         } header: {
             Text("At a Glance")
         }
 
-        // Period Comparison Section
+        // Spending Section
         Section {
-            periodComparisonContent()
+            SpendingChartView(
+                buckets: AnalyticsService.spendingBuckets(
+                    entries: repository.visibleEntries,
+                    range: timeRange.wrappedValue,
+                    offset: periodOffset
+                ),
+                range: timeRange.wrappedValue,
+                settings: settings
+            )
         } header: {
-            Text("Month-over-Month")
+            Text("Spending")
         }
 
         // Insights Section
@@ -157,6 +203,68 @@ struct ReportsView: View {
             exportContent()
         } header: {
             Text("Data Export")
+        }
+    }
+
+    // MARK: - Explore Tab
+
+    @ViewBuilder
+    private func exploreContent() -> some View {
+        if premiumManager.isPremium {
+            Section {
+                RangeSelectorView(range: timeRange, offset: $periodOffset)
+                    .listRowBackground(Color.clear)
+                    .listRowInsets(EdgeInsets())
+            }
+
+            Section {
+                FuelCalendarView(
+                    entries: scopedEntries,
+                    range: timeRange.wrappedValue,
+                    offset: periodOffset,
+                    settings: settings
+                )
+            } header: {
+                Text("Fuel Calendar")
+            } footer: {
+                Text("Darker cells mean higher spending. Tap a cell for details.")
+            }
+
+            Section {
+                StationScoreboardView(entries: scopedEntries, settings: settings)
+            } header: {
+                Text("Stations")
+            }
+
+            Section {
+                JourneyChartView(entries: scopedEntries, settings: settings)
+            } header: {
+                Text("Journey")
+            } footer: {
+                Text("Cumulative spending over time. Drag to scrub.")
+            }
+
+            Section {
+                PriceTimelineView(entries: scopedEntries, settings: settings)
+            } header: {
+                Text("Price History")
+            }
+
+            Section {
+                EcoWhatIfView(entries: scopedEntries, settings: settings)
+            } header: {
+                Text("Eco What-If")
+            }
+
+            Section {
+                RecordsView(entries: scopedEntries, settings: settings)
+            } header: {
+                Text("Records")
+            }
+        } else {
+            Section {
+                lockedContent(message: "Unlock Explore for the fuel calendar, station scoreboard, price history, and more.")
+            }
         }
     }
 
@@ -222,122 +330,6 @@ struct ReportsView: View {
                 lockedContent(message: "Unlock Patterns to discover your driving habits and optimal modes.")
             }
         }
-    }
-
-    // MARK: - Metrics Content
-
-    @ViewBuilder
-    private func metricsContent(summary: FuelSummary) -> some View {
-            // Total Distance
-            LabeledContent {
-                VStack(alignment: .trailing) {
-                    Text(settings.formatDistance(summary.totalDistance))
-                        .font(.headline)
-                    Text("\(repository.visibleEntries.filter { $0.distance != nil }.count) tracked trips")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-            } label: {
-                Label("Total Distance", systemImage: "point.topleft.down.curvedto.point.bottomright.up")
-            }
-
-            // Total Fuel
-            LabeledContent {
-                VStack(alignment: .trailing) {
-                    Text(settings.formatVolume(summary.totalLiters))
-                        .font(.headline)
-                    if let avg = summary.averageLitersPer100KM {
-                        Text("Avg: \(settings.formatEfficiency(avg))")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            } label: {
-                Label("Total Fuel", systemImage: "drop.fill")
-            }
-
-            // Total Spent
-            LabeledContent {
-                VStack(alignment: .trailing) {
-                    Text(settings.formatCost(summary.totalCost))
-                        .font(.headline)
-                    if let avg = summary.averageCostPerKM {
-                        Text("Avg: \(settings.formatCostPerDistance(avg))")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            } label: {
-                Label("Total Spent", systemImage: "creditcard.fill")
-            }
-
-            // Recent Efficiency
-            LabeledContent {
-                VStack(alignment: .trailing) {
-                    Text(summary.recentAverageLitersPer100KM.map { settings.formatEfficiency($0) } ?? "N/A")
-                        .font(.headline)
-                    if let cost = summary.recentAverageCostPerKM {
-                        Text("Cost: \(settings.formatCostPerDistance(cost))")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            } label: {
-                Label("Recent Efficiency", systemImage: "waveform.path.ecg.rectangle")
-            }
-    }
-
-    // MARK: - Period Comparison Content
-
-    @ViewBuilder
-    private func periodComparisonContent() -> some View {
-        let comparison = chartData.comparison
-
-            if let current = comparison.currentPeriod,
-               (current.averageEfficiency != nil || current.averageCostPerKM != nil) {
-                // Efficiency
-                if let efficiency = current.averageEfficiency {
-                    LabeledContent {
-                        HStack {
-                            Text(settings.formatEfficiency(efficiency))
-                                .font(.headline)
-                            if let change = comparison.efficiencyChange {
-                                trendIndicator(change: change, isLowerBetter: true)
-                            }
-                        }
-                    } label: {
-                        Text("Efficiency")
-                    }
-                }
-
-                // Cost per km
-                if let costPerKM = current.averageCostPerKM {
-                    LabeledContent {
-                        HStack {
-                            Text(settings.formatCostPerDistance(costPerKM))
-                                .font(.headline)
-                            if let change = comparison.costChange {
-                                trendIndicator(change: change, isLowerBetter: true)
-                            }
-                        }
-                    } label: {
-                        Text("Cost/km")
-                    }
-                }
-            } else {
-                Label("Add odometer readings to see efficiency trends", systemImage: "gauge.badge.plus")
-                    .foregroundStyle(.secondary)
-            }
-    }
-
-    private func trendIndicator(change: Double, isLowerBetter: Bool) -> some View {
-        let isGood = isLowerBetter ? change < 0 : change > 0
-        return HStack {
-            Image(systemName: change > 0 ? "arrow.up.right" : "arrow.down.right")
-            Text("\(String(format: "%.0f", abs(change)))%")
-        }
-        .font(.caption)
-        .foregroundStyle(isGood ? .green : .red)
     }
 
     // MARK: - Insights Content
