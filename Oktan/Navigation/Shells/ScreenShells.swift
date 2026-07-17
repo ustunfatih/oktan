@@ -1,6 +1,6 @@
 import SwiftUI
 
-// MARK: - iOS 26 Design Bible Compliant Screen Shells
+// MARK: - Screen Shells
 // These shells enforce proper navigation patterns and system styling.
 //
 // Every screen MUST use one of these shells:

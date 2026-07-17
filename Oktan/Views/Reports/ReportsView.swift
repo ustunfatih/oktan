@@ -1,10 +1,6 @@
 import Charts
 import SwiftUI
 
-// MARK: - iOS 26 Design Bible Compliant ReportsView
-// Removed: non-List containers, numeric spacing, custom color palettes,
-//          fixed frames, color overrides, custom modifiers, gradients
-
 struct ReportsView: View {
     @EnvironmentObject private var repository: FuelRepository
     @Environment(AppSettings.self) private var settings
@@ -19,6 +15,37 @@ struct ReportsView: View {
     @State private var selectedDate: Date?
     @State private var selectedMonth: String?
     @State private var selectedMode: String?
+
+    /// Chart datasets, cached so chart scrubbing (which re-renders the body on
+    /// every gesture tick) doesn't re-run the aggregations each time.
+    private struct ChartData {
+        var insights: [String] = []
+        var comparison = ChartDataService.PeriodComparison(currentPeriod: nil, previousPeriod: nil)
+        var efficiencyTrend: [ChartDataService.TimeSeriesPoint] = []
+        var rollingAverage: [ChartDataService.TimeSeriesPoint] = []
+        var monthly: [ChartDataService.MonthlyData] = []
+        var costPerKMEntries: [FuelEntry] = []
+        var driveModeComparison: [ChartDataService.ComparisonPoint] = []
+        var dayOfWeek: [ChartDataService.ComparisonPoint] = []
+        var averageDays: Double?
+    }
+
+    @State private var chartData = ChartData()
+
+    private func rebuildChartData() {
+        let entries = repository.entries
+        chartData = ChartData(
+            insights: ChartDataService.generateInsights(from: entries),
+            comparison: ChartDataService.monthOverMonthComparison(from: entries),
+            efficiencyTrend: ChartDataService.efficiencyTrend(from: entries),
+            rollingAverage: ChartDataService.rollingAverageEfficiency(from: entries),
+            monthly: ChartDataService.aggregateMonthly(from: entries),
+            costPerKMEntries: entries.filter { $0.costPerKM != nil },
+            driveModeComparison: ChartDataService.driveModeComparison(from: entries),
+            dayOfWeek: ChartDataService.fillupsByDayOfWeek(from: entries),
+            averageDays: ChartDataService.averageDaysBetweenFillups(from: entries)
+        )
+    }
     
     enum ReportTab: String, CaseIterable {
         case overview = "Overview"
@@ -86,6 +113,12 @@ struct ReportsView: View {
         }
         .sheet(isPresented: $showingPaywall) {
             PaywallView()
+        }
+        .onAppear {
+            rebuildChartData()
+        }
+        .onChange(of: repository.entries) { _, _ in
+            rebuildChartData()
         }
     }
 
@@ -253,7 +286,7 @@ struct ReportsView: View {
 
     @ViewBuilder
     private func periodComparisonContent() -> some View {
-        let comparison = ChartDataService.monthOverMonthComparison(from: repository.entries)
+        let comparison = chartData.comparison
 
             if let current = comparison.currentPeriod,
                (current.averageEfficiency != nil || current.averageCostPerKM != nil) {
@@ -305,7 +338,7 @@ struct ReportsView: View {
     // MARK: - Insights Content
 
     private func insightsContent() -> some View {
-        let insights = ChartDataService.generateInsights(from: repository.entries)
+        let insights = chartData.insights
 
         return Group {
             if insights.isEmpty {
@@ -344,8 +377,8 @@ struct ReportsView: View {
 
     @ViewBuilder
     private func efficiencyChartContent() -> some View {
-        let trendData = ChartDataService.efficiencyTrend(from: repository.entries)
-        let rollingAverage = ChartDataService.rollingAverageEfficiency(from: repository.entries)
+        let trendData = chartData.efficiencyTrend
+        let rollingAverage = chartData.rollingAverage
 
             if trendData.isEmpty {
                 emptyChartLabel("Add odometer readings to see efficiency trends")
@@ -407,7 +440,7 @@ struct ReportsView: View {
 
     @ViewBuilder
     private func monthlyCostChartContent() -> some View {
-        let monthlyData = ChartDataService.aggregateMonthly(from: repository.entries)
+        let monthlyData = chartData.monthly
 
             if monthlyData.isEmpty {
                 emptyChartLabel("Track fill-ups to see monthly spending")
@@ -434,7 +467,7 @@ struct ReportsView: View {
 
     @ViewBuilder
     private func costPerKMChartContent() -> some View {
-        let entries = repository.entries.filter { $0.costPerKM != nil }
+        let entries = chartData.costPerKMEntries
 
             if entries.isEmpty {
                 emptyChartLabel("Track odometer values to see cost trends")
@@ -470,7 +503,7 @@ struct ReportsView: View {
 
     @ViewBuilder
     private func driveModeChartContent() -> some View {
-        let comparisonData = ChartDataService.driveModeComparison(from: repository.entries)
+        let comparisonData = chartData.driveModeComparison
 
             if comparisonData.isEmpty {
                 emptyChartLabel("Log different drive modes to compare efficiency")
@@ -506,8 +539,8 @@ struct ReportsView: View {
 
     @ViewBuilder
     private func fillupFrequencyContent() -> some View {
-        let dayOfWeekData = ChartDataService.fillupsByDayOfWeek(from: repository.entries)
-        let averageDays = ChartDataService.averageDaysBetweenFillups(from: repository.entries)
+        let dayOfWeekData = chartData.dayOfWeek
+        let averageDays = chartData.averageDays
 
             if let avg = averageDays {
                 LabeledContent("Average Interval", value: "Every \(Int(avg)) days")

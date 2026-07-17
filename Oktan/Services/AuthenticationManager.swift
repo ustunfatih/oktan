@@ -43,7 +43,7 @@ final class AuthenticationManager: NSObject {
     private(set) var isLoading: Bool = false
     private(set) var errorMessage: String?
     
-    private let userDefaultsKey = "authenticatedUser"
+    private let storageKey = "authenticatedUser"
     
     // MARK: - Initialization
     
@@ -72,7 +72,7 @@ final class AuthenticationManager: NSObject {
     func signOut() {
         currentUser = nil
         isAuthenticated = false
-        UserDefaults.standard.removeObject(forKey: userDefaultsKey)
+        KeychainStore.delete(forKey: storageKey)
         
         // Haptic feedback
         let generator = UINotificationFeedbackGenerator()
@@ -106,21 +106,28 @@ final class AuthenticationManager: NSObject {
     // MARK: - Private Methods
     
     private func loadStoredUser() {
-        guard let data = UserDefaults.standard.data(forKey: userDefaultsKey),
-              let user = try? JSONDecoder().decode(User.self, from: data) else {
-            return
+        var user = KeychainStore.load(User.self, forKey: storageKey)
+
+        // One-time migration: earlier versions stored the user in UserDefaults.
+        if user == nil,
+           let legacyData = UserDefaults.standard.data(forKey: storageKey),
+           let legacyUser = try? JSONDecoder().decode(User.self, from: legacyData) {
+            user = legacyUser
+            KeychainStore.save(legacyUser, forKey: storageKey)
+            UserDefaults.standard.removeObject(forKey: storageKey)
         }
-        
+
+        guard let user else { return }
+
         currentUser = user
         isAuthenticated = true
-        
+
         // Verify credential is still valid
         checkCredentialState()
     }
-    
+
     private func saveUser(_ user: User) {
-        guard let data = try? JSONEncoder().encode(user) else { return }
-        UserDefaults.standard.set(data, forKey: userDefaultsKey)
+        KeychainStore.save(user, forKey: storageKey)
     }
 }
 

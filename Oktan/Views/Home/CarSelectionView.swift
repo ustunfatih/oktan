@@ -140,7 +140,7 @@ struct CarConfirmationView: View {
         _tankCapacity = State(initialValue: model.tankCapacity)
     }
     
-    // MARK: - Body (Bible Compliant)
+    // MARK: - Body
     // Removed: fixed frame sizes, numeric padding, fixed font sizes
 
     var body: some View {
@@ -210,7 +210,7 @@ struct CarConfirmationView: View {
                 }
             } else {
                 Image(systemName: "car.fill")
-                    .font(.largeTitle) // System font - Bible compliant
+                    .font(.largeTitle)
                     .foregroundStyle(.tertiary)
             }
         }

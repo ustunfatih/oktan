@@ -16,7 +16,7 @@ struct ProfileView: View {
         .listStyle(.insetGrouped)
     }
     
-    // MARK: - Authenticated Sections (Bible Compliant)
+    // MARK: - Authenticated Sections
     // Removed: LinearGradient, fixed frame dimensions
 
     @ViewBuilder
@@ -72,7 +72,7 @@ struct ProfileView: View {
         }
     }
     
-    // MARK: - Unauthenticated Sections (Bible Compliant)
+    // MARK: - Unauthenticated Sections
     // Removed: fixed font size .system(size: 60)
 
     @ViewBuilder
@@ -81,7 +81,7 @@ struct ProfileView: View {
         Section {
             VStack {
                 Image(systemName: "person.circle.fill")
-                    .font(.largeTitle) // System font - Bible compliant
+                    .font(.largeTitle)
                     .foregroundStyle(.tint)
 
                 Text("Sign in to Oktan")
@@ -93,7 +93,7 @@ struct ProfileView: View {
                     .multilineTextAlignment(.center)
             }
             .frame(maxWidth: .infinity)
-            .padding() // No numeric value - Bible compliant
+            .padding()
         }
         .listRowBackground(Color.clear)
         
@@ -156,7 +156,7 @@ struct ProfileView: View {
             }
         } icon: {
             Image(systemName: icon)
-                .foregroundStyle(.tint) // System tint - Bible compliant
+                .foregroundStyle(.tint)
         }
     }
 }

@@ -171,7 +171,7 @@ struct HomeView: View {
         Button(action: { isPresentingCarSelection = true }) {
             VStack {
                 Image(systemName: "car.badge.gearshape")
-                    .font(.largeTitle) // System font size - Bible compliant
+                    .font(.largeTitle)
                     .foregroundStyle(.tint)
 
                 Text("Add Your Car")
@@ -182,15 +182,14 @@ struct HomeView: View {
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
             }
-            .padding() // No numeric value - Bible compliant
+            .padding()
             .frame(maxWidth: .infinity)
             .background(.ultraThinMaterial)
         }
         .accessibilityIdentifier("add-car-button")
     }
     
-    // MARK: - Hero Card (Bible Compliant)
-    // Removed: custom gradients, custom shapes, fixed font sizes, custom opacity
+    // MARK: - Hero Card
 
     private var heroCard: some View {
         VStack(alignment: .leading) {
@@ -310,7 +309,7 @@ struct HomeView: View {
                 Text("Start tracking your fuel consumption")
             }
         } else {
-            ForEach(repository.entries.sorted(by: { $0.date > $1.date }).prefix(3)) { entry in
+            ForEach(repository.entries.suffix(3).reversed()) { entry in
                 RecentEntryRow(entry: entry, settings: settings)
             }
         }

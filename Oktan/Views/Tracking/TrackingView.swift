@@ -7,6 +7,35 @@ struct TrackingView: View {
     @State private var isPresentingForm = false
     @State private var entryToEdit: FuelEntry?
 
+    private struct MonthSection {
+        let title: String
+        let entries: [FuelEntry]
+    }
+
+    /// Entries grouped by month, newest first. Repository entries are kept
+    /// sorted ascending, so a single reverse pass avoids re-sorting per render.
+    private var monthlySections: [MonthSection] {
+        var sections: [MonthSection] = []
+        var currentTitle = ""
+        var currentEntries: [FuelEntry] = []
+
+        for entry in repository.entries.reversed() {
+            let title = entry.date.formatted(.dateTime.month(.wide).year())
+            if title != currentTitle {
+                if !currentEntries.isEmpty {
+                    sections.append(MonthSection(title: currentTitle, entries: currentEntries))
+                }
+                currentTitle = title
+                currentEntries = []
+            }
+            currentEntries.append(entry)
+        }
+        if !currentEntries.isEmpty {
+            sections.append(MonthSection(title: currentTitle, entries: currentEntries))
+        }
+        return sections
+    }
+
     var body: some View {
         ListShell(title: "Tracking") {
             // Header Section
@@ -16,26 +45,32 @@ struct TrackingView: View {
                     .foregroundStyle(.secondary)
             }
             
-            // Entries Section
-            Section {
-                if repository.entries.isEmpty {
+            // Entries, newest first, grouped by month
+            if repository.entries.isEmpty {
+                Section {
                     ContentUnavailableView {
                         Label("No Entries Yet", systemImage: "fuelpump")
                     } description: {
                         Text("Tap Add Fill-up to start tracking your fuel efficiency.")
                     }
-                } else {
-                    ForEach(repository.entries.sorted(by: { $0.date > $1.date })) { entry in
-                        FuelEntryRow(
-                            entry: entry,
-                            settings: settings,
-                            onEdit: { entryToEdit = entry },
-                            onDelete: { repository.delete(entry) }
-                        )
+                } header: {
+                    Text("Recent fill-ups")
+                }
+            } else {
+                ForEach(monthlySections, id: \.title) { section in
+                    Section {
+                        ForEach(section.entries) { entry in
+                            FuelEntryRow(
+                                entry: entry,
+                                settings: settings,
+                                onEdit: { entryToEdit = entry },
+                                onDelete: { repository.delete(entry) }
+                            )
+                        }
+                    } header: {
+                        Text(section.title)
                     }
                 }
-            } header: {
-                Text("Recent fill-ups")
             }
         }
         .listStyle(.insetGrouped)

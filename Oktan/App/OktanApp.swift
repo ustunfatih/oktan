@@ -102,10 +102,13 @@ struct OktanApp: App {
                 
                 // Check credential state on app launch
                 authManager.checkCredentialState()
-                
-                // Dismiss splash after startup tasks complete
-                try? await Task.sleep(for: .seconds(5.0))
-                showSplash = false
+
+                // Dismiss splash once startup work is done, keeping a brief
+                // brand moment instead of a fixed multi-second delay.
+                try? await Task.sleep(for: .seconds(1.5))
+                withAnimation {
+                    showSplash = false
+                }
             }
             .onChange(of: scenePhase) { _, newPhase in
                 if newPhase == .active {
@@ -140,10 +143,3 @@ struct OktanApp: App {
         isInitialized = true
     }
 }
-
-// MARK: - Main Tab View (DEPRECATED - Use RootScaffold instead)
-// This is kept for reference but RootScaffold is now the primary tab container.
-// RootScaffold provides:
-// - @SceneStorage for tab persistence (Bible Article VI compliance)
-// - No color overrides (Bible Article III compliance)
-// - Navigation path persistence for each tab

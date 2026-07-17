@@ -193,8 +193,8 @@ final class CalculationAccuracyTests: XCTestCase {
         let distance = odometerEnd - odometerStart // 357 km
         XCTAssertEqual(distance, 357.0, accuracy: 0.01)
         
-        let lPer100 = (totalLiters / distance) * 100 // 11.928...
-        XCTAssertEqual(lPer100, 11.928, accuracy: 0.001)
+        let lPer100 = (totalLiters / distance) * 100 // 11.9244...
+        XCTAssertEqual(lPer100, 11.9244, accuracy: 0.001)
         
         let totalCost = totalLiters * pricePerLiter // 85.14
         XCTAssertEqual(totalCost, 85.14, accuracy: 0.001)

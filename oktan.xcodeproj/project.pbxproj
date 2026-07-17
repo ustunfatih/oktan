@@ -51,6 +51,7 @@
 		BC6126FF2EECAB780025A96B /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		BC6127012EECAB780025A96B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		BC61272A2EECBBEF0025A96B /* OktanWidgetsExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = OktanWidgetsExtension.entitlements; sourceTree = "<group>"; };
+		BCADD5EC2EEDA10000000001 /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Secrets.xcconfig; path = Config/Secrets.xcconfig; sourceTree = "<group>"; };
 		BCA4F6202EEC9530002504C6 /* oktanTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = oktanTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -140,6 +141,7 @@
 		BC5E9A8C2EE9D52800489193 = {
 			isa = PBXGroup;
 			children = (
+				BCADD5EC2EEDA10000000001 /* Secrets.xcconfig */,
 				BC61272A2EECBBEF0025A96B /* OktanWidgetsExtension.entitlements */,
 				BC5E9A972EE9D52800489193 /* oktan */,
 				BCA4F6212EEC9530002504C6 /* oktanTests */,
@@ -353,6 +355,7 @@
 /* Begin XCBuildConfiguration section */
 		BC5E9A9E2EE9D52900489193 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BCADD5EC2EEDA10000000001 /* Secrets.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -417,6 +420,7 @@
 		};
 		BC5E9A9F2EE9D52900489193 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BCADD5EC2EEDA10000000001 /* Secrets.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -483,7 +487,7 @@
 				DEVELOPMENT_TEAM = 23BJ9QDJAH;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_FILE = oktan/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -516,7 +520,7 @@
 				DEVELOPMENT_TEAM = 23BJ9QDJAH;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_FILE = oktan/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -689,7 +693,7 @@
 			repositoryURL = "https://github.com/RevenueCat/purchases-ios-spm.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 5.50.1;
+				minimumVersion = 5.81.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
