@@ -20,7 +20,18 @@ Progress log:
   are off. The Worker also verifies the Access JWT, audience and email on every `/api` call.
 - 24 Oct — **Phase 2 ✅ done.** Key loaded. You confirmed live data on the phone. Local dev reads the Oktan DEV
   sheet with identical numbers (23 fill-ups, 8,761 km, 9.29 L/100 km, QAR 0.188/km). Secrets and build
-  output are git-ignored. Next: commit phase 2, then phase 3 (Dashboard).
+  output are git-ignored. Committed as `42f2f63`.
+- 24 Oct — **Phase 3 (Dashboard) deployed** in the Instrument Cluster theme (your default for now).
+  - `/api/data` reads the Data, Fuel Prices and Settings tabs in one request, cached for 30 s; the refresh
+    button skips the cache.
+  - `/api/woqod` fetches WOQOD's prices, cached for 6 h.
+  - Dashboard: gauge, 6 figures, tappable efficiency trend, tappable monthly spend, WOQOD price card,
+    recent fill-ups, next fill-up estimate.
+  - Phone layout with a bottom tab bar; a "sign-in expired" state.
+  - Charts are hand-drawn SVG instead of ECharts: far lighter, and they match the mockups exactly.
+  - 20 unit tests. Checked in the browser at desktop and phone sizes.
+  - Not yet confirmed: whether WOQOD answers Cloudflare's servers (the price card says so if not).
+  - Uncommitted.
 
 What you've decided so far:
 

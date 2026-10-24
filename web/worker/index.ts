@@ -2,28 +2,35 @@ import { Hono } from "hono";
 import { requireAccess } from "./access";
 import { LIVE_SHEET_ID, type Env } from "./env";
 import { GoogleAuthError } from "./google";
-import { getValues, SheetsApiError } from "./sheets";
-import { lastClosedEntry, latestEntry, summarize } from "../shared/metrics";
-import { parseEntries, SheetLayoutError } from "../shared/parse";
-import type { SummaryResponse } from "../shared/types";
+import { readWorkbook, SheetsApiError } from "./sheets";
+import { fetchWoqod } from "./woqod";
+import { parseEntries, parsePrices, parseSettings, SheetLayoutError } from "../shared/parse";
+import type { DataResponse } from "../shared/types";
 
 const app = new Hono<{ Bindings: Env; Variables: { email: string } }>();
 
 app.use("/api/*", requireAccess);
+app.use("/api/*", async (c, next) => {
+  await next();
+  c.header("cache-control", "no-store");
+});
 
 app.get("/api/me", (c) => c.json({ email: c.get("email") }));
 
-app.get("/api/summary", async (c) => {
-  const entries = parseEntries(await getValues(c.env, "Data!A1:P"));
-  const body: SummaryResponse = {
+app.get("/api/data", async (c) => {
+  const wb = await readWorkbook(c.env, c.req.query("fresh") === "1");
+  const body: DataResponse = {
     email: c.get("email"),
     sheet: c.env.SHEET_ID === LIVE_SHEET_ID ? "live" : "dev",
-    summary: summarize(entries),
-    latest: latestEntry(entries),
-    lastClosed: lastClosedEntry(entries),
+    fetchedAt: wb.fetchedAt,
+    entries: parseEntries(wb.data),
+    prices: parsePrices(wb.prices),
+    settings: parseSettings(wb.settings),
   };
   return c.json(body);
 });
+
+app.get("/api/woqod", async (c) => c.json(await fetchWoqod(c.req.query("fresh") === "1")));
 
 app.notFound((c) => c.json({ error: "Not found" }, 404));
 

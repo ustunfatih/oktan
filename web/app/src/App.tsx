@@ -1,117 +1,93 @@
-import { useEffect, useState } from "react";
-import type { SummaryResponse } from "../../shared/types";
-import { fmt, fmtDate, qar } from "./format";
+import { useEffect, useState, type ComponentType } from "react";
+import { DataProvider, useData } from "./data";
+import { fmt, fmtAgo } from "./format";
+import { BarsIcon, DropIcon, GaugeIcon, GearIcon, PlusIcon, RefreshIcon } from "./icons";
+import { Dashboard } from "./pages/Dashboard";
+import { ComingSoon } from "./pages/ComingSoon";
+import { Link, RouterProvider, useRouter, type Route } from "./router";
 
-type State =
-  | { status: "loading" }
-  | { status: "error"; message: string; detail?: string }
-  | { status: "ready"; data: SummaryResponse };
-
-const firstName = (email: string) => (email.startsWith("ustunfa@") ? "Fatih" : email.split("@")[0]);
+const TABS: { to: Route; label: string; icon: ComponentType }[] = [
+  { to: "/", label: "Dashboard", icon: GaugeIcon },
+  { to: "/analytics", label: "Analytics", icon: BarsIcon },
+  { to: "/log", label: "Log fill-up", icon: PlusIcon },
+];
 
 export function App() {
-  const [state, setState] = useState<State>({ status: "loading" });
+  return (
+    <RouterProvider>
+      <DataProvider>
+        <Shell />
+      </DataProvider>
+    </RouterProvider>
+  );
+}
 
-  useEffect(() => {
-    fetch("/api/summary")
-      .then(async (res) => {
-        const body = await res.json();
-        if (!res.ok) setState({ status: "error", message: body.error ?? `Error ${res.status}`, detail: body.detail });
-        else setState({ status: "ready", data: body as SummaryResponse });
-      })
-      .catch((e: unknown) => setState({ status: "error", message: "Could not reach the server", detail: String(e) }));
-  }, []);
-
+function Shell() {
+  const { route } = useRouter();
   return (
     <div className="shell">
-      <header className="bar">
-        <span className="logo">
-          <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 2C12 2 5 10 5 14.5a7 7 0 0 0 14 0C19 10 12 2 12 2Z" fill="none" stroke="currentColor" strokeWidth="2" />
-          </svg>
-          OKTAN
-        </span>
-        {state.status === "ready" && <span className="chip">{state.data.sheet === "live" ? "LIVE SHEET" : "DEV SHEET"}</span>}
-      </header>
-
-      <main className="content">
-        {state.status === "loading" && <p className="muted">Reading your sheet…</p>}
-
-        {state.status === "error" && (
-          <section className="card error" role="alert">
-            <h1>{state.message}</h1>
-            {state.detail && <p className="muted mono">{state.detail}</p>}
-          </section>
-        )}
-
-        {state.status === "ready" && <Ready data={state.data} />}
+      <TopBar />
+      <main className="page">
+        {route === "/" && <Dashboard />}
+        {route === "/analytics" && <ComingSoon title="Analytics" phase="phase 4" />}
+        {route === "/log" && <ComingSoon title="Log fill-up" phase="phase 5" />}
+        {route === "/settings" && <ComingSoon title="Settings" phase="phase 6b" />}
       </main>
+      <nav className="bottom-nav" aria-label="Main">
+        {TABS.map(({ to, label, icon: Icon }) => (
+          <Link key={to} to={to} className="bottom-nav__item">
+            <Icon />
+            <span>{to === "/log" ? "Log" : label}</span>
+          </Link>
+        ))}
+      </nav>
     </div>
   );
 }
 
-function Ready({ data }: { data: SummaryResponse }) {
-  const { summary: s, latest, lastClosed } = data;
+function TopBar() {
+  const { data, loading, refresh } = useData();
+  const [, tick] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => tick((n) => n + 1), 30_000);
+    return () => clearInterval(id);
+  }, []);
+
+  const odometer = data?.entries.at(-1)?.odometer;
+
   return (
-    <>
-      <h1 className="hello">Hello, {firstName(data.email)}</h1>
-      <p className="muted">
-        {s.fillUps} fill-ups · {fmt(s.distanceKm)} km logged
-      </p>
+    <header className="topbar">
+      <Link to="/" className="brand" aria-label="Oktan home">
+        <DropIcon />
+        <span>OKTAN</span>
+      </Link>
 
-      <section className="hero card">
-        <span className="label">Lifetime consumption</span>
-        <span className="big mono">{fmt(s.litersPer100Km, 2)}</span>
-        <span className="label">L / 100 km</span>
-      </section>
+      <nav className="tabs" aria-label="Main">
+        {TABS.map(({ to, label }) => (
+          <Link key={to} to={to} className="tabs__item">
+            {label}
+          </Link>
+        ))}
+      </nav>
 
-      <section className="grid">
-        <Stat label="Cost per km" value={qar(s.costPerKm, 3)} />
-        <Stat label="Total spend" value={qar(s.totalSpend)} />
-        <Stat label="Fuel bought" value={`${fmt(s.totalLiters, 1)} L`} />
-        <Stat label="Km per tank" value={`${fmt(s.avgKmPerTank)} km`} />
-      </section>
-
-      {latest && (
-        <section className="card">
-          <span className="label">Latest fill-up</span>
-          <h2>
-            {fmtDate(latest.date)} · {latest.station ?? "Unknown station"}
-          </h2>
-          <p className="mono">
-            {fmt(latest.liters, 2)} L · {qar(latest.totalCost)} · {fmt(latest.pricePerLiter, 2)}/L ·{" "}
-            {latest.mode ?? "—"}
-          </p>
-          <p className="muted">
-            {latest.distanceKm == null ? `Trip in progress since ${fmt(latest.odometer)} km` : `${fmt(latest.distanceKm)} km`}
-          </p>
-        </section>
-      )}
-
-      {lastClosed && lastClosed.id !== latest?.id && (
-        <section className="card">
-          <span className="label">Last completed trip</span>
-          <h2>
-            {fmtDate(lastClosed.date)} · {fmt(lastClosed.distanceKm)} km
-          </h2>
-          <p className="mono">
-            {fmt(lastClosed.litersPer100Km, 2)} L/100 km · {qar(lastClosed.costPerKm, 3)}/km
-          </p>
-        </section>
-      )}
-
-      <p className="muted small">
-        Signed in as {data.email}. Phase 2 preview: dashboard, analytics and logging come next.
-      </p>
-    </>
-  );
-}
-
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="card stat">
-      <span className="label">{label}</span>
-      <span className="mono value">{value}</span>
-    </div>
+      <div className="topbar__end">
+        {data && (
+          <span className="chip" title={`Read ${new Date(data.fetchedAt).toLocaleString("en-GB")}`}>
+            <span className={`dot ${data.sheet === "live" ? "dot--ok" : "dot--dev"}`} />
+            <span className="chip__long">{data.sheet === "live" ? "SHEET" : "DEV SHEET"} · </span>
+            {loading ? "SYNCING…" : fmtAgo(data.fetchedAt).toUpperCase()}
+          </span>
+        )}
+        {odometer != null && <span className="chip chip__long">ODO {fmt(odometer)} KM</span>}
+        <button type="button" className="icon-btn" onClick={refresh} disabled={loading} aria-label="Refresh from the sheet">
+          <span className={loading ? "spin" : undefined}>
+            <RefreshIcon />
+          </span>
+        </button>
+        <Link to="/settings" className="icon-btn" aria-label="Settings">
+          <GearIcon />
+        </Link>
+      </div>
+    </header>
   );
 }

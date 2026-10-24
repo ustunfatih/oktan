@@ -6,6 +6,7 @@
     "dev": "vite",
     "dev:worker": "wrangler dev --port 8787 --local-upstream localhost",
     "build": "vite build",
+    "preview": "vite build && wrangler dev --port 8787 --local-upstream localhost",
     "typecheck": "tsc -p tsconfig.app.json --noEmit && tsc -p tsconfig.worker.json --noEmit",
     "test": "vitest run",
     "deploy": "npm run build && wrangler deploy",

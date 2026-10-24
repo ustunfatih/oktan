@@ -1,4 +1,4 @@
-import type { Entry } from "./types";
+import type { Entry, MonthPrice, Settings } from "./types";
 
 /**
  * The Data tab's columns A–P, in order. Matching is whitespace- and case-insensitive,
@@ -81,4 +81,47 @@ export function parseEntries(values: Cell[][]): Entry[] {
     });
   });
   return entries;
+}
+
+/** The Fuel Prices tab's B:D block (header "Month, Price, Source" included). Rows without a month are skipped. */
+export function parsePrices(values: Cell[][]): MonthPrice[] {
+  return values.slice(1).flatMap((r) => {
+    const serial = num(r[0]);
+    if (serial === null) return [];
+    return [{ month: serialToIsoDate(serial).slice(0, 7), price: num(r[1]), source: text(r[2]) }];
+  });
+}
+
+const SETTING_KEYS: Record<string, keyof Omit<Settings, "stations" | "modes">> = {
+  theme: "theme",
+  "fuel grade": "fuelGrade",
+  "tank capacity (l)": "tankCapacityL",
+  "default drive mode": "defaultMode",
+  currency: "currency",
+};
+
+export const DEFAULT_SETTINGS: Settings = {
+  theme: "auto",
+  fuelGrade: "Super 95",
+  tankCapacityL: 47,
+  defaultMode: "Eco",
+  currency: "QAR",
+  stations: [],
+  modes: ["Eco", "Normal", "Sport"],
+};
+
+/** The Settings tab's A:G block: key/value pairs in A:B, stations in E, drive modes in G. */
+export function parseSettings(values: Cell[][]): Settings {
+  const s: Settings = { ...DEFAULT_SETTINGS, stations: [], modes: [] };
+  for (const r of values.slice(1)) {
+    const key = SETTING_KEYS[normalize(r[0])];
+    if (key === "tankCapacityL") s.tankCapacityL = num(r[1]) ?? DEFAULT_SETTINGS.tankCapacityL;
+    else if (key) s[key] = text(r[1]) ?? DEFAULT_SETTINGS[key];
+    const station = text(r[4]);
+    if (station) s.stations.push(station);
+    const mode = text(r[6]);
+    if (mode) s.modes.push(mode);
+  }
+  if (!s.modes.length) s.modes = [...DEFAULT_SETTINGS.modes];
+  return s;
 }

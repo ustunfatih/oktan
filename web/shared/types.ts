@@ -25,6 +25,48 @@ export interface Entry {
   costPerKm: number | null;
 }
 
+/** One row of the Fuel Prices tab. */
+export interface MonthPrice {
+  /** YYYY-MM */
+  month: string;
+  price: number | null;
+  /** "WOQOD", "Manual" or "Sheet"; null when not recorded. */
+  source: string | null;
+}
+
+/** The Settings tab. */
+export interface Settings {
+  theme: string;
+  fuelGrade: string;
+  tankCapacityL: number;
+  defaultMode: string;
+  currency: string;
+  stations: string[];
+  modes: string[];
+}
+
+export interface DataResponse {
+  email: string;
+  sheet: "live" | "dev";
+  /** ISO timestamp of the sheet read (may be up to the cache TTL old). */
+  fetchedAt: string;
+  entries: Entry[];
+  prices: MonthPrice[];
+  settings: Settings;
+}
+
+export interface WoqodPrice {
+  /** e.g. "Gasoline Super (95)" */
+  grade: string;
+  price: number;
+  /** YYYY-MM the price applies to */
+  month: string;
+}
+
+export type WoqodResponse =
+  | { ok: true; prices: WoqodPrice[]; fetchedAt: string }
+  | { ok: false; error: string };
+
 export interface Summary {
   fillUps: number;
   closedTrips: number;
@@ -35,12 +77,4 @@ export interface Summary {
   litersPer100Km: number | null;
   costPerKm: number | null;
   avgKmPerTank: number | null;
-}
-
-export interface SummaryResponse {
-  email: string;
-  sheet: "live" | "dev";
-  summary: Summary;
-  latest: Entry | null;
-  lastClosed: Entry | null;
 }
