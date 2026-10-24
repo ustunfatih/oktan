@@ -93,7 +93,7 @@ Progress log:
   - **Tested:** 64 unit tests, typecheck, colour-contrast check of every text/background pair in all 5 themes,
     screenshots of each theme at desktop and phone size, an overflow sweep of every page at 375 px in all 5 themes.
   - Committed as `a7a22c9`.
-- 24 Oct — **Phase 8 (hardening) deployed** (version `26090273`, uncommitted).
+- 24 Oct — **Phase 8 (hardening) deployed** (version `26090273`), committed as `80331c8`.
   - **Google quota:** a 429 is retried up to 3 times (about 6 s, honouring Retry-After). Read errors from Google
     (5xx) are retried too; write errors are not, because the write may have landed. A rejected access token is
     dropped and fetched again once.
