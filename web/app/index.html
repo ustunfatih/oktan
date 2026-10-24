@@ -7,12 +7,30 @@
     <meta name="robots" content="noindex, nofollow" />
     <title>Oktan</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <!-- Home-screen app. use-credentials: the manifest is behind Cloudflare Access too. -->
+    <link rel="manifest" href="/manifest.webmanifest" crossorigin="use-credentials" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Oktan" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
+      id="theme-fonts"
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
     />
+    <script>
+      // Apply the last theme before the first paint (the app re-checks it once the sheet is read).
+      try {
+        var t = JSON.parse(localStorage.getItem("oktan:theme-applied") || "null");
+        if (t && t.theme) {
+          document.documentElement.dataset.theme = t.theme;
+          document.getElementById("theme-fonts").href = t.href;
+        }
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <div id="root"></div>

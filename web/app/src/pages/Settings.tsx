@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { FUEL_GRADES, THEMES, usageCount, type SettingsPatch, type StationEdit } from "../../../shared/settings";
+import { AUTO_THEMES, FUEL_GRADES, THEMES, usageCount, type SettingsPatch, type StationEdit, type ThemeInfo } from "../../../shared/settings";
 import type { DataResponse, Entry, SettingsWriteResponse } from "../../../shared/types";
 import { api, useData, type WriteError } from "../data";
 import { fmtAgo, fmtDate } from "../format";
@@ -78,7 +78,18 @@ function SettingsView({ data }: { data: DataResponse }) {
 function ThemeSection({ data, onSave }: { data: DataResponse; onSave: (theme: string) => Promise<boolean> }) {
   const [device, setDevice] = useState(readDeviceTheme);
   const [busy, setBusy] = useState(false);
-  const options = [{ id: "auto", name: "Auto", swatches: THEMES[0]!.swatches, fonts: "Follows the default for now", available: true }, ...THEMES];
+  const cluster = THEMES.find((t) => t.id === AUTO_THEMES.dark)!;
+  const fintech = THEMES.find((t) => t.id === AUTO_THEMES.light)!;
+  const options = [
+    {
+      id: "auto",
+      name: "Auto",
+      swatches: [cluster.swatches[0], cluster.swatches[2], fintech.swatches[0], fintech.swatches[2]] as ThemeInfo["swatches"],
+      fonts: `${cluster.name} when your phone is dark, ${fintech.name} when light`,
+      available: true,
+    },
+    ...THEMES,
+  ];
 
   return (
     <section className="panel">
@@ -107,7 +118,7 @@ function ThemeSection({ data, onSave }: { data: DataResponse; onSave: (theme: st
               ))}
             </span>
             <span className="theme-card__name">{t.name}</span>
-            <span className="theme-card__note">{t.available ? t.fonts : "Arrives in phase 7"}</span>
+            <span className="theme-card__note">{t.fonts}</span>
           </button>
         ))}
       </div>
@@ -123,6 +134,7 @@ function ThemeSection({ data, onSave }: { data: DataResponse; onSave: (theme: st
           }}
         >
           <option value="">Same as everywhere</option>
+          <option value="auto">Auto (dark/light)</option>
           {THEMES.filter((t) => t.available).map((t) => (
             <option key={t.id} value={t.id}>
               {t.name}
@@ -166,7 +178,7 @@ function CarSection({ data, onSave }: { data: DataResponse; onSave: (p: Settings
           {!tankValid && <span className="field__err">Between 20 and 150 L.</span>}
           {tankValid && tankNum !== s.tankCapacityL && <span className="field__warn">The sheet recalculates fuel used and L/100 km for every past fill-up with the new size.</span>}
         </label>
-        <fieldset className="field">
+        <fieldset className="field field--row-phone">
           <legend className="field__label">Fuel grade · for WOQOD prices</legend>
           <div className="seg seg--wide">
             {FUEL_GRADES.map((g) => (
@@ -176,7 +188,7 @@ function CarSection({ data, onSave }: { data: DataResponse; onSave: (p: Settings
             ))}
           </div>
         </fieldset>
-        <fieldset className="field">
+        <fieldset className="field field--row-phone">
           <legend className="field__label">Default drive mode · Log form</legend>
           <div className="seg seg--wide">
             {s.modes.map((m) => (
@@ -406,6 +418,8 @@ function DataSection({ data }: { data: DataResponse }) {
           <dd>{data.email}</dd>
           <dt>Protected by</dt>
           <dd>Cloudflare Access · Google sign-in</dd>
+          <dt>Home screen</dt>
+          <dd>iPhone: Safari → Share → Add to Home Screen. You'll sign in with Google once inside the app.</dd>
         </dl>
         <div className="form-actions form-actions--start">
           <a className="btn btn--ghost" href="/cdn-cgi/access/logout">

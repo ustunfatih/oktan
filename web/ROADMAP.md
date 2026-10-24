@@ -78,6 +78,20 @@ Progress log:
     past fill-ups", which does an exact-match find-and-replace in the Data tab in the same atomic update.
   - **Data & sync:** sheet link, last read, refresh, CSV export, Fuel prices shortcut, test-mode switch.
   - **Account:** signed-in email, sign out.
+  - Committed as `b5b1bea`.
+- 24 Oct — **Phase 7 (themes and home-screen app) deployed** (version `cfab78f2`, uncommitted).
+  - **All 5 themes work:** Instrument Cluster, Swiss Ledger, Doha Editorial, Soft Fintech and Pump Brutalist.
+    Each is a set of colour, font, border and shadow tokens, plus a few signature details (cluster glow,
+    Doha serif headings, brutalist hard shadows and yellow efficiency block). Only the active theme's fonts load.
+  - **Auto** (the default, D4): Instrument Cluster when the phone is in dark mode, Soft Fintech in light mode.
+    It follows the phone live. The sheet's choice applies everywhere, and "On this device" overrides it per device.
+  - **No flash:** the last theme is applied before the first paint, and the browser bar colour follows the theme.
+  - **Home-screen app:** manifest, icons (amber drop), apple-touch-icon and a service worker. The worker caches
+    the app shell only, never `/api`, so data is always read live. Everything, the manifest included, stays
+    behind the Google login.
+  - **Fixed:** the fuel-grade and drive-mode pickers in Settings overflowed at phone width. They now take the full row.
+  - **Tested:** 64 unit tests, typecheck, colour-contrast check of every text/background pair in all 5 themes,
+    screenshots of each theme at desktop and phone size, an overflow sweep of every page at 375 px in all 5 themes.
   - **Tested:** 64 unit tests; an 11-step API run on the DEV sheet (tank size flows into the sheet's
     formulas; invalid grade refused; add/archive/reorder; rename refused without history and applied with
     it; deleting a used station refused; full restore); the screen at desktop and phone sizes.

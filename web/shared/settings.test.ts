@@ -8,10 +8,12 @@ const current = ["Pearl", "Dafna", "Fox Hills", "Onaiza"].map((name) => ({ name,
 const edits = (): StationEdit[] => current.map((s) => ({ ...s, original: s.name }));
 
 describe("resolveTheme", () => {
-  it("prefers the device, falls back to Cluster for auto or unfinished themes", () => {
-    expect(resolveTheme("auto", null)).toBe("cluster");
-    expect(resolveTheme("swiss", null)).toBe("cluster");
-    expect(resolveTheme("swiss", "cluster")).toBe("cluster");
+  it("prefers the device, follows dark/light for auto, falls back to Cluster", () => {
+    expect(resolveTheme("auto", null, true)).toBe("cluster");
+    expect(resolveTheme("auto", null, false)).toBe("fintech");
+    expect(resolveTheme("swiss", null)).toBe("swiss");
+    expect(resolveTheme("swiss", "doha")).toBe("doha");
+    expect(resolveTheme("neon", null)).toBe("cluster");
   });
 });
 
