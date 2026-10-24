@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Oktan · Swiss Ledger · Dashboard</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;800&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFFFFF}
+a{color:#111111}a:hover{color:#E30613}
+</style>
+</helmet>
+<div style="min-height: 1240px; background: #FFFFFF; color: #111111; font-family: 'Inter Tight', 'Helvetica Neue', Arial, sans-serif; font-variant-numeric: tabular-nums">
+  <div style="max-width: 1360px; margin: 0 auto; padding: 0 40px 48px">
+    <header style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px; padding: 32px 0 16px; border-bottom: 4px solid #111111">
+      <div style="display: flex; align-items: baseline; gap: 20px; flex-wrap: wrap">
+        <span style="font-size: 44px; font-weight: 800; letter-spacing: -0.04em; line-height: 1">Oktan</span>
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #555555">Fuel ledger — Doha — Super 95</span>
+      </div>
+      <nav aria-label="Main" style="display: flex; gap: 28px; font-size: 17px; font-weight: 600">
+        <a href="S2-Dashboard.dc.html" aria-current="page" style="text-decoration: none; padding: 10px 0; border-bottom: 3px solid #E30613; color: #111111"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #E30613; margin-right: 6px">01</span>Overview</a>
+        <a href="S2-Analytics.dc.html" style="text-decoration: none; padding: 10px 0; color: #111111"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #555555; margin-right: 6px">02</span>Analysis</a>
+        <a href="S2-Log.dc.html" style="text-decoration: none; padding: 10px 0; color: #111111"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #555555; margin-right: 6px">03</span>Log</a>
+      </nav>
+    </header>
+
+    <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; padding: 10px 0; border-bottom: 1px solid #111111; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #555555">
+      <span>Updated 24.10.2026 09:28 from Google Sheets</span>
+      <span>16.04.2025 – 21.10.2026 · 23 entries</span>
+    </div>
+
+    <section style="display: flex; flex-wrap: wrap; gap: 0; border-bottom: 1px solid #111111">
+      <div style="flex: 3 1 560px; padding: 36px 40px 36px 0; display: flex; flex-direction: column; justify-content: space-between; gap: 16px">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #555555">A — Fuel consumption, lifetime</div>
+        <div style="display: flex; align-items: flex-end; gap: 20px; flex-wrap: wrap">
+          <span style="font-size: 220px; font-weight: 800; letter-spacing: -0.06em; line-height: 0.82">9.29</span>
+          <span style="font-size: 22px; font-weight: 500; line-height: 1.2; padding-bottom: 14px">litres per<br>100 km</span>
+        </div>
+        <div style="font-size: 18px; line-height: 1.45; max-width: 560px">That is 10.8 km per litre. The last trip came in at <b>9.21</b>; the last five average <b>9.49</b>.</div>
+      </div>
+      <div style="flex: 2 1 360px; border-left: 1px solid #111111; display: flex; flex-direction: column">
+        <div style="padding: 20px 0 20px 28px; border-bottom: 1px solid #DDDDDD">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #555555">B — Cost per km</div>
+          <div style="font-size: 48px; font-weight: 800; letter-spacing: -0.03em; margin-top: 4px">QAR 0.188</div>
+        </div>
+        <div style="padding: 20px 0 20px 28px; border-bottom: 1px solid #DDDDDD">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #555555">C — Spent in 2026</div>
+          <div style="font-size: 48px; font-weight: 800; letter-spacing: -0.03em; margin-top: 4px">QAR 1,052.51</div>
+        </div>
+        <div style="padding: 20px 0 20px 28px; border-bottom: 1px solid #DDDDDD">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #555555">D — Distance logged</div>
+          <div style="font-size: 48px; font-weight: 800; letter-spacing: -0.03em; margin-top: 4px">8,761 km</div>
+        </div>
+        <div style="padding: 20px 0 20px 28px">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #555555">E — Next fill-up, estimated</div>
+          <div style="font-size: 48px; font-weight: 800; letter-spacing: -0.03em; margin-top: 4px; color: #E30613">15.11.2026</div>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding: 28px 0; border-bottom: 1px solid #111111">
+      <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px">
+        <h2 style="margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.02em">F — L/100 km, each tank</h2>
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #555555">— trip · - - average 9.29 · ● latest</span>
+      </div>
+      <svg viewBox="0 0 640 220" role="img" aria-label="Line chart of L/100 km for 22 trips between 8.23 and 10.25" style="width: 100%; height: auto; display: block; margin-top: 16px">
+        <line x1="40" x2="630" y1="196" y2="196" stroke="#111111" style="stroke-width: 1"></line>
+        <line x1="40" x2="630" y1="124" y2="124" stroke="#DDDDDD" style="stroke-width: 0.5"></line>
+        <line x1="40" x2="630" y1="52" y2="52" stroke="#DDDDDD" style="stroke-width: 0.5"></line>
+        <text x="8" y="127" fill="#555555" style="font-size: 8px; font-family: 'IBM Plex Mono', monospace">9.0</text>
+        <text x="4" y="55" fill="#555555" style="font-size: 8px; font-family: 'IBM Plex Mono', monospace">10.0</text>
+        <line x1="40" x2="630" y1="103.1" y2="103.1" stroke="#111111" style="stroke-width: 0.75; stroke-dasharray: 3 3"></line>
+        <path d="M40 128.3 L68.1 155 L96.2 106 L124.3 145.6 L152.4 130.5 L180.5 34 L208.6 58.5 L236.7 121.1 L264.8 82.2 L292.9 91.6 L321 179.4 L349 105.3 L377.1 116.1 L405.2 88.7 L433.3 113.2 L461.4 75.8 L489.5 86.6 L517.6 62.1 L545.7 99.5 L573.8 106 L601.9 67.8 L630 108.9" fill="none" stroke="#111111" style="stroke-width: 1.5"></path>
+        <circle cx="630" cy="108.9" r="4" fill="#E30613"></circle>
+        <text x="186" y="32" fill="#111111" style="font-size: 8px; font-family: 'IBM Plex Mono', monospace">10.25 Jul 25 (Sport)</text>
+        <text x="327" y="186" fill="#111111" style="font-size: 8px; font-family: 'IBM Plex Mono', monospace">8.23 Dec 25</text>
+        <text x="40" y="210" fill="#555555" style="font-size: 8px; font-family: 'IBM Plex Mono', monospace">04.2025</text>
+        <text x="320" y="210" fill="#555555" style="font-size: 8px; font-family: 'IBM Plex Mono', monospace">12.2025</text>
+        <text x="600" y="210" fill="#555555" style="font-size: 8px; font-family: 'IBM Plex Mono', monospace">09.2026</text>
+      </svg>
+    </section>
+
+    <section style="display: flex; flex-wrap: wrap">
+      <div style="flex: 2 1 460px; min-width: 0; padding: 28px 32px 0 0">
+        <h2 style="margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.02em">G — Spend per month, QAR</h2>
+        <svg viewBox="0 0 640 220" role="img" aria-label="Monthly spend bars, 2026 months in red" style="width: 100%; height: auto; display: block; margin-top: 16px">
+          <line x1="40" x2="630" y1="196" y2="196" stroke="#111111"></line>
+          <line x1="40" x2="630" y1="106" y2="106" stroke="#DDDDDD" style="stroke-width: 0.5"></line>
+          <text x="14" y="109" fill="#555555" style="font-size: 9px; font-family: 'IBM Plex Mono', monospace">100</text>
+          <rect x="45.9" y="83.4" width="19.3" height="112.6" fill="#111111"></rect>
+          <rect x="77" y="52" width="19.3" height="144" fill="#111111"></rect>
+          <rect x="139.1" y="45.8" width="19.3" height="150.2" fill="#111111"></rect>
+          <rect x="201.2" y="122.2" width="19.3" height="73.8" fill="#111111"></rect>
+          <rect x="232.2" y="39.4" width="19.3" height="156.6" fill="#111111"></rect>
+          <rect x="263.3" y="113.9" width="19.3" height="82.1" fill="#111111"></rect>
+          <rect x="294.3" y="116.8" width="19.3" height="79.2" fill="#111111"></rect>
+          <rect x="325.4" y="43.3" width="19.3" height="152.7" fill="#E30613"></rect>
+          <rect x="356.4" y="123.1" width="19.3" height="72.9" fill="#E30613"></rect>
+          <rect x="387.5" y="124" width="19.3" height="72" fill="#E30613"></rect>
+          <rect x="418.5" y="118.6" width="19.3" height="77.4" fill="#E30613"></rect>
+          <rect x="480.6" y="34" width="19.3" height="162" fill="#E30613"></rect>
+          <rect x="511.7" y="31.3" width="19.3" height="164.7" fill="#E30613"></rect>
+          <rect x="542.7" y="112.3" width="19.3" height="83.7" fill="#E30613"></rect>
+          <rect x="573.8" y="116.2" width="19.3" height="79.8" fill="#E30613"></rect>
+          <rect x="604.8" y="114.1" width="19.3" height="81.9" fill="#E30613"></rect>
+          <text x="46" y="210" fill="#555555" style="font-size: 9px; font-family: 'IBM Plex Mono', monospace">2025</text>
+          <text x="326" y="210" fill="#E30613" style="font-size: 9px; font-family: 'IBM Plex Mono', monospace">2026</text>
+        </svg>
+      </div>
+
+      <div style="flex: 1 1 280px; padding: 28px 0 0 28px; border-left: 1px solid #111111">
+        <h2 style="margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.02em">H — Pump price</h2>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #555555; margin-top: 4px">WOQOD, October 2026, QAR/L</div>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 18px">
+          <tbody>
+            <tr style="border-top: 2px solid #111111"><td style="padding: 12px 0; font-weight: 600">Super 95</td><td style="padding: 12px 0; text-align: right; font-weight: 800; font-size: 28px; color: #E30613">2.10</td></tr>
+            <tr style="border-top: 1px solid #DDDDDD"><td style="padding: 12px 0">Premium 91</td><td style="padding: 12px 0; text-align: right; font-weight: 600">1.95</td></tr>
+            <tr style="border-top: 1px solid #DDDDDD; border-bottom: 1px solid #DDDDDD"><td style="padding: 12px 0">Diesel</td><td style="padding: 12px 0; text-align: right; font-weight: 600">2.05</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size: 14px; line-height: 1.5; color: #555555; margin: 12px 0 0">Same as September. November is fetched on 01.11.</p>
+      </div>
+    </section>
+
+    <section style="padding: 28px 0 0; margin-top: 28px; border-top: 1px solid #111111">
+      <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px">
+        <h2 style="margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.02em">I — Latest entries</h2>
+        <a href="S2-Analytics.dc.html" style="font-size: 15px; font-weight: 600">All 23 entries →</a>
+      </div>
+      <div style="overflow-x: auto; margin-top: 12px">
+        <table style="width: 100%; border-collapse: collapse; font-size: 15px; min-width: 720px">
+          <thead><tr style="border-bottom: 2px solid #111111; text-align: left; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #555555"><th style="padding: 8px 0; font-weight: 500">Date</th><th style="padding: 8px 0; font-weight: 500">Station</th><th style="padding: 8px 0; font-weight: 500">Mode</th><th style="padding: 8px 0; font-weight: 500; text-align: right">Litres</th><th style="padding: 8px 0; font-weight: 500; text-align: right">QAR</th><th style="padding: 8px 0; font-weight: 500; text-align: right">km</th><th style="padding: 8px 0; font-weight: 500; text-align: right">L/100 km</th></tr></thead>
+          <tbody>
+            <tr style="border-bottom: 1px solid #DDDDDD"><td style="padding: 10px 0">21.10.2026</td><td>Dafna</td><td>Eco</td><td style="text-align: right">43.34</td><td style="text-align: right">91.01</td><td style="text-align: right; color: #555555">open</td><td style="text-align: right; color: #555555">—</td></tr>
+            <tr style="border-bottom: 1px solid #DDDDDD"><td style="padding: 10px 0">10.09.2026</td><td>Dafna</td><td>Eco</td><td style="text-align: right">42.23</td><td style="text-align: right">88.68</td><td style="text-align: right">419</td><td style="text-align: right; font-weight: 600">9.21</td></tr>
+            <tr style="border-bottom: 1px solid #DDDDDD"><td style="padding: 10px 0">22.08.2026</td><td>Pearl</td><td>Eco</td><td style="text-align: right">44.29</td><td style="text-align: right">93.01</td><td style="text-align: right">404</td><td style="text-align: right; font-weight: 600; color: #E30613">9.78</td></tr>
+            <tr style="border-bottom: 1px solid #DDDDDD"><td style="padding: 10px 0">30.07.2026</td><td>Dafna</td><td>Eco</td><td style="text-align: right">42.87</td><td style="text-align: right">90.03</td><td style="text-align: right">434</td><td style="text-align: right; font-weight: 600">9.25</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1240}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

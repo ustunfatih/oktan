@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Oktan · Soft Fintech · Mobile log</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=DM+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4F6FB}
+a{color:#4F46E5}a:hover{color:#3730A3}
+input:focus-visible,button:focus-visible,select:focus-visible{outline:3px solid #A5B4FC;outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 390px; min-height: 1500px; box-sizing: border-box; background: #F4F6FB; color: #0F172A; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; display: flex; flex-direction: column">
+  <header style="padding: 20px 16px 8px">
+    <h1 style="margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.02em">Fuel log</h1>
+    <div role="tablist" aria-label="Log sections" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; margin-top: 12px; background: #E2E8F0; border-radius: 12px; padding: 4px">
+      <sc-for list="{{tabs}}" as="t" hint-placeholder-count="3">
+        <button type="button" role="tab" aria-selected="{{t.on}}" onClick="{{t.pick}}" style="{{t.style}}">{{t.label}}</button>
+      </sc-for>
+    </div>
+  </header>
+
+  <main style="flex: 1; padding: 8px 16px 24px; display: flex; flex-direction: column; gap: 14px">
+    <sc-if value="{{isFill}}" hint-placeholder-val="{{true}}">
+      <form style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 20px; padding: 18px; display: flex; flex-direction: column; gap: 14px">
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+          <div style="display: flex; flex-direction: column; gap: 6px"><label for="m4-date" style="font-size: 13px; font-weight: 600; color: #334155">Date</label><input id="m4-date" type="date" value="2026-10-24" style="min-height: 48px; box-sizing: border-box; padding: 0 10px; border-radius: 12px; border: 1px solid #CBD5E1; font-family: inherit; font-size: 14px; width: 100%"></div>
+          <div style="display: flex; flex-direction: column; gap: 6px"><label for="m4-odo" style="font-size: 13px; font-weight: 600; color: #334155">Odometer (km)</label><input id="m4-odo" type="text" inputmode="numeric" value="9,183" style="min-height: 48px; box-sizing: border-box; padding: 0 12px; border-radius: 12px; border: 1px solid #CBD5E1; font-family: 'DM Mono', monospace; font-size: 16px; width: 100%"></div>
+          <div style="display: flex; flex-direction: column; gap: 6px"><label for="m4-l" style="font-size: 13px; font-weight: 600; color: #334155">Litres</label><input id="m4-l" type="text" inputmode="decimal" value="41.80" style="min-height: 48px; box-sizing: border-box; padding: 0 12px; border-radius: 12px; border: 2px solid #4F46E5; font-family: 'DM Mono', monospace; font-size: 16px; width: 100%"></div>
+          <div style="display: flex; flex-direction: column; gap: 6px"><label for="m4-p" style="font-size: 13px; font-weight: 600; color: #334155">QAR / L</label><input id="m4-p" type="text" inputmode="decimal" value="2.10" style="min-height: 48px; box-sizing: border-box; padding: 0 12px; border-radius: 12px; border: 1px solid #CBD5E1; background: #F8FAFC; font-family: 'DM Mono', monospace; font-size: 16px; width: 100%"></div>
+        </div>
+        <div style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: #4338CA"><span style="width: 6px; height: 6px; border-radius: 50%; background: #4F46E5"></span>Price from WOQOD · Super 95 · Oct 2026</div>
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px; border-radius: 14px; background: #EEF2FF"><span style="font-weight: 600; color: #3730A3">Total</span><span style="font-family: 'DM Mono', monospace; font-size: 22px; color: #3730A3">QAR 87.78</span></div>
+        <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+          <button type="button" aria-pressed="true" style="min-height: 44px; border-radius: 12px; border: 2px solid #10B981; background: #ECFDF5; color: #047857; font-family: inherit; font-weight: 700">Eco</button>
+          <button type="button" style="min-height: 44px; border-radius: 12px; border: 1px solid #CBD5E1; background: #FFFFFF; color: #334155; font-family: inherit; font-weight: 600">Normal</button>
+          <button type="button" style="min-height: 44px; border-radius: 12px; border: 1px solid #CBD5E1; background: #FFFFFF; color: #334155; font-family: inherit; font-weight: 600">Sport</button>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 14px; font-weight: 600; color: #334155">Full tank</span><button type="button" role="switch" aria-checked="true" aria-label="Full tank" style="width: 56px; height: 32px; border-radius: 999px; border: 0; background: #4F46E5; position: relative; padding: 0"><span style="position: absolute; top: 4px; left: 28px; width: 24px; height: 24px; border-radius: 50%; background: #FFFFFF"></span></button></div>
+        <div style="display: flex; gap: 8px; overflow-x: auto"><button type="button" style="flex: none; min-height: 40px; padding: 0 14px; border-radius: 999px; border: 0; background: #EEF2FF; color: #4338CA; font-family: inherit; font-weight: 700">Dafna</button><button type="button" style="flex: none; min-height: 40px; padding: 0 14px; border-radius: 999px; border: 0; background: #F1F5F9; color: #334155; font-family: inherit; font-weight: 600">Pearl</button><button type="button" style="flex: none; min-height: 40px; padding: 0 14px; border-radius: 999px; border: 0; background: #F1F5F9; color: #334155; font-family: inherit; font-weight: 600">Fox Hills</button><button type="button" style="flex: none; min-height: 40px; padding: 0 14px; border-radius: 999px; border: 0; background: #F1F5F9; color: #334155; font-family: inherit; font-weight: 600">+ New</button></div>
+        <div style="display: flex; justify-content: space-between; padding: 12px 14px; border-radius: 14px; background: #0F172A; color: #FFFFFF; font-size: 13px"><span>409 km · 38.14 L</span><b>9.33 L/100 km</b></div>
+        <button type="submit" style="min-height: 54px; border: 0; border-radius: 14px; background: #4F46E5; color: #FFFFFF; font-family: inherit; font-weight: 700; font-size: 16px; box-shadow: 0 6px 18px rgba(79,70,229,0.3)">Save fill-up</button>
+      </form>
+    </sc-if>
+
+    <sc-if value="{{isHist}}" hint-placeholder-val="{{false}}">
+      <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 20px; padding: 6px 14px">
+        <sc-for list="{{entries}}" as="e" hint-placeholder-count="4">
+          <div style="padding: 12px 0; border-bottom: 1px solid #F1F5F9">
+            <div style="display: flex; align-items: center; gap: 10px">
+              <div style="width: 40px; height: 40px; border-radius: 12px; background: #EEF2FF; color: #4338CA; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; flex: none">{{e.day}}</div>
+              <div style="flex: 1; min-width: 0"><div style="font-weight: 700; font-size: 14px">{{e.d}}</div><div style="font-size: 12px; color: #64748B">{{e.sub}}</div></div>
+              <button type="button" aria-label="Edit fill-up" style="width: 44px; height: 44px; border-radius: 12px; border: 0; background: #F1F5F9; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20 L4 16 L15 5 L19 9 L8 20 Z" fill="none" stroke="#334155" style="stroke-width: 2; stroke-linejoin: round"></path></svg></button>
+              <button type="button" aria-label="Delete fill-up" onClick="{{e.ask}}" style="width: 44px; height: 44px; border-radius: 12px; border: 0; background: #FEF2F2; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7 H19 M9 7 V4 H15 V7 M7 7 L8 20 H16 L17 7" fill="none" stroke="#DC2626" style="stroke-width: 2; stroke-linejoin: round"></path></svg></button>
+            </div>
+            <sc-if value="{{e.confirming}}" hint-placeholder-val="{{false}}">
+              <div style="margin-top: 10px; padding: 12px; border-radius: 14px; background: #FEF2F2; font-size: 13px; line-height: 1.5; color: #7F1D1D">{{e.warn}}
+                <div style="display: flex; gap: 8px; margin-top: 10px"><button type="button" onClick="{{e.cancel}}" style="flex: 1; min-height: 44px; border-radius: 12px; border: 1px solid #E2E8F0; background: #FFFFFF; font-family: inherit; font-weight: 600">Cancel</button><button type="button" onClick="{{e.cancel}}" style="flex: 1; min-height: 44px; border-radius: 12px; border: 0; background: #DC2626; color: #FFFFFF; font-family: inherit; font-weight: 700">Delete</button></div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{isPrice}}" hint-placeholder-val="{{false}}">
+      <form style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 20px; padding: 18px; display: flex; flex-direction: column; gap: 12px">
+        <div style="font-size: 16px; font-weight: 700">Set a monthly price</div>
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+          <div style="display: flex; flex-direction: column; gap: 6px"><label for="m4-pm" style="font-size: 13px; font-weight: 600; color: #334155">Month</label><select id="m4-pm" style="min-height: 48px; border-radius: 12px; border: 1px solid #CBD5E1; background: #FFFFFF; font-family: inherit; font-size: 14px; padding: 0 8px"><option>Nov 2026</option><option>Oct 2026</option></select></div>
+          <div style="display: flex; flex-direction: column; gap: 6px"><label for="m4-pp" style="font-size: 13px; font-weight: 600; color: #334155">Super 95 (QAR/L)</label><input id="m4-pp" type="text" inputmode="decimal" placeholder="2.10" style="min-height: 48px; box-sizing: border-box; padding: 0 12px; border-radius: 12px; border: 1px solid #CBD5E1; font-family: 'DM Mono', monospace; font-size: 16px; width: 100%"></div>
+        </div>
+        <button type="submit" style="min-height: 48px; border: 0; border-radius: 12px; background: #4F46E5; color: #FFFFFF; font-family: inherit; font-weight: 700">Save price</button>
+        <div style="font-size: 12px; color: #64748B">Manual prices are locked. The automatic WOQOD update will not replace them.</div>
+      </form>
+      <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 20px; padding: 6px 14px">
+        <sc-for list="{{prices}}" as="p" hint-placeholder-count="5">
+          <div style="display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #F1F5F9">
+            <div style="flex: 1"><div style="font-weight: 700; font-size: 14px">{{p.m}}</div><span style="{{p.badge}}">{{p.src}}</span></div>
+            <span style="font-family: 'DM Mono', monospace; font-size: 18px">{{p.p}}</span>
+            <button type="button" aria-label="Edit price" style="width: 44px; height: 44px; border-radius: 12px; border: 0; background: #F1F5F9; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20 L4 16 L15 5 L19 9 L8 20 Z" fill="none" stroke="#334155" style="stroke-width: 2; stroke-linejoin: round"></path></svg></button>
+          </div>
+        </sc-for>
+      </div>
+      <button type="button" style="min-height: 48px; border-radius: 12px; border: 1px solid #E2E8F0; background: #FFFFFF; color: #334155; font-family: inherit; font-weight: 600">↻ Fetch from WOQOD now</button>
+    </sc-if>
+  </main>
+
+  <nav aria-label="Main" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: end; background: #FFFFFF; border-top: 1px solid #E2E8F0; padding: 8px 12px 20px">
+    <a href="S4-M-Dashboard.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 4px; min-height: 52px; justify-content: center; text-decoration: none; color: #64748B; font-size: 12px; font-weight: 600"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="2" fill="none" stroke="#64748B" style="stroke-width: 2"></rect><rect x="14" y="3" width="7" height="5" rx="2" fill="none" stroke="#64748B" style="stroke-width: 2"></rect><rect x="14" y="12" width="7" height="9" rx="2" fill="none" stroke="#64748B" style="stroke-width: 2"></rect><rect x="3" y="16" width="7" height="5" rx="2" fill="none" stroke="#64748B" style="stroke-width: 2"></rect></svg>Dashboard</a>
+    <a href="S4-M-Log.dc.html" aria-current="page" aria-label="Log fill-up" style="justify-self: center; width: 60px; height: 60px; margin-top: -30px; border-radius: 20px; background: #3730A3; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 4px #C7D2FE; text-decoration: none"><svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5 V19 M5 12 H19" fill="none" stroke="#FFFFFF" style="stroke-width: 2.5; stroke-linecap: round"></path></svg></a>
+    <a href="S4-M-Analytics.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 4px; min-height: 52px; justify-content: center; text-decoration: none; color: #64748B; font-size: 12px; font-weight: 600"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20 V10 M10 20 V4 M16 20 V13 M22 20 H2" fill="none" stroke="#64748B" style="stroke-width: 2; stroke-linecap: round"></path></svg>Analytics</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1500}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: 'fill', del: null };
+  }
+  renderVals() {
+    const s = this.state;
+    const base = 'min-height: 40px; border: 0; border-radius: 9px; font-family: inherit; font-size: 13px; cursor: pointer; ';
+    const tabs = [['fill', 'New'], ['hist', 'History'], ['price', 'Prices']].map(([id, label]) => ({
+      label, on: s.tab === id,
+      pick: () => this.setState({ tab: id, del: null }),
+      style: base + (s.tab === id ? 'background: #FFFFFF; color: #0F172A; font-weight: 700; box-shadow: 0 1px 3px rgba(15,23,42,0.12)' : 'background: transparent; color: #475569; font-weight: 600'),
+    }));
+    const rows = [
+      ['21', 'Dafna · 21 Oct', '43.34 L · QAR 91.01 · in progress'],
+      ['10', 'Dafna · 10 Sep', '419 km · 9.21 L/100 · QAR 88.68'],
+      ['22', 'Pearl · 22 Aug', '404 km · 9.78 L/100 · QAR 93.01'],
+      ['30', 'Dafna · 30 Jul', '434 km · 9.25 L/100 · QAR 90.03'],
+      ['05', 'Fox Hills · 5 Jul', '430 km · 9.34 L/100 · QAR 93.01'],
+    ];
+    const entries = rows.map(([day, d, sub], i) => ({
+      day, d, sub,
+      confirming: s.del === i,
+      warn: i === 0 ? 'Delete this fill-up? The 10 Sep trip will become the open trip again.' : 'Delete this fill-up? The trips before and after it will be merged.',
+      ask: () => this.setState({ del: i }),
+      cancel: () => this.setState({ del: null }),
+    }));
+    const badge = (bg, fg) => 'display: inline-block; margin-top: 2px; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: ' + bg + '; color: ' + fg;
+    const prices = [
+      { m: 'Nov 2026', p: '—', src: 'Due 1 Nov', badge: badge('#FFFBEB', '#B45309') },
+      { m: 'Oct 2026', p: '2.10', src: 'WOQOD', badge: badge('#EEF2FF', '#4338CA') },
+      { m: 'Sep 2026', p: '2.10', src: 'Sheet', badge: badge('#F1F5F9', '#475569') },
+      { m: 'Aug 2026', p: '2.10', src: 'Sheet', badge: badge('#F1F5F9', '#475569') },
+      { m: 'Jul 2026', p: '2.10', src: 'Sheet', badge: badge('#F1F5F9', '#475569') },
+    ];
+    return { tabs, entries, prices, isFill: s.tab === 'fill', isHist: s.tab === 'hist', isPrice: s.tab === 'price' };
+  }
+}
+</script>
+</body>
+</html>

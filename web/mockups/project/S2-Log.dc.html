@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Oktan · Swiss Ledger · Log</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;800&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFFFFF}
+a{color:#111111}a:hover{color:#E30613}
+input:focus-visible,button:focus-visible{outline:3px solid #E30613;outline-offset:2px}
+</style>
+</helmet>
+<div style="min-height: 1240px; background: #FFFFFF; color: #111111; font-family: 'Inter Tight', 'Helvetica Neue', Arial, sans-serif; font-variant-numeric: tabular-nums">
+  <div style="max-width: 1360px; margin: 0 auto; padding: 0 40px 48px">
+    <header style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px; padding: 32px 0 16px; border-bottom: 4px solid #111111">
+      <div style="display: flex; align-items: baseline; gap: 20px; flex-wrap: wrap">
+        <span style="font-size: 44px; font-weight: 800; letter-spacing: -0.04em; line-height: 1">Oktan</span>
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #555555">Fuel ledger — Doha — Super 95</span>
+      </div>
+      <nav aria-label="Main" style="display: flex; gap: 28px; font-size: 17px; font-weight: 600">
+        <a href="S2-Dashboard.dc.html" style="text-decoration: none; padding: 10px 0; color: #111111"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #555555; margin-right: 6px">01</span>Overview</a>
+        <a href="S2-Analytics.dc.html" style="text-decoration: none; padding: 10px 0; color: #111111"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #555555; margin-right: 6px">02</span>Analysis</a>
+        <a href="S2-Log.dc.html" aria-current="page" style="text-decoration: none; padding: 10px 0; border-bottom: 3px solid #E30613; color: #111111"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #E30613; margin-right: 6px">03</span>Log</a>
+      </nav>
+    </header>
+
+    <div style="display: flex; flex-wrap: wrap">
+      <form style="flex: 3 1 600px; min-width: 0; padding: 32px 40px 0 0; display: flex; flex-direction: column">
+        <h1 style="margin: 0 0 8px; font-size: 64px; font-weight: 800; letter-spacing: -0.04em; line-height: 1">New entry</h1>
+        <p style="margin: 0 0 24px; font-size: 17px; color: #555555">Entry 24 · closes the trip that started on 21.10.2026 at 8,774 km.</p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); column-gap: 40px">
+          <div style="display: flex; flex-direction: column; gap: 6px; padding: 18px 0; border-top: 2px solid #111111">
+            <label for="s2-date" style="font-size: 15px; font-weight: 600"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #E30613; margin-right: 8px">1</span>Date</label>
+            <input id="s2-date" type="text" value="24.10.2026" style="border: 0; border-bottom: 1px solid #111111; padding: 8px 0; min-height: 48px; font-family: inherit; font-size: 32px; font-weight: 600; background: transparent; color: #111111">
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px; padding: 18px 0; border-top: 2px solid #111111">
+            <label for="s2-odo" style="font-size: 15px; font-weight: 600"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #E30613; margin-right: 8px">2</span>Odometer, km</label>
+            <input id="s2-odo" type="text" inputmode="numeric" value="9,183" style="border: 0; border-bottom: 1px solid #111111; padding: 8px 0; min-height: 48px; font-family: inherit; font-size: 32px; font-weight: 600; background: transparent; color: #111111">
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px; padding: 18px 0; border-top: 2px solid #111111">
+            <label for="s2-l" style="font-size: 15px; font-weight: 600"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #E30613; margin-right: 8px">3</span>Litres</label>
+            <input id="s2-l" type="text" inputmode="decimal" value="41.80" style="border: 0; border-bottom: 1px solid #111111; padding: 8px 0; min-height: 48px; font-family: inherit; font-size: 32px; font-weight: 600; background: transparent; color: #111111">
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px; padding: 18px 0; border-top: 2px solid #111111">
+            <label for="s2-p" style="font-size: 15px; font-weight: 600; display: flex; justify-content: space-between"><span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #E30613; margin-right: 8px">4</span>QAR per litre</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 400; color: #555555">WOQOD 10.2026</span></label>
+            <input id="s2-p" type="text" inputmode="decimal" value="2.10" style="border: 0; border-bottom: 1px solid #111111; padding: 8px 0; min-height: 48px; font-family: inherit; font-size: 32px; font-weight: 600; background: transparent; color: #111111">
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px; padding: 18px 0; border-top: 2px solid #111111">
+            <span style="font-size: 15px; font-weight: 600"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #E30613; margin-right: 8px">5</span>Drive mode</span>
+            <div style="display: flex; border: 2px solid #111111">
+              <button type="button" aria-pressed="true" style="flex: 1; min-height: 48px; border: 0; background: #111111; color: #FFFFFF; font-family: inherit; font-size: 16px; font-weight: 600">Eco</button>
+              <button type="button" style="flex: 1; min-height: 48px; border: 0; border-left: 2px solid #111111; background: #FFFFFF; color: #111111; font-family: inherit; font-size: 16px; font-weight: 600">Normal</button>
+              <button type="button" style="flex: 1; min-height: 48px; border: 0; border-left: 2px solid #111111; background: #FFFFFF; color: #111111; font-family: inherit; font-size: 16px; font-weight: 600">Sport</button>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px; padding: 18px 0; border-top: 2px solid #111111">
+            <span style="font-size: 15px; font-weight: 600"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #E30613; margin-right: 8px">6</span>Tank</span>
+            <div style="display: flex; border: 2px solid #111111">
+              <button type="button" aria-pressed="true" style="flex: 1; min-height: 48px; border: 0; background: #111111; color: #FFFFFF; font-family: inherit; font-size: 16px; font-weight: 600">Full</button>
+              <button type="button" style="flex: 1; min-height: 48px; border: 0; border-left: 2px solid #111111; background: #FFFFFF; color: #111111; font-family: inherit; font-size: 16px; font-weight: 600">Partial</button>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px; padding: 18px 0; border-top: 2px solid #111111; grid-column: 1 / -1">
+            <label for="s2-st" style="font-size: 15px; font-weight: 600"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #E30613; margin-right: 8px">7</span>Station</label>
+            <input id="s2-st" type="text" value="Dafna" list="s2-stations" style="border: 0; border-bottom: 1px solid #111111; padding: 8px 0; min-height: 48px; font-family: inherit; font-size: 32px; font-weight: 600; background: transparent; color: #111111">
+            <span style="font-size: 14px; color: #555555">Recent: Dafna, Pearl, Fox Hills, Onaiza</span>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center; padding-top: 24px; border-top: 4px solid #111111">
+          <button type="submit" style="min-height: 64px; padding: 0 40px; border: 0; background: #E30613; color: #FFFFFF; font-family: inherit; font-size: 20px; font-weight: 800; letter-spacing: -0.01em">Write to sheet</button>
+          <button type="reset" style="min-height: 64px; padding: 0 24px; border: 2px solid #111111; background: #FFFFFF; color: #111111; font-family: inherit; font-size: 18px; font-weight: 600">Discard</button>
+        </div>
+      </form>
+
+      <aside style="flex: 2 1 380px; min-width: 0; padding: 32px 0 0 32px; border-left: 1px solid #111111">
+        <h2 style="margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.02em">Calculation</h2>
+        <table style="width: 100%; border-collapse: collapse; font-size: 17px; margin-top: 16px">
+          <tbody>
+            <tr style="border-top: 2px solid #111111"><td style="padding: 12px 0">Litres × price</td><td style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 15px">41.80 × 2.10</td></tr>
+            <tr style="border-top: 1px solid #DDDDDD"><td style="padding: 12px 0; font-weight: 800">Total</td><td style="text-align: right; font-weight: 800; font-size: 32px">QAR 87.78</td></tr>
+            <tr style="border-top: 2px solid #111111"><td style="padding: 12px 0">Distance (9,183 − 8,774)</td><td style="text-align: right; font-weight: 600">409 km</td></tr>
+            <tr style="border-top: 1px solid #DDDDDD"><td style="padding: 12px 0">Fuel used last trip</td><td style="text-align: right; font-weight: 600">38.14 L</td></tr>
+            <tr style="border-top: 1px solid #DDDDDD"><td style="padding: 12px 0">Consumption</td><td style="text-align: right; font-weight: 800; font-size: 32px">9.33</td></tr>
+            <tr style="border-top: 1px solid #DDDDDD"><td style="padding: 12px 0">vs. lifetime 9.29</td><td style="text-align: right; font-weight: 600; color: #E30613">+0.04</td></tr>
+            <tr style="border-top: 1px solid #DDDDDD; border-bottom: 2px solid #111111"><td style="padding: 12px 0">Cost per km</td><td style="text-align: right; font-weight: 600">QAR 0.196</td></tr>
+          </tbody>
+        </table>
+
+        <h2 style="margin: 36px 0 0; font-size: 22px; font-weight: 800; letter-spacing: -0.02em">Cells to be written</h2>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; line-height: 1.8; margin-top: 12px; padding-top: 12px; border-top: 2px solid #111111">
+          <div>Data!C24 ← 9183</div>
+          <div>Data!A25 ← 24-Oct-26</div>
+          <div>Data!D25:I25 ← 41.80 · 2.10 · 87.78 · TRUE · Eco · Dafna</div>
+          <div style="color: #555555">Data!B25, J24:O24 — formulas, untouched</div>
+        </div>
+        <p style="font-size: 14px; line-height: 1.5; color: #555555; margin: 16px 0 0">Price filled from WOQOD for the selected date. Edit it if the pump showed something else.</p>
+      </aside>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1240}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

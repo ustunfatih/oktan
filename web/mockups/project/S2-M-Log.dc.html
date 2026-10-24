@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Oktan · Swiss Ledger · Mobile log</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;800&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFFFFF}
+a{color:#111111}a:hover{color:#E30613}
+input:focus-visible,button:focus-visible,select:focus-visible{outline:3px solid #E30613;outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 390px; min-height: 1500px; box-sizing: border-box; background: #FFFFFF; color: #111111; font-family: 'Inter Tight', 'Helvetica Neue', Arial, sans-serif; font-variant-numeric: tabular-nums; display: flex; flex-direction: column">
+  <header style="padding: 18px 20px 0; border-bottom: 4px solid #111111">
+    <h1 style="margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.04em">Log</h1>
+    <div role="tablist" aria-label="Log sections" style="display: flex; gap: 22px; margin-top: 6px">
+      <sc-for list="{{tabs}}" as="t" hint-placeholder-count="3">
+        <button type="button" role="tab" aria-selected="{{t.on}}" onClick="{{t.pick}}" style="{{t.style}}">{{t.label}}</button>
+      </sc-for>
+    </div>
+  </header>
+
+  <main style="flex: 1; padding: 0 20px 24px">
+    <sc-if value="{{isFill}}" hint-placeholder-val="{{true}}">
+      <form style="display: flex; flex-direction: column">
+        <div style="padding: 14px 0; border-bottom: 1px solid #DDDDDD"><label for="m2-date" style="font-size: 13px; font-weight: 600"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #E30613; margin-right: 6px">1</span>Date</label><input id="m2-date" type="text" value="24.10.2026" style="display: block; width: 100%; box-sizing: border-box; border: 0; border-bottom: 1px solid #111111; min-height: 48px; font-family: inherit; font-size: 26px; font-weight: 600; background: transparent; padding: 0"></div>
+        <div style="padding: 14px 0; border-bottom: 1px solid #DDDDDD"><label for="m2-odo" style="font-size: 13px; font-weight: 600"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #E30613; margin-right: 6px">2</span>Odometer, km</label><input id="m2-odo" type="text" inputmode="numeric" value="9,183" style="display: block; width: 100%; box-sizing: border-box; border: 0; border-bottom: 1px solid #111111; min-height: 48px; font-family: inherit; font-size: 26px; font-weight: 600; background: transparent; padding: 0"></div>
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding: 14px 0; border-bottom: 1px solid #DDDDDD">
+          <div><label for="m2-l" style="font-size: 13px; font-weight: 600"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #E30613; margin-right: 6px">3</span>Litres</label><input id="m2-l" type="text" inputmode="decimal" value="41.80" style="display: block; width: 100%; box-sizing: border-box; border: 0; border-bottom: 1px solid #111111; min-height: 48px; font-family: inherit; font-size: 26px; font-weight: 600; background: transparent; padding: 0"></div>
+          <div><label for="m2-p" style="font-size: 13px; font-weight: 600"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #E30613; margin-right: 6px">4</span>QAR/L</label><input id="m2-p" type="text" inputmode="decimal" value="2.10" style="display: block; width: 100%; box-sizing: border-box; border: 0; border-bottom: 1px dashed #111111; min-height: 48px; font-family: inherit; font-size: 26px; font-weight: 600; background: transparent; padding: 0"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #555555">WOQOD 10.2026</span></div>
+        </div>
+        <div style="padding: 14px 0; border-bottom: 1px solid #DDDDDD"><span style="font-size: 13px; font-weight: 600"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #E30613; margin-right: 6px">5</span>Mode</span>
+          <div style="display: flex; border: 2px solid #111111; margin-top: 8px"><button type="button" aria-pressed="true" style="flex: 1; min-height: 46px; border: 0; background: #111111; color: #FFFFFF; font-family: inherit; font-weight: 600; font-size: 15px">Eco</button><button type="button" style="flex: 1; min-height: 46px; border: 0; border-left: 2px solid #111111; background: #FFFFFF; color: #111111; font-family: inherit; font-weight: 600; font-size: 15px">Normal</button><button type="button" style="flex: 1; min-height: 46px; border: 0; border-left: 2px solid #111111; background: #FFFFFF; color: #111111; font-family: inherit; font-weight: 600; font-size: 15px">Sport</button></div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding: 14px 0; border-bottom: 1px solid #DDDDDD">
+          <div><span style="font-size: 13px; font-weight: 600"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #E30613; margin-right: 6px">6</span>Tank</span><div style="display: flex; border: 2px solid #111111; margin-top: 8px"><button type="button" aria-pressed="true" style="flex: 1; min-height: 46px; border: 0; background: #111111; color: #FFFFFF; font-family: inherit; font-weight: 600">Full</button><button type="button" style="flex: 1; min-height: 46px; border: 0; border-left: 2px solid #111111; background: #FFFFFF; font-family: inherit; font-weight: 600">Part</button></div></div>
+          <div><label for="m2-st" style="font-size: 13px; font-weight: 600"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #E30613; margin-right: 6px">7</span>Station</label><input id="m2-st" type="text" value="Dafna" style="display: block; width: 100%; box-sizing: border-box; border: 0; border-bottom: 1px solid #111111; min-height: 50px; font-family: inherit; font-size: 22px; font-weight: 600; background: transparent; padding: 0"></div>
+        </div>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 15px">
+          <tbody>
+            <tr style="border-top: 2px solid #111111"><td style="padding: 8px 0">Total</td><td style="text-align: right; font-weight: 800; font-size: 24px">QAR 87.78</td></tr>
+            <tr style="border-top: 1px solid #DDDDDD"><td style="padding: 8px 0">409 km · 38.14 L</td><td style="text-align: right; font-weight: 800; font-size: 24px">9.33</td></tr>
+          </tbody>
+        </table>
+        <button type="submit" style="margin-top: 16px; min-height: 58px; border: 0; background: #E30613; color: #FFFFFF; font-family: inherit; font-size: 18px; font-weight: 800">Write to sheet</button>
+      </form>
+    </sc-if>
+
+    <sc-if value="{{isHist}}" hint-placeholder-val="{{false}}">
+      <div style="padding-top: 14px">
+        <p style="margin: 0 0 12px; font-size: 14px; color: #555555">Edit or delete any entry. Neighbouring trips are re-linked automatically.</p>
+        <div style="border-top: 2px solid #111111">
+          <sc-for list="{{entries}}" as="e" hint-placeholder-count="4">
+            <div style="padding: 10px 0; border-bottom: 1px solid #DDDDDD">
+              <div style="display: flex; align-items: center; gap: 8px">
+                <div style="flex: 1; min-width: 0"><div style="font-weight: 600">{{e.d}}</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #555555">{{e.sub}}</div></div>
+                <b style="width: 44px; text-align: right">{{e.tag}}</b>
+                <button type="button" style="min-width: 52px; min-height: 44px; border: 2px solid #111111; background: #FFFFFF; font-family: inherit; font-weight: 600; font-size: 14px">Edit</button>
+                <button type="button" onClick="{{e.ask}}" aria-label="Delete entry" style="width: 44px; min-height: 44px; border: 2px solid #E30613; background: #FFFFFF; color: #E30613; font-family: inherit; font-weight: 800; font-size: 18px">×</button>
+              </div>
+              <sc-if value="{{e.confirming}}" hint-placeholder-val="{{false}}">
+                <div style="margin-top: 10px; padding: 12px; background: #FDECEC; border-left: 4px solid #E30613; font-size: 14px; line-height: 1.45">{{e.warn}}
+                  <div style="display: flex; gap: 8px; margin-top: 10px"><button type="button" onClick="{{e.cancel}}" style="flex: 1; min-height: 44px; border: 2px solid #111111; background: #FFFFFF; font-family: inherit; font-weight: 600">Keep</button><button type="button" onClick="{{e.cancel}}" style="flex: 1; min-height: 44px; border: 0; background: #E30613; color: #FFFFFF; font-family: inherit; font-weight: 800">Delete</button></div>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{isPrice}}" hint-placeholder-val="{{false}}">
+      <div style="padding-top: 14px; display: flex; flex-direction: column; gap: 18px">
+        <form style="border-top: 2px solid #111111; padding-top: 12px">
+          <div style="font-size: 18px; font-weight: 800">Set price manually</div>
+          <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 8px">
+            <div><label for="m2-pm" style="font-size: 13px; font-weight: 600">Month</label><select id="m2-pm" style="display: block; width: 100%; min-height: 48px; border: 0; border-bottom: 1px solid #111111; background: transparent; font-family: inherit; font-size: 20px; font-weight: 600"><option>11.2026</option><option>10.2026</option></select></div>
+            <div><label for="m2-pp" style="font-size: 13px; font-weight: 600">Super 95, QAR/L</label><input id="m2-pp" type="text" inputmode="decimal" placeholder="0.00" style="display: block; width: 100%; box-sizing: border-box; min-height: 48px; border: 0; border-bottom: 1px solid #111111; background: transparent; font-family: inherit; font-size: 20px; font-weight: 600; padding: 0"></div>
+          </div>
+          <button type="submit" style="margin-top: 12px; width: 100%; min-height: 50px; border: 0; background: #111111; color: #FFFFFF; font-family: inherit; font-size: 16px; font-weight: 800">Save price</button>
+          <p style="margin: 8px 0 0; font-size: 13px; color: #555555">Manual prices take priority. The monthly WOQOD fetch never overwrites them.</p>
+        </form>
+        <table style="width: 100%; border-collapse: collapse; font-size: 15px">
+          <thead><tr style="border-bottom: 2px solid #111111; text-align: left; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #555555"><th style="padding: 6px 0; font-weight: 500">Month</th><th style="font-weight: 500">Source</th><th style="font-weight: 500; text-align: right">QAR/L</th><th></th></tr></thead>
+          <tbody>
+            <sc-for list="{{prices}}" as="p" hint-placeholder-count="5">
+              <tr style="border-bottom: 1px solid #DDDDDD"><td style="padding: 6px 0">{{p.m}}</td><td style="font-size: 13px; color: #555555">{{p.src}}</td><td style="text-align: right; font-weight: 800">{{p.p}}</td><td style="text-align: right"><button type="button" style="min-height: 44px; min-width: 44px; border: 0; background: transparent; font-family: inherit; font-weight: 600; text-decoration: underline">Edit</button></td></tr>
+            </sc-for>
+          </tbody>
+        </table>
+        <button type="button" style="min-height: 48px; border: 2px solid #111111; background: #FFFFFF; font-family: inherit; font-size: 15px; font-weight: 600">Fetch from WOQOD now</button>
+      </div>
+    </sc-if>
+  </main>
+
+  <nav aria-label="Main" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid #111111; padding-bottom: 16px">
+    <a href="S2-M-Dashboard.dc.html" style="min-height: 56px; display: flex; flex-direction: column; justify-content: center; padding: 0 14px; border-top: 4px solid transparent; text-decoration: none; color: #111111; font-weight: 600; font-size: 15px"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #555555; font-weight: 400">01</span>Overview</a>
+    <a href="S2-M-Analytics.dc.html" style="min-height: 56px; display: flex; flex-direction: column; justify-content: center; padding: 0 14px; border-top: 4px solid transparent; border-left: 1px solid #DDDDDD; text-decoration: none; color: #111111; font-weight: 600; font-size: 15px"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #555555; font-weight: 400">02</span>Analysis</a>
+    <a href="S2-M-Log.dc.html" aria-current="page" style="min-height: 56px; display: flex; flex-direction: column; justify-content: center; padding: 0 14px; border-top: 4px solid #E30613; border-left: 1px solid #DDDDDD; text-decoration: none; color: #111111; font-weight: 800; font-size: 15px"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #E30613; font-weight: 400">03</span>Log</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1500}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: 'fill', del: null };
+  }
+  renderVals() {
+    const s = this.state;
+    const base = 'min-height: 48px; padding: 0; border: 0; background: transparent; color: #111111; font-family: inherit; font-size: 16px; cursor: pointer; ';
+    const tabs = [['fill', 'New entry'], ['hist', 'Entries'], ['price', 'Prices']].map(([id, label]) => ({
+      label, on: s.tab === id,
+      pick: () => this.setState({ tab: id, del: null }),
+      style: base + (s.tab === id ? 'font-weight: 800; border-bottom: 3px solid #E30613' : 'font-weight: 500; border-bottom: 3px solid transparent'),
+    }));
+    const rows = [
+      ['21.10.2026 · Dafna', '43.34 L · 2.10 · QAR 91.01', 'open'],
+      ['10.09.2026 · Dafna', '42.23 L · 2.10 · QAR 88.68', '9.21'],
+      ['22.08.2026 · Pearl', '44.29 L · 2.10 · QAR 93.01', '9.78'],
+      ['30.07.2026 · Dafna', '42.87 L · 2.10 · QAR 90.03', '9.25'],
+      ['05.07.2026 · Fox Hills', '44.29 L · 2.10 · QAR 93.01', '9.34'],
+    ];
+    const entries = rows.map(([d, sub, tag], i) => ({
+      d, sub, tag,
+      confirming: s.del === i,
+      warn: i === 0 ? 'Delete entry 21.10.2026? The 10.09. trip becomes open again.' : 'Delete entry ' + d.split(' ')[0] + '? The trips before and after are joined.',
+      ask: () => this.setState({ del: i }),
+      cancel: () => this.setState({ del: null }),
+    }));
+    const prices = [
+      { m: '11.2026', p: '—', src: 'due 01.11.' },
+      { m: '10.2026', p: '2.10', src: 'WOQOD' },
+      { m: '09.2026', p: '2.10', src: 'Sheet' },
+      { m: '08.2026', p: '2.10', src: 'Sheet' },
+      { m: '07.2026', p: '2.10', src: 'Sheet' },
+    ];
+    return { tabs, entries, prices, isFill: s.tab === 'fill', isHist: s.tab === 'hist', isPrice: s.tab === 'price' };
+  }
+}
+</script>
+</body>
+</html>

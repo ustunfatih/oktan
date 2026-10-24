@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Oktan · Pump Brutalist · Dashboard</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF8E7}
+a{color:#000000}a:hover{color:#1F4FFF}
+</style>
+</helmet>
+<div style="min-height: 1240px; background: #FFF8E7; color: #000000; font-family: 'Space Grotesk', system-ui, sans-serif">
+  <div style="max-width: 1360px; margin: 0 auto; padding: 28px 40px 48px; display: flex; flex-direction: column; gap: 24px">
+    <header style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
+      <div style="display: flex; align-items: center; gap: 12px">
+        <span style="display: inline-flex; align-items: center; justify-content: center; width: 52px; height: 52px; background: #FFD60A; border: 3px solid #000000; box-shadow: 4px 4px 0 #000000; font-weight: 700; font-size: 28px">O</span>
+        <span style="font-size: 36px; font-weight: 700; letter-spacing: -0.03em">OKTAN</span>
+      </div>
+      <nav aria-label="Main" style="display: flex; flex-wrap: wrap; gap: 12px">
+        <a href="S5-Dashboard.dc.html" aria-current="page" style="display: inline-flex; align-items: center; min-height: 52px; padding: 0 22px; background: #000000; color: #FFD60A; border: 3px solid #000000; font-weight: 700; font-size: 18px; text-decoration: none">DASHBOARD</a>
+        <a href="S5-Analytics.dc.html" style="display: inline-flex; align-items: center; min-height: 52px; padding: 0 22px; background: #FFFFFF; color: #000000; border: 3px solid #000000; box-shadow: 4px 4px 0 #000000; font-weight: 700; font-size: 18px; text-decoration: none">ANALYTICS</a>
+        <a href="S5-Log.dc.html" style="display: inline-flex; align-items: center; min-height: 52px; padding: 0 22px; background: #1F4FFF; color: #FFFFFF; border: 3px solid #000000; box-shadow: 4px 4px 0 #000000; font-weight: 700; font-size: 18px; text-decoration: none">+ LOG FILL-UP</a>
+      </nav>
+    </header>
+
+    <section style="display: flex; flex-wrap: wrap; gap: 24px">
+      <div style="flex: 2 1 520px; background: #FFD60A; border: 3px solid #000000; box-shadow: 8px 8px 0 #000000; padding: 28px; display: flex; flex-direction: column; gap: 10px">
+        <div style="font-family: 'Space Mono', monospace; font-size: 15px; font-weight: 700">LIFETIME CONSUMPTION</div>
+        <div style="display: flex; align-items: flex-end; gap: 16px; flex-wrap: wrap">
+          <span style="font-size: 168px; font-weight: 700; line-height: 0.85; letter-spacing: -0.06em">9.29</span>
+          <span style="font-size: 30px; font-weight: 700; line-height: 1; padding-bottom: 10px">L/<br>100KM</span>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px">
+          <span style="background: #000000; color: #FFD60A; padding: 8px 12px; font-family: 'Space Mono', monospace; font-size: 14px; font-weight: 700">LAST TRIP 9.21 ↓</span>
+          <span style="background: #FFFFFF; border: 2px solid #000000; padding: 6px 12px; font-family: 'Space Mono', monospace; font-size: 14px; font-weight: 700">10.8 KM/L</span>
+          <span style="background: #FFFFFF; border: 2px solid #000000; padding: 6px 12px; font-family: 'Space Mono', monospace; font-size: 14px; font-weight: 700">23 FILL-UPS</span>
+        </div>
+      </div>
+
+      <div style="flex: 1 1 340px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px">
+        <div style="background: #1F4FFF; color: #FFFFFF; border: 3px solid #000000; padding: 18px; display: flex; flex-direction: column; justify-content: space-between">
+          <div style="font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700">QAR / KM</div>
+          <div style="font-size: 40px; font-weight: 700; letter-spacing: -0.03em">0.188</div>
+        </div>
+        <div style="background: #FFFFFF; border: 3px solid #000000; padding: 18px; display: flex; flex-direction: column; justify-content: space-between">
+          <div style="font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700">2026 SPEND</div>
+          <div style="font-size: 32px; font-weight: 700; letter-spacing: -0.03em">QAR 1,052</div>
+        </div>
+        <div style="background: #FFFFFF; border: 3px solid #000000; padding: 18px; display: flex; flex-direction: column; justify-content: space-between">
+          <div style="font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700">KM LOGGED</div>
+          <div style="font-size: 36px; font-weight: 700; letter-spacing: -0.03em">8,761</div>
+        </div>
+        <div style="background: #000000; color: #FFD60A; border: 3px solid #000000; padding: 18px; display: flex; flex-direction: column; justify-content: space-between">
+          <div style="font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700">NEXT FILL</div>
+          <div style="font-size: 36px; font-weight: 700; letter-spacing: -0.03em">~15 NOV</div>
+        </div>
+      </div>
+    </section>
+
+    <section style="display: flex; flex-wrap: wrap; gap: 24px">
+      <div style="flex: 3 1 600px; min-width: 0; background: #FFFFFF; border: 3px solid #000000; box-shadow: 8px 8px 0 #000000; padding: 24px">
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px">
+          <h2 style="margin: 0; font-size: 26px; font-weight: 700; letter-spacing: -0.02em">EACH TANK VS YOUR 9.29 AVERAGE</h2>
+          <div style="display: flex; gap: 14px; font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700"><span><span style="display: inline-block; width: 12px; height: 12px; background: #1F4FFF; border: 2px solid #000000; vertical-align: -2px; margin-right: 6px"></span>BETTER</span><span><span style="display: inline-block; width: 12px; height: 12px; background: #000000; vertical-align: -2px; margin-right: 6px"></span>WORSE</span></div>
+        </div>
+        <svg viewBox="0 0 640 220" role="img" aria-label="Diverging bars: each tank's L/100 km above or below the 9.29 average" style="width: 100%; height: auto; display: block; margin-top: 16px">
+          <text x="2" y="38" fill="#000000" style="font-size: 11px; font-weight: 700; font-family: 'Space Mono', monospace">+1.0</text>
+          <text x="2" y="114" fill="#000000" style="font-size: 11px; font-weight: 700; font-family: 'Space Mono', monospace">AVG</text>
+          <text x="2" y="194" fill="#000000" style="font-size: 11px; font-weight: 700; font-family: 'Space Mono', monospace">−1.0</text>
+          <rect x="44.4" y="110" width="18" height="28" fill="#1F4FFF"></rect>
+          <rect x="71.2" y="110" width="18" height="57.6" fill="#1F4FFF"></rect>
+          <rect x="98" y="110" width="18" height="3.2" fill="#1F4FFF"></rect>
+          <rect x="124.9" y="110" width="18" height="47.2" fill="#1F4FFF"></rect>
+          <rect x="151.7" y="110" width="18" height="30.4" fill="#1F4FFF"></rect>
+          <rect x="178.5" y="33.2" width="18" height="76.8" fill="#000000"></rect>
+          <rect x="205.3" y="60.4" width="18" height="49.6" fill="#000000"></rect>
+          <rect x="232.1" y="110" width="18" height="20" fill="#1F4FFF"></rect>
+          <rect x="258.9" y="86.8" width="18" height="23.2" fill="#000000"></rect>
+          <rect x="285.8" y="97.2" width="18" height="12.8" fill="#000000"></rect>
+          <rect x="312.6" y="110" width="18" height="84.8" fill="#1F4FFF"></rect>
+          <rect x="339.4" y="110" width="18" height="2.4" fill="#1F4FFF"></rect>
+          <rect x="366.2" y="110" width="18" height="14.4" fill="#1F4FFF"></rect>
+          <rect x="393" y="94" width="18" height="16" fill="#000000"></rect>
+          <rect x="419.9" y="110" width="18" height="11.2" fill="#1F4FFF"></rect>
+          <rect x="446.7" y="79.6" width="18" height="30.4" fill="#000000"></rect>
+          <rect x="473.5" y="91.6" width="18" height="18.4" fill="#000000"></rect>
+          <rect x="500.3" y="64.4" width="18" height="45.6" fill="#000000"></rect>
+          <rect x="527.1" y="106" width="18" height="4" fill="#000000"></rect>
+          <rect x="553.9" y="110" width="18" height="3.2" fill="#1F4FFF"></rect>
+          <rect x="580.8" y="70.8" width="18" height="39.2" fill="#000000"></rect>
+          <rect x="607.6" y="110" width="18" height="6.4" fill="#1F4FFF"></rect>
+          <line x1="40" x2="630" y1="110" y2="110" stroke="#000000" style="stroke-width: 3"></line>
+          <text x="172" y="26" fill="#000000" style="font-size: 11px; font-weight: 700; font-family: 'Space Mono', monospace">10.25 SPORT</text>
+          <text x="300" y="210" fill="#1F4FFF" style="font-size: 11px; font-weight: 700; font-family: 'Space Mono', monospace">8.23 BEST</text>
+        </svg>
+      </div>
+
+      <div style="flex: 1 1 300px; background: #000000; color: #FFFFFF; border: 3px solid #000000; box-shadow: 8px 8px 0 #1F4FFF; padding: 24px; display: flex; flex-direction: column; gap: 14px">
+        <div style="font-family: 'Space Mono', monospace; font-size: 14px; font-weight: 700; color: #FFD60A">WOQOD · OCT 2026 · QAR/L</div>
+        <div style="background: #1A1A1A; border: 2px solid #FFD60A; padding: 14px; display: flex; justify-content: space-between; align-items: center">
+          <span style="font-size: 20px; font-weight: 700">SUPER 95</span>
+          <span style="font-family: 'Space Mono', monospace; font-size: 48px; font-weight: 700; color: #FFD60A; letter-spacing: 0.04em">2.10</span>
+        </div>
+        <div style="background: #1A1A1A; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center">
+          <span style="font-size: 17px; font-weight: 700">PREMIUM 91</span>
+          <span style="font-family: 'Space Mono', monospace; font-size: 30px; font-weight: 700">1.95</span>
+        </div>
+        <div style="background: #1A1A1A; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center">
+          <span style="font-size: 17px; font-weight: 700">DIESEL</span>
+          <span style="font-family: 'Space Mono', monospace; font-size: 30px; font-weight: 700">2.05</span>
+        </div>
+        <div style="font-family: 'Space Mono', monospace; font-size: 13px; color: #D4D4D4; margin-top: auto">AUTO-FETCHED 01 OCT. NEXT: 01 NOV.</div>
+      </div>
+    </section>
+
+    <section style="display: flex; flex-wrap: wrap; gap: 24px">
+      <div style="flex: 1 1 520px; min-width: 0; background: #FFFFFF; border: 3px solid #000000; padding: 24px">
+        <h2 style="margin: 0; font-size: 26px; font-weight: 700; letter-spacing: -0.02em">QAR PER MONTH</h2>
+        <svg viewBox="0 0 640 220" role="img" aria-label="Monthly spend blocks" style="width: 100%; height: auto; display: block; margin-top: 16px">
+          <line x1="40" x2="630" y1="196" y2="196" stroke="#000000" style="stroke-width: 3"></line>
+          <rect x="45.9" y="83.4" width="19.3" height="112.6" fill="#FFF8E7" stroke="#000000" style="stroke-width: 2"></rect>
+          <rect x="77" y="52" width="19.3" height="144" fill="#FFF8E7" stroke="#000000" style="stroke-width: 2"></rect>
+          <rect x="139.1" y="45.8" width="19.3" height="150.2" fill="#FFF8E7" stroke="#000000" style="stroke-width: 2"></rect>
+          <rect x="201.2" y="122.2" width="19.3" height="73.8" fill="#FFF8E7" stroke="#000000" style="stroke-width: 2"></rect>
+          <rect x="232.2" y="39.4" width="19.3" height="156.6" fill="#FFF8E7" stroke="#000000" style="stroke-width: 2"></rect>
+          <rect x="263.3" y="113.9" width="19.3" height="82.1" fill="#FFF8E7" stroke="#000000" style="stroke-width: 2"></rect>
+          <rect x="294.3" y="116.8" width="19.3" height="79.2" fill="#FFF8E7" stroke="#000000" style="stroke-width: 2"></rect>
+          <rect x="325.4" y="43.3" width="19.3" height="152.7" fill="#FFD60A" stroke="#000000" style="stroke-width: 2"></rect>
+          <rect x="356.4" y="123.1" width="19.3" height="72.9" fill="#FFD60A" stroke="#000000" style="stroke-width: 2"></rect>
+          <rect x="387.5" y="124" width="19.3" height="72" fill="#FFD60A" stroke="#000000" style="stroke-width: 2"></rect>
+          <rect x="418.5" y="118.6" width="19.3" height="77.4" fill="#FFD60A" stroke="#000000" style="stroke-width: 2"></rect>
+          <rect x="480.6" y="34" width="19.3" height="162" fill="#FFD60A" stroke="#000000" style="stroke-width: 2"></rect>
+          <rect x="511.7" y="31.3" width="19.3" height="164.7" fill="#FFD60A" stroke="#000000" style="stroke-width: 2"></rect>
+          <rect x="542.7" y="112.3" width="19.3" height="83.7" fill="#FFD60A" stroke="#000000" style="stroke-width: 2"></rect>
+          <rect x="573.8" y="116.2" width="19.3" height="79.8" fill="#FFD60A" stroke="#000000" style="stroke-width: 2"></rect>
+          <rect x="604.8" y="114.1" width="19.3" height="81.9" fill="#1F4FFF" stroke="#000000" style="stroke-width: 2"></rect>
+          <text x="46" y="214" fill="#000000" style="font-size: 11px; font-weight: 700; font-family: 'Space Mono', monospace">2025</text>
+          <text x="326" y="214" fill="#000000" style="font-size: 11px; font-weight: 700; font-family: 'Space Mono', monospace">2026</text>
+          <text x="600" y="214" fill="#1F4FFF" style="font-size: 11px; font-weight: 700; font-family: 'Space Mono', monospace">OCT</text>
+        </svg>
+      </div>
+
+      <div style="flex: 1 1 460px; min-width: 0; background: #FFFFFF; border: 3px solid #000000; padding: 24px">
+        <div style="display: flex; justify-content: space-between; align-items: baseline">
+          <h2 style="margin: 0; font-size: 26px; font-weight: 700; letter-spacing: -0.02em">LATEST</h2>
+          <a href="S5-Analytics.dc.html" style="font-family: 'Space Mono', monospace; font-size: 14px; font-weight: 700">ALL →</a>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 14px">
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; border: 2px solid #000000; padding: 12px 14px; background: #FFD60A">
+            <span style="font-family: 'Space Mono', monospace; font-weight: 700">21 OCT</span><span style="flex: 1">Dafna · 43.34 L</span><span style="font-weight: 700">OPEN</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; border: 2px solid #000000; padding: 12px 14px">
+            <span style="font-family: 'Space Mono', monospace; font-weight: 700">10 SEP</span><span style="flex: 1">Dafna · 419 km</span><span style="font-weight: 700; color: #1F4FFF">9.21</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; border: 2px solid #000000; padding: 12px 14px">
+            <span style="font-family: 'Space Mono', monospace; font-weight: 700">22 AUG</span><span style="flex: 1">Pearl · 404 km</span><span style="font-weight: 700">9.78</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; border: 2px solid #000000; padding: 12px 14px">
+            <span style="font-family: 'Space Mono', monospace; font-weight: 700">30 JUL</span><span style="flex: 1">Dafna · 434 km</span><span style="font-weight: 700; color: #1F4FFF">9.25</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1240}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Oktan · Pump Brutalist · Analytics</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF8E7}
+a{color:#000000}a:hover{color:#1F4FFF}
+</style>
+</helmet>
+<div style="min-height: 1240px; background: #FFF8E7; color: #000000; font-family: 'Space Grotesk', system-ui, sans-serif">
+  <div style="max-width: 1360px; margin: 0 auto; padding: 28px 40px 48px; display: flex; flex-direction: column; gap: 24px">
+    <header style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
+      <div style="display: flex; align-items: center; gap: 12px">
+        <span style="display: inline-flex; align-items: center; justify-content: center; width: 52px; height: 52px; background: #FFD60A; border: 3px solid #000000; box-shadow: 4px 4px 0 #000000; font-weight: 700; font-size: 28px">O</span>
+        <span style="font-size: 36px; font-weight: 700; letter-spacing: -0.03em">OKTAN</span>
+      </div>
+      <nav aria-label="Main" style="display: flex; flex-wrap: wrap; gap: 12px">
+        <a href="S5-Dashboard.dc.html" style="display: inline-flex; align-items: center; min-height: 52px; padding: 0 22px; background: #FFFFFF; color: #000000; border: 3px solid #000000; box-shadow: 4px 4px 0 #000000; font-weight: 700; font-size: 18px; text-decoration: none">DASHBOARD</a>
+        <a href="S5-Analytics.dc.html" aria-current="page" style="display: inline-flex; align-items: center; min-height: 52px; padding: 0 22px; background: #000000; color: #FFD60A; border: 3px solid #000000; font-weight: 700; font-size: 18px; text-decoration: none">ANALYTICS</a>
+        <a href="S5-Log.dc.html" style="display: inline-flex; align-items: center; min-height: 52px; padding: 0 22px; background: #1F4FFF; color: #FFFFFF; border: 3px solid #000000; box-shadow: 4px 4px 0 #000000; font-weight: 700; font-size: 18px; text-decoration: none">+ LOG FILL-UP</a>
+      </nav>
+    </header>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center">
+      <span style="font-family: 'Space Mono', monospace; font-weight: 700; margin-right: 6px">RANGE:</span>
+      <button type="button" style="min-height: 44px; padding: 0 16px; border: 3px solid #000000; background: #FFFFFF; font-family: 'Space Mono', monospace; font-weight: 700; font-size: 14px">90D</button>
+      <button type="button" style="min-height: 44px; padding: 0 16px; border: 3px solid #000000; background: #FFFFFF; font-family: 'Space Mono', monospace; font-weight: 700; font-size: 14px">1Y</button>
+      <button type="button" style="min-height: 44px; padding: 0 16px; border: 3px solid #000000; background: #FFFFFF; font-family: 'Space Mono', monospace; font-weight: 700; font-size: 14px">2026</button>
+      <button type="button" aria-pressed="true" style="min-height: 44px; padding: 0 16px; border: 3px solid #000000; background: #FFD60A; box-shadow: 3px 3px 0 #000000; font-family: 'Space Mono', monospace; font-weight: 700; font-size: 14px">ALL</button>
+    </div>
+
+    <section style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px">
+      <div style="background: #1F4FFF; color: #FFFFFF; border: 3px solid #000000; box-shadow: 6px 6px 0 #000000; padding: 22px">
+        <div style="font-family: 'Space Mono', monospace; font-size: 14px; font-weight: 700">NORMAL · 8 TANKS</div>
+        <div style="font-size: 72px; font-weight: 700; letter-spacing: -0.04em; line-height: 1">9.04</div>
+        <div style="font-size: 15px; font-weight: 500">L/100 km · QAR 0.182/km · WINNER</div>
+      </div>
+      <div style="background: #FFFFFF; border: 3px solid #000000; box-shadow: 6px 6px 0 #000000; padding: 22px">
+        <div style="font-family: 'Space Mono', monospace; font-size: 14px; font-weight: 700">ECO · 10 TANKS</div>
+        <div style="font-size: 72px; font-weight: 700; letter-spacing: -0.04em; line-height: 1">9.35</div>
+        <div style="font-size: 15px; font-weight: 500">L/100 km · QAR 0.193/km · mostly summer</div>
+      </div>
+      <div style="background: #000000; color: #FFFFFF; border: 3px solid #000000; box-shadow: 6px 6px 0 #FFD60A; padding: 22px">
+        <div style="font-family: 'Space Mono', monospace; font-size: 14px; font-weight: 700; color: #FFD60A">SPORT · 4 TANKS</div>
+        <div style="font-size: 72px; font-weight: 700; letter-spacing: -0.04em; line-height: 1">9.65</div>
+        <div style="font-size: 15px; font-weight: 500">L/100 km · QAR 0.189/km · thirstiest</div>
+      </div>
+    </section>
+
+    <section style="display: flex; flex-wrap: wrap; gap: 24px">
+      <div style="flex: 3 1 560px; min-width: 0; background: #FFFFFF; border: 3px solid #000000; box-shadow: 8px 8px 0 #000000; padding: 24px">
+        <h2 style="margin: 0; font-size: 26px; font-weight: 700; letter-spacing: -0.02em">SUPER 95 PRICE, QAR/L</h2>
+        <svg viewBox="0 0 640 220" role="img" aria-label="Super 95 price step chart, 1.85 low in February 2026" style="width: 100%; height: auto; display: block; margin-top: 16px">
+          <rect x="40" y="16" width="590" height="180" fill="#FFF8E7"></rect>
+          <line x1="40" x2="630" y1="118.9" y2="118.9" stroke="#000000" style="stroke-width: 1; stroke-dasharray: 2 4"></line>
+          <line x1="40" x2="630" y1="41.7" y2="41.7" stroke="#000000" style="stroke-width: 1; stroke-dasharray: 2 4"></line>
+          <text x="2" y="122" fill="#000000" style="font-size: 11px; font-weight: 700; font-family: 'Space Mono', monospace">1.95</text>
+          <text x="2" y="45" fill="#000000" style="font-size: 11px; font-weight: 700; font-family: 'Space Mono', monospace">2.10</text>
+          <path d="M40 67.4 H72.8 V118.9 H105.6 V93.1 H138.3 V93.1 H171.1 V93.1 H203.9 V93.1 H236.7 V67.4 H269.4 V67.4 H302.2 V67.4 H335 V93.1 H367.8 V170.3 H400.6 V144.6 H433.3 V67.4 H466.1 V41.7 H498.9 V41.7 H531.7 V41.7 H564.4 V41.7 H597.2 V41.7 H630 V41.7" fill="none" stroke="#000000" style="stroke-width: 6; stroke-linejoin: miter"></path>
+          <rect x="360" y="162" width="16" height="16" fill="#1F4FFF" stroke="#000000" style="stroke-width: 3"></rect>
+          <text x="384" y="176" fill="#1F4FFF" style="font-size: 12px; font-weight: 700; font-family: 'Space Mono', monospace">1.85 FEB 26</text>
+          <rect x="622" y="34" width="16" height="16" fill="#FFD60A" stroke="#000000" style="stroke-width: 3"></rect>
+          <text x="40" y="214" fill="#000000" style="font-size: 11px; font-weight: 700; font-family: 'Space Mono', monospace">APR 25</text>
+          <text x="584" y="214" fill="#000000" style="font-size: 11px; font-weight: 700; font-family: 'Space Mono', monospace">OCT 26</text>
+        </svg>
+      </div>
+
+      <div style="flex: 2 1 380px; background: #FFFFFF; border: 3px solid #000000; padding: 24px">
+        <h2 style="margin: 0 0 16px; font-size: 26px; font-weight: 700; letter-spacing: -0.02em">STATION LEADERBOARD</h2>
+        <div style="display: flex; flex-direction: column; gap: 12px">
+          <div>
+            <div style="display: flex; justify-content: space-between; font-weight: 700"><span>1. PEARL · 13×</span><span style="font-family: 'Space Mono', monospace">QAR 1,109</span></div>
+            <div style="height: 22px; border: 3px solid #000000; margin-top: 6px; background: #FFF8E7"><div style="width: 100%; height: 100%; background: #FFD60A"></div></div>
+          </div>
+          <div>
+            <div style="display: flex; justify-content: space-between; font-weight: 700"><span>2. DAFNA · 7×</span><span style="font-family: 'Space Mono', monospace">QAR 616</span></div>
+            <div style="height: 22px; border: 3px solid #000000; margin-top: 6px; background: #FFF8E7"><div style="width: 55.5%; height: 100%; background: #FFD60A"></div></div>
+          </div>
+          <div>
+            <div style="display: flex; justify-content: space-between; font-weight: 700"><span>3. FOX HILLS · 1×</span><span style="font-family: 'Space Mono', monospace">QAR 93</span></div>
+            <div style="height: 22px; border: 3px solid #000000; margin-top: 6px; background: #FFF8E7"><div style="width: 8.4%; height: 100%; background: #FFD60A"></div></div>
+          </div>
+          <div>
+            <div style="display: flex; justify-content: space-between; font-weight: 700"><span>4. ONAIZA · 1×</span><span style="font-family: 'Space Mono', monospace">QAR 82</span></div>
+            <div style="height: 22px; border: 3px solid #000000; margin-top: 6px; background: #FFF8E7"><div style="width: 7.4%; height: 100%; background: #FFD60A"></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section style="background: #FFD60A; border: 3px solid #000000; box-shadow: 8px 8px 0 #000000; padding: 24px">
+      <h2 style="margin: 0 0 16px; font-size: 26px; font-weight: 700; letter-spacing: -0.02em">RECORD BOARD</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px">
+        <div style="background: #FFFFFF; border: 3px solid #000000; padding: 16px"><div style="font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700">BEST TANK</div><div style="font-size: 36px; font-weight: 700">8.23</div><div style="font-size: 14px">L/100 km · 6 Dec 2025</div></div>
+        <div style="background: #FFFFFF; border: 3px solid #000000; padding: 16px"><div style="font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700">WORST TANK</div><div style="font-size: 36px; font-weight: 700">10.25</div><div style="font-size: 14px">L/100 km · 20 Jul 2025 · Sport</div></div>
+        <div style="background: #FFFFFF; border: 3px solid #000000; padding: 16px"><div style="font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700">LONGEST RANGE</div><div style="font-size: 36px; font-weight: 700">459 km</div><div style="font-size: 14px">one tank · Dec 2025</div></div>
+        <div style="background: #FFFFFF; border: 3px solid #000000; padding: 16px"><div style="font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700">PRICIEST MONTH</div><div style="font-size: 36px; font-weight: 700">QAR 183</div><div style="font-size: 14px">July 2026 · 2 fills</div></div>
+        <div style="background: #FFFFFF; border: 3px solid #000000; padding: 16px"><div style="font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700">BIGGEST FILL</div><div style="font-size: 36px; font-weight: 700">44.50 L</div><div style="font-size: 14px">19 Nov 2025 · Pearl</div></div>
+      </div>
+    </section>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1240}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Oktan · Cluster · Log fill-up</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0A0C0F}
+a{color:#FFB547}a:hover{color:#FFD08A}
+input:focus-visible,button:focus-visible{outline:2px solid #4FD1E8;outline-offset:2px}
+</style>
+</helmet>
+<div style="min-height: 1240px; background: #0A0C0F; color: #E8ECF1; font-family: 'Chakra Petch', system-ui, sans-serif; box-sizing: border-box; padding: 0 0 48px">
+  <header style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px 32px; padding: 18px 40px; border-bottom: 1px solid #1F262E; background: #0D1014">
+    <div style="display: flex; align-items: center; gap: 10px">
+      <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 C12 2 5 10 5 14.5 A7 7 0 0 0 19 14.5 C19 10 12 2 12 2 Z" fill="none" stroke="#FFB547" style="stroke-width: 2"></path><path d="M9 15 A3 3 0 0 0 12 18" fill="none" stroke="#FFB547" style="stroke-width: 2; stroke-linecap: round"></path></svg>
+      <span style="font-weight: 700; font-size: 20px; letter-spacing: 0.24em">OKTAN</span>
+    </div>
+    <nav aria-label="Main" style="display: flex; gap: 4px; background: #11151A; border: 1px solid #1F262E; border-radius: 10px; padding: 4px">
+      <a href="Main.dc.html" style="text-decoration: none; padding: 10px 18px; border-radius: 7px; color: #C9D1DA; font-weight: 500; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase">Dashboard</a>
+      <a href="S1-Analytics.dc.html" style="text-decoration: none; padding: 10px 18px; border-radius: 7px; color: #C9D1DA; font-weight: 500; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase">Analytics</a>
+      <a href="S1-Log.dc.html" aria-current="page" style="text-decoration: none; padding: 10px 18px; border-radius: 7px; background: #FFB547; color: #0A0C0F; font-weight: 600; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase">Log fill-up</a>
+    </nav>
+    <div style="flex: 1 1 auto"></div>
+    <span style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid #1F262E; border-radius: 999px; color: #8E9AA6; font-family: 'JetBrains Mono', monospace; font-size: 12px"><span style="width: 8px; height: 8px; border-radius: 50%; background: #5BD69A"></span>SHEET SYNCED · 2 MIN AGO</span>
+  </header>
+
+  <main style="max-width: 1360px; margin: 0 auto; padding: 28px 40px 0; display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start">
+    <form style="flex: 3 1 560px; min-width: 0; background: #11151A; border: 1px solid #1F262E; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 22px">
+      <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px">
+        <h1 style="margin: 0; font-size: 26px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase">New fill-up</h1>
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #8E9AA6">PREVIOUS: 21 OCT · 8,774 KM · 43.34 L</span>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px">
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <label for="s1-date" style="font-size: 12px; letter-spacing: 0.14em; color: #8E9AA6; text-transform: uppercase">Date</label>
+          <input id="s1-date" type="text" value="24 Oct 2026" style="min-height: 52px; box-sizing: border-box; padding: 0 16px; border-radius: 10px; border: 1px solid #2A333D; background: #0A0C0F; color: #E8ECF1; font-family: 'JetBrains Mono', monospace; font-size: 18px">
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <label for="s1-odo" style="font-size: 12px; letter-spacing: 0.14em; color: #8E9AA6; text-transform: uppercase">Odometer now · km</label>
+          <input id="s1-odo" type="number" inputmode="numeric" value="{{odo}}" onChange="{{onOdo}}" style="min-height: 52px; box-sizing: border-box; padding: 0 16px; border-radius: 10px; border: 1px solid #2A333D; background: #0A0C0F; color: #E8ECF1; font-family: 'JetBrains Mono', monospace; font-size: 18px">
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <label for="s1-l" style="font-size: 12px; letter-spacing: 0.14em; color: #8E9AA6; text-transform: uppercase">Litres</label>
+          <input id="s1-l" type="number" inputmode="decimal" step="0.01" value="{{liters}}" onChange="{{onLiters}}" style="min-height: 52px; box-sizing: border-box; padding: 0 16px; border-radius: 10px; border: 1px solid #2A333D; background: #0A0C0F; color: #E8ECF1; font-family: 'JetBrains Mono', monospace; font-size: 18px">
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <label for="s1-p" style="display: flex; justify-content: space-between; font-size: 12px; letter-spacing: 0.14em; color: #8E9AA6; text-transform: uppercase"><span>Price · QAR/L</span><span style="color: #FFB547">WOQOD AUTO</span></label>
+          <input id="s1-p" type="number" inputmode="decimal" step="0.01" value="{{price}}" onChange="{{onPrice}}" style="min-height: 52px; box-sizing: border-box; padding: 0 16px; border-radius: 10px; border: 1px solid #4A3B17; background: #17140C; color: #FFB547; font-family: 'JetBrains Mono', monospace; font-size: 18px">
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; padding: 18px 20px; border-radius: 12px; background: #0A0C0F; border: 1px dashed #2A333D">
+        <div>
+          <div style="font-size: 12px; letter-spacing: 0.14em; color: #8E9AA6; text-transform: uppercase">Total cost</div>
+          <div style="font-size: 13px; color: #8E9AA6; margin-top: 4px">Litres × price. Type the amount you paid to work out litres instead.</div>
+        </div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 40px; font-weight: 700">{{cost}} <span style="font-size: 16px; color: #8E9AA6">QAR</span></div>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; gap: 22px">
+        <fieldset style="border: 0; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px">
+          <legend style="font-size: 12px; letter-spacing: 0.14em; color: #8E9AA6; text-transform: uppercase; padding: 0; margin-bottom: 8px">Drive mode</legend>
+          <div style="display: flex; gap: 4px; background: #0A0C0F; border: 1px solid #2A333D; border-radius: 10px; padding: 4px">
+            <sc-for list="{{modes}}" as="m" hint-placeholder-count="3">
+              <button type="button" aria-pressed="{{m.on}}" onClick="{{m.pick}}" style="{{m.style}}">{{m.label}}</button>
+            </sc-for>
+          </div>
+        </fieldset>
+        <fieldset style="border: 0; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px">
+          <legend style="font-size: 12px; letter-spacing: 0.14em; color: #8E9AA6; text-transform: uppercase; padding: 0; margin-bottom: 8px">Tank</legend>
+          <button type="button" aria-pressed="{{full}}" onClick="{{toggleFull}}" style="{{fullStyle}}">{{fullLabel}}</button>
+        </fieldset>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <label for="s1-st" style="font-size: 12px; letter-spacing: 0.14em; color: #8E9AA6; text-transform: uppercase">Gas station</label>
+        <input id="s1-st" type="text" value="Dafna" style="min-height: 52px; box-sizing: border-box; padding: 0 16px; border-radius: 10px; border: 1px solid #2A333D; background: #0A0C0F; color: #E8ECF1; font-family: 'Chakra Petch', sans-serif; font-size: 17px">
+        <div style="display: flex; flex-wrap: wrap; gap: 8px">
+          <button type="button" style="min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid #FFB547; background: #2A2312; color: #FFB547; font-family: inherit; font-size: 14px">Dafna</button>
+          <button type="button" style="min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid #2A333D; background: transparent; color: #C9D1DA; font-family: inherit; font-size: 14px">Pearl</button>
+          <button type="button" style="min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid #2A333D; background: transparent; color: #C9D1DA; font-family: inherit; font-size: 14px">Fox Hills</button>
+          <button type="button" style="min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid #2A333D; background: transparent; color: #C9D1DA; font-family: inherit; font-size: 14px">Onaiza</button>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: flex-end; border-top: 1px solid #1F262E; padding-top: 20px">
+        <button type="reset" style="min-height: 52px; padding: 0 24px; border-radius: 10px; border: 1px solid #2A333D; background: transparent; color: #C9D1DA; font-family: inherit; font-size: 15px; letter-spacing: 0.08em; text-transform: uppercase">Clear</button>
+        <button type="submit" style="min-height: 52px; padding: 0 32px; border-radius: 10px; border: 0; background: #FFB547; color: #0A0C0F; font-family: inherit; font-weight: 700; font-size: 15px; letter-spacing: 0.08em; text-transform: uppercase">Save to sheet</button>
+      </div>
+    </form>
+
+    <aside style="flex: 2 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
+      <section style="background: #11151A; border: 1px solid #1F262E; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 16px">
+        <h2 style="margin: 0; font-size: 16px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase">Trip being closed</h2>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #8E9AA6">21 OCT → 24 OCT 2026</div>
+        <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px">
+          <div><div style="font-size: 11px; letter-spacing: 0.14em; color: #8E9AA6">DISTANCE</div><div style="font-family: 'JetBrains Mono', monospace; font-size: 26px; font-weight: 700; margin-top: 6px">{{trip}}</div><div style="font-size: 12px; color: #8E9AA6">km</div></div>
+          <div><div style="font-size: 11px; letter-spacing: 0.14em; color: #8E9AA6">EFFICIENCY</div><div style="font-family: 'JetBrains Mono', monospace; font-size: 26px; font-weight: 700; margin-top: 6px; color: #FFB547">{{l100}}</div><div style="font-size: 12px; color: #8E9AA6">L/100 km</div></div>
+          <div><div style="font-size: 11px; letter-spacing: 0.14em; color: #8E9AA6">COST/KM</div><div style="font-family: 'JetBrains Mono', monospace; font-size: 26px; font-weight: 700; margin-top: 6px">{{cpk}}</div><div style="font-size: 12px; color: #8E9AA6">QAR</div></div>
+        </div>
+        <div style="font-size: 14px; color: #C9D1DA; line-height: 1.5">{{verdict}}</div>
+      </section>
+
+      <section style="background: #11151A; border: 1px solid #1F262E; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 12px">
+        <h2 style="margin: 0; font-size: 16px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase">Sheet write preview</h2>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.7; background: #0A0C0F; border: 1px solid #1F262E; border-radius: 10px; padding: 14px; overflow-x: auto">
+          <div style="color: #8E9AA6">Data!C24 · row 21-Oct-26</div>
+          <div><span style="color: #FF6B5B">−</span> Odometer POST: <span style="color: #8E9AA6">(empty)</span></div>
+          <div><span style="color: #5BD69A">+</span> Odometer POST: {{odo}}</div>
+          <div style="color: #8E9AA6; margin-top: 10px">Data!A25:I25 · new row</div>
+          <div><span style="color: #5BD69A">+</span> 24-Oct-26 · {{liters}} L · {{price}} · {{cost}}</div>
+          <div><span style="color: #5BD69A">+</span> {{fullWord}} · {{mode}} · Dafna</div>
+        </div>
+        <div style="font-size: 13px; color: #8E9AA6; line-height: 1.5">The sheet is read again right before saving. If someone changed row 24 in the meantime, nothing is written and you are asked to review.</div>
+      </section>
+
+      <section style="background: #11151A; border: 1px solid #1F262E; border-radius: 16px; padding: 20px 24px; display: flex; gap: 14px; align-items: flex-start">
+        <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" style="flex: none; margin-top: 2px"><circle cx="12" cy="12" r="9" fill="none" stroke="#FFB547" style="stroke-width: 2"></circle><path d="M12 7 V12 L15 14" fill="none" stroke="#FFB547" style="stroke-width: 2; stroke-linecap: round"></path></svg>
+        <div style="font-size: 14px; line-height: 1.5; color: #C9D1DA">Price for <b>24 Oct 2026</b>: Super 95 at QAR 2.10, from WOQOD (fetched 1 Oct, 06:00). When you log a past date, that month's price from the Fuel Prices tab is used. You can always type over it.</div>
+      </section>
+    </aside>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1240}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { odo: '9183', liters: '41.80', price: '2.10', mode: 'Eco', full: true };
+  }
+  renderVals() {
+    const s = this.state;
+    const L = parseFloat(s.liters) || 0;
+    const P = parseFloat(s.price) || 0;
+    const odo = parseFloat(s.odo) || 0;
+    const trip = odo - 8774;
+    const used = s.full ? 43.34 - (47 - L) : null;
+    const l100 = used && trip > 0 ? (used / trip) * 100 : null;
+    const cpk = used && trip > 0 ? (used * 2.10) / trip : null;
+    const diff = l100 ? l100 - 9.29 : 0;
+    const segBase = 'min-height: 44px; padding: 0 18px; border-radius: 7px; border: 0; font-family: inherit; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; ';
+    const modes = ['Eco', 'Normal', 'Sport'].map((m) => ({
+      label: m,
+      on: s.mode === m,
+      pick: () => this.setState({ mode: m }),
+      style: segBase + (s.mode === m ? 'background: #FFB547; color: #0A0C0F; font-weight: 700' : 'background: transparent; color: #C9D1DA; font-weight: 500'),
+    }));
+    return {
+      odo: s.odo, liters: s.liters, price: s.price, mode: s.mode, full: s.full,
+      cost: (L * P).toFixed(2),
+      trip: trip > 0 ? trip.toLocaleString('en-GB') : '—',
+      l100: l100 ? l100.toFixed(2) : '—',
+      cpk: cpk ? cpk.toFixed(3) : '—',
+      verdict: !l100 ? 'Partial fill: efficiency is calculated at the next full tank.' : (diff <= 0 ? 'Better than your 9.29 average by ' + Math.abs(diff).toFixed(2) + ' L/100 km.' : 'Worse than your 9.29 average by ' + diff.toFixed(2) + ' L/100 km.'),
+      modes,
+      fullWord: s.full ? 'Full' : 'Partial',
+      fullLabel: s.full ? 'Full tank ✓' : 'Partial fill',
+      fullStyle: 'min-height: 52px; padding: 0 20px; border-radius: 10px; font-family: inherit; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; ' + (s.full ? 'border: 1px solid #5BD69A; background: #0F2A22; color: #5BD69A' : 'border: 1px solid #2A333D; background: transparent; color: #C9D1DA'),
+      toggleFull: () => this.setState({ full: !s.full }),
+      onOdo: (e) => this.setState({ odo: e.target.value }),
+      onLiters: (e) => this.setState({ liters: e.target.value }),
+      onPrice: (e) => this.setState({ price: e.target.value }),
+    };
+  }
+}
+</script>
+</body>
+</html>

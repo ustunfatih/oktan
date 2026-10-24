@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Oktan · Doha Editorial · Log a fill-up</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&amp;family=Work+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F6F1E9}
+a{color:#8A1538}a:hover{color:#5E0E26}
+input:focus-visible,button:focus-visible{outline:2px solid #1F6F6B;outline-offset:3px}
+</style>
+</helmet>
+<div style="min-height: 1240px; background: #F6F1E9; color: #2A1A1F; font-family: 'Work Sans', system-ui, sans-serif">
+  <div style="max-width: 1280px; margin: 0 auto; padding: 0 40px 56px">
+    <header style="text-align: center; padding: 36px 0 0">
+      <div style="font-family: 'Fraunces', Georgia, serif; font-size: 48px; font-weight: 700; letter-spacing: -0.02em; line-height: 1; color: #8A1538">Oktan</div>
+      <nav aria-label="Main" style="display: flex; justify-content: center; flex-wrap: wrap; gap: 8px 40px; margin-top: 16px; padding: 6px 0; border-top: 3px double #2A1A1F; border-bottom: 1px solid #2A1A1F; font-size: 15px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase">
+        <a href="S3-Dashboard.dc.html" style="text-decoration: none; padding: 10px 0; color: #2A1A1F">Overview</a>
+        <a href="S3-Analytics.dc.html" style="text-decoration: none; padding: 10px 0; color: #2A1A1F">Analysis</a>
+        <a href="S3-Log.dc.html" aria-current="page" style="text-decoration: none; padding: 10px 0; color: #8A1538; font-weight: 600">Log a fill-up</a>
+      </nav>
+    </header>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 48px; padding-top: 40px">
+      <form style="flex: 3 1 600px; min-width: 0">
+        <div style="font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: #1F6F6B; font-weight: 600">Entry no. 24</div>
+        <h1 style="font-family: 'Fraunces', Georgia, serif; font-size: 48px; font-weight: 600; margin: 8px 0 28px; letter-spacing: -0.01em">Saturday, 24 October 2026</h1>
+
+        <div style="font-family: 'Fraunces', Georgia, serif; font-size: 30px; line-height: 2.1; color: #2A1A1F">
+          <span>At </span>
+          <label for="s3-st" style="position: absolute; left: -9999px">Station</label>
+          <input id="s3-st" type="text" value="Dafna" style="width: 170px; border: 0; border-bottom: 2px solid #8A1538; background: transparent; font-family: inherit; font-size: 30px; color: #8A1538; padding: 0 4px; min-height: 48px">
+          <span>, I put in </span>
+          <label for="s3-l" style="position: absolute; left: -9999px">Litres</label>
+          <input id="s3-l" type="text" inputmode="decimal" value="41.80" style="width: 110px; border: 0; border-bottom: 2px solid #8A1538; background: transparent; font-family: inherit; font-size: 30px; color: #8A1538; padding: 0 4px; min-height: 48px; text-align: center">
+          <span> litres of Super 95 at QAR </span>
+          <label for="s3-p" style="position: absolute; left: -9999px">Price per litre</label>
+          <input id="s3-p" type="text" inputmode="decimal" value="2.10" style="width: 80px; border: 0; border-bottom: 2px dashed #1F6F6B; background: transparent; font-family: inherit; font-size: 30px; color: #1F6F6B; padding: 0 4px; min-height: 48px; text-align: center">
+          <span> a litre, and paid </span>
+          <span style="color: #2A1A1F; font-weight: 600; border-bottom: 2px solid #2A1A1F">QAR 87.78</span><span>. The odometer read </span>
+          <label for="s3-odo" style="position: absolute; left: -9999px">Odometer</label>
+          <input id="s3-odo" type="text" inputmode="numeric" value="9,183" style="width: 120px; border: 0; border-bottom: 2px solid #8A1538; background: transparent; font-family: inherit; font-size: 30px; color: #8A1538; padding: 0 4px; min-height: 48px; text-align: center">
+          <span> km, I filled it to the brim, and I'd mostly been driving in </span>
+          <span style="color: #8A1538; border-bottom: 2px solid #8A1538">Eco</span><span>.</span>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 32px; margin-top: 32px; padding-top: 24px; border-top: 1px solid #E4D9CA">
+          <fieldset style="border: 0; padding: 0; margin: 0">
+            <legend style="font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: #6B5A54; margin-bottom: 10px">Drive mode</legend>
+            <div style="display: flex; gap: 8px">
+              <button type="button" aria-pressed="true" style="min-height: 44px; padding: 0 20px; border-radius: 999px; border: 1px solid #8A1538; background: #8A1538; color: #FFFDF9; font-family: inherit; font-size: 15px">Eco</button>
+              <button type="button" style="min-height: 44px; padding: 0 20px; border-radius: 999px; border: 1px solid #CDBFAE; background: #FFFDF9; color: #2A1A1F; font-family: inherit; font-size: 15px">Normal</button>
+              <button type="button" style="min-height: 44px; padding: 0 20px; border-radius: 999px; border: 1px solid #CDBFAE; background: #FFFDF9; color: #2A1A1F; font-family: inherit; font-size: 15px">Sport</button>
+            </div>
+          </fieldset>
+          <fieldset style="border: 0; padding: 0; margin: 0">
+            <legend style="font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: #6B5A54; margin-bottom: 10px">Tank</legend>
+            <div style="display: flex; gap: 8px">
+              <button type="button" aria-pressed="true" style="min-height: 44px; padding: 0 20px; border-radius: 999px; border: 1px solid #8A1538; background: #8A1538; color: #FFFDF9; font-family: inherit; font-size: 15px">Filled to the brim</button>
+              <button type="button" style="min-height: 44px; padding: 0 20px; border-radius: 999px; border: 1px solid #CDBFAE; background: #FFFDF9; color: #2A1A1F; font-family: inherit; font-size: 15px">Topped up</button>
+            </div>
+          </fieldset>
+          <div style="display: flex; flex-direction: column; gap: 10px">
+            <label for="s3-date" style="font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: #6B5A54">Different date?</label>
+            <input id="s3-date" type="date" value="2026-10-24" style="min-height: 44px; padding: 0 12px; border: 1px solid #CDBFAE; background: #FFFDF9; color: #2A1A1F; font-family: inherit; font-size: 15px">
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-top: 36px">
+          <button type="submit" style="min-height: 56px; padding: 0 36px; border: 0; background: #2A1A1F; color: #F6F1E9; font-family: 'Fraunces', Georgia, serif; font-size: 20px; font-weight: 600">Add to the journal</button>
+          <button type="reset" style="min-height: 56px; padding: 0 24px; border: 1px solid #2A1A1F; background: transparent; color: #2A1A1F; font-family: inherit; font-size: 16px">Start over</button>
+        </div>
+      </form>
+
+      <aside style="flex: 2 1 360px; min-width: 0; display: flex; flex-direction: column; gap: 24px">
+        <div style="background: #FFFDF9; border: 1px solid #E4D9CA; padding: 28px">
+          <div style="font-family: 'Fraunces', Georgia, serif; font-size: 22px; font-weight: 600; padding-bottom: 12px; border-bottom: 1px solid #E4D9CA">How the last tank went</div>
+          <p style="font-family: 'Fraunces', Georgia, serif; font-size: 20px; line-height: 1.5; margin: 16px 0">Since 21 October you drove <b>409 km</b> on <b>38.14 L</b>, which is <span style="color: #8A1538; font-weight: 600">9.33 L/100 km</span>, a hair above your 9.29 average.</p>
+          <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; border-top: 1px solid #E4D9CA; padding-top: 16px">
+            <div><div style="font-size: 13px; color: #6B5A54">Cost per km</div><div style="font-family: 'Fraunces', Georgia, serif; font-size: 28px; font-weight: 600">QAR 0.196</div></div>
+            <div><div style="font-size: 13px; color: #6B5A54">km per litre</div><div style="font-family: 'Fraunces', Georgia, serif; font-size: 28px; font-weight: 600">10.7</div></div>
+          </div>
+        </div>
+        <div style="background: #E7EFEE; border: 1px solid #B9D3D0; padding: 22px; display: flex; flex-direction: column; gap: 8px">
+          <div style="font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: #1F6F6B; font-weight: 600">Price filled in for you</div>
+          <p style="margin: 0; font-size: 16px; line-height: 1.55">QAR 2.10 is WOQOD's Super 95 price for October 2026. For a past date, that month's price from your Fuel Prices sheet is used. Tap the dashed number to change it.</p>
+        </div>
+        <div style="border-top: 3px double #2A1A1F; padding-top: 16px">
+          <div style="font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: #6B5A54">What will change in the sheet</div>
+          <ul style="margin: 10px 0 0; padding-left: 20px; font-size: 15px; line-height: 1.8">
+            <li>Row 24 (21 Oct) gets its closing odometer: 9,183</li>
+            <li>A new row 25 is added for today</li>
+            <li>Formulas for distance and L/100 km stay in place</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1240}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>
