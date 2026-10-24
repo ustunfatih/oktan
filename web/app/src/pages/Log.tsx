@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from "react";
-import type { DataResponse, Entry, WriteResponse } from "../../../shared/types";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { woqodForGrade } from "../../../shared/prices";
+import type { DataResponse, Entry, PriceWriteResponse, WoqodResponse, WriteResponse } from "../../../shared/types";
 import { deleteConsequence, type EntryInput } from "../../../shared/writes";
 import { api, useData, useWoqod, type WriteError } from "../data";
-import { fmt, fmtDate, fmtMonthLong, qar } from "../format";
+import { fmt, fmtDate, fmtMonthLong, qar, qatarToday } from "../format";
 import { EntryForm } from "./EntryForm";
 
 type Tab = "new" | "history" | "prices";
@@ -141,7 +142,7 @@ export function Log() {
         />
       )}
 
-      {tab === "prices" && <Prices data={data} />}
+      {tab === "prices" && <Prices data={data} woqod={woqod} onData={setData} notify={notify} />}
 
       {toast && (
         <div className="toast" role="status">
@@ -304,28 +305,166 @@ function History({
   );
 }
 
-function Prices({ data }: { data: DataResponse }) {
-  const list = data.prices.filter((p) => p.price !== null).slice(-12).reverse();
+function Prices({
+  data,
+  woqod,
+  onData,
+  notify,
+}: {
+  data: DataResponse;
+  woqod: WoqodResponse | null;
+  onData: (d: DataResponse) => void;
+  notify: (t: Toast) => void;
+}) {
+  const today = qatarToday();
+  const thisMonth = today.slice(0, 7);
+  const months = useMemo(() => {
+    const [y, m] = thisMonth.split("-").map(Number) as [number, number];
+    return Array.from({ length: 14 }, (_, i) => {
+      const d = new Date(Date.UTC(y, m - 1 + 1 - i, 1));
+      return d.toISOString().slice(0, 7);
+    });
+  }, [thisMonth]);
+  const [month, setMonth] = useState(thisMonth);
+  const [price, setPrice] = useState("");
+  const [busy, setBusy] = useState<string | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+
+  const mine = woqod?.ok ? woqodForGrade(woqod.prices, data.settings.fuelGrade) : null;
+  const saved = (m: string) => data.prices.find((p) => p.month === m) ?? null;
+  const sheetForWoqod = mine ? saved(mine.month) : null;
+  const shown = data.prices.filter((p) => p.month <= months[0]! && (p.price !== null || p.month >= thisMonth)).slice(-14).reverse();
+
+  // Pre-fill the price field with what the selected month already has (or a sensible suggestion).
+  useEffect(() => {
+    const existing = saved(month)?.price;
+    setPrice(existing != null ? existing.toFixed(2) : mine && mine.month === month ? mine.price.toFixed(2) : "");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [month, data.prices]);
+
+  async function run(key: string, call: () => Promise<PriceWriteResponse>) {
+    setBusy(key);
+    setErr(null);
+    try {
+      const res = await call();
+      onData(res.data);
+      notify({ text: res.outcome.message });
+    } catch (e) {
+      setErr((e as WriteError).message);
+    } finally {
+      setBusy(null);
+    }
+  }
+  const refresh = () => run("refresh", () => api<PriceWriteResponse>("/api/prices/refresh", { method: "POST", body: {} }));
+  const saveManual = () => run("manual", () => api<PriceWriteResponse>(`/api/prices/${month}`, { method: "PUT", body: { price: Number(price.replace(",", ".")) } }));
+  const unlock = (m: string) => run(`unlock-${m}`, () => api<PriceWriteResponse>(`/api/prices/${m}/unlock`, { method: "POST", body: {} }));
+  const priceNum = Number(price.replace(",", "."));
+  const priceValid = Number.isFinite(priceNum) && priceNum >= 0.5 && priceNum <= 5;
+
+  let status: { tone: "good" | "warn" | "info"; text: string } | null = null;
+  if (mine) {
+    if (!sheetForWoqod?.price) status = { tone: "warn", text: `Not in your sheet yet. The monthly check saves it automatically, or save it now.` };
+    else if (sheetForWoqod.source === "Manual")
+      status = { tone: "info", text: `Your sheet has a manual price of QAR ${sheetForWoqod.price.toFixed(2)} for ${fmtMonthLong(mine.month)}, which stays locked.` };
+    else if (Math.abs(sheetForWoqod.price - mine.price) > 0.0005) status = { tone: "warn", text: `Your sheet says QAR ${sheetForWoqod.price.toFixed(2)}. Saving will update it.` };
+    else status = { tone: "good", text: `Saved in your sheet${sheetForWoqod.source === "WOQOD" ? " from WOQOD" : ""}.` };
+  }
+
   return (
-    <section className="panel">
-      <div className="panel-head">
-        <h2>Monthly prices</h2>
-        <span className="label">{data.settings.fuelGrade} · Fuel Prices tab</span>
-      </div>
-      <p className="muted small">Typing in a month's price by hand, and saving WOQOD prices automatically, arrive in phase 6.</p>
-      <ul className="history">
-        {list.map((p) => (
-          <li key={p.month} className="history__item">
-            <div className="history__row">
-              <div className="history__main">
-                <div className="mono">{fmtMonthLong(p.month)}</div>
-                <div className="muted small">{p.source ?? "—"}</div>
-              </div>
-              <span className="mono price__value price__value--small">{p.price!.toFixed(2)}</span>
+    <>
+      <section className="panel">
+        <div className="panel-head">
+          <h2>WOQOD this month</h2>
+          <span className="label">{data.settings.fuelGrade}</span>
+        </div>
+        {mine ? (
+          <div className="price price--mine">
+            <div>
+              <div className="price__grade">{fmtMonthLong(mine.month)}</div>
+              <div className="price__note">{mine.grade}</div>
             </div>
-          </li>
-        ))}
-      </ul>
-    </section>
+            <div className="price__value mono">{mine.price.toFixed(2)}</div>
+          </div>
+        ) : (
+          <p className="muted">{woqod ? (woqod.ok ? `WOQOD has no ${data.settings.fuelGrade} price.` : `WOQOD unavailable: ${woqod.error}`) : "Checking WOQOD…"}</p>
+        )}
+        {status && <p className={`insight insight--${status.tone}`}>{status.text}</p>}
+        <div className="form-actions form-actions--start">
+          <button type="button" className="btn" disabled={!data.canWrite || busy !== null} onClick={refresh}>
+            {busy === "refresh" ? "Fetching…" : "Fetch from WOQOD and save"}
+          </button>
+        </div>
+        <p className="muted small">Checked automatically at 06:00 on the 1st–5th of every month. Manual prices are never overwritten.</p>
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">
+          <h2>Set a price by hand</h2>
+          <span className="label">Locked once saved</span>
+        </div>
+        <div className="form-grid form-grid--2">
+          <label className="field">
+            <span className="field__label">Month</span>
+            <select className="field__select" value={month} onChange={(e) => setMonth(e.target.value)}>
+              {months.map((m) => (
+                <option key={m} value={m}>
+                  {fmtMonthLong(m)}
+                  {saved(m)?.price != null ? ` · ${saved(m)!.price!.toFixed(2)}` : ""}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="field">
+            <span className="field__label">{data.settings.fuelGrade} · QAR/L</span>
+            <input type="number" inputMode="decimal" step="0.01" value={price} onChange={(e) => setPrice(e.target.value)} aria-invalid={price !== "" && !priceValid} />
+            {price !== "" && !priceValid && <span className="field__err">Prices in Qatar are between QAR 0.50 and 5.00.</span>}
+          </label>
+        </div>
+        <div className="form-actions form-actions--start">
+          <button type="button" className="btn" disabled={!data.canWrite || !priceValid || busy !== null} onClick={saveManual}>
+            {busy === "manual" ? "Saving…" : `Save ${fmtMonthLong(month)}`}
+          </button>
+        </div>
+        {err && (
+          <p className="form-error" role="alert">
+            {err}
+          </p>
+        )}
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">
+          <h2>Monthly prices</h2>
+          <span className="label">Fuel Prices tab</span>
+        </div>
+        <ul className="history">
+          {shown.map((p) => (
+            <li key={p.month} className="history__item">
+              <div className="history__row">
+                <div className="history__main">
+                  <div className="mono">{fmtMonthLong(p.month)}</div>
+                  <div className="small">
+                    <span className={`source source--${(p.source ?? "none").toLowerCase()}`}>{p.source === "Manual" ? "Manual · locked" : (p.source ?? "Not set yet")}</span>
+                  </div>
+                </div>
+                <span className="mono price__value price__value--small">{p.price?.toFixed(2) ?? "—"}</span>
+                {p.source === "Manual" ? (
+                  <button type="button" className="btn btn--ghost btn--small" disabled={!data.canWrite || busy !== null} onClick={() => unlock(p.month)}>
+                    {busy === `unlock-${p.month}` ? "…" : "Unlock"}
+                  </button>
+                ) : (
+                  <button type="button" className="icon-btn" aria-label={`Set the ${fmtMonthLong(p.month)} price`} disabled={!data.canWrite} onClick={() => { setMonth(p.month); scrollTo({ top: 0, behavior: "smooth" }); }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M4 20v-4L15 5l4 4L8 20Z" />
+                    </svg>
+                  </button>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+        <p className="muted small">Unlocking keeps the price but lets the monthly WOQOD check replace it.</p>
+      </section>
+    </>
   );
 }

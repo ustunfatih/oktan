@@ -326,3 +326,12 @@ a { color: var(--accent); }
 .confirm__actions { display: flex; justify-content: flex-end; gap: 8px; }
 .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(84px + env(safe-area-inset-bottom)); z-index: 20; display: flex; align-items: center; gap: 14px; max-width: calc(100vw - 32px); padding: 12px 14px 12px 18px; border-radius: 12px; background: var(--text); color: var(--bg); font-size: 14px; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5); }
 @media (min-width: 820px) { .toast { bottom: 28px; } }
+
+/* ── Prices ────────────────────────────────────────────────────────────── */
+.form-grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+.form-actions--start { justify-content: flex-start; }
+.field__select { width: 100%; min-height: 50px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--line-strong); background: var(--bg); color: var(--text); font-family: var(--mono); font-size: 15px; }
+.source { display: inline-block; padding: 2px 8px; border-radius: 999px; font-family: var(--mono); font-size: 11px; background: #1a2027; color: var(--muted); }
+.source--woqod { background: var(--accent-soft); color: var(--accent); }
+.source--manual { background: #0e1e26; color: var(--accent-2); }
+p.insight { margin: 0; }

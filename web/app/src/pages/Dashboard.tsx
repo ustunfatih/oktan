@@ -153,7 +153,7 @@ function PricesCard({ model, settings, woqod }: { model: DashboardModel; setting
               : `${minePrice.price > prev.price ? "Up" : "Down"} ${fmt(Math.abs(minePrice.price - prev.price), 2)} from last month.`
             : ""}{" "}
           {missingInSheet
-            ? "Not in your sheet's Fuel Prices tab yet; automatic saving comes in phase 6."
+            ? "Not in your sheet yet: it's saved automatically on the 1st–5th, or from Log → Prices."
             : "Matches your sheet's Fuel Prices tab."}
         </p>
       </div>

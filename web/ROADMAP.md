@@ -55,7 +55,18 @@ Progress log:
   - **Known effect:** deleting a fill-up between two others makes the merged trip's L/100 km read low
     (that fill-up's litres disappear). The delete confirmation explains this and suggests Edit.
 - 24 Oct — You tested add, edit, undo and delete in test mode on your phone. **Live saving unlocked**
-  (`LIVE_WRITES` "true", version `772961ee`); the DEV copy was left clean. Test mode stays available. Phase 5 ✅.
+  (`LIVE_WRITES` "true", version `772961ee`); the DEV copy was left clean. Test mode stays available. Phase 5 ✅
+  (`cefc543`).
+- 24 Oct — **Phase 6 (prices) deployed** (version `846f5de5`, uncommitted).
+  - **Monthly check:** a Cloudflare cron at 03:00 UTC (06:00 Qatar) on the 1st–5th fetches WOQOD and saves
+    your grade's price into the Fuel Prices tab (live sheet and DEV copy), with Source = WOQOD. Unchanged
+    values aren't rewritten. Results go to the Worker logs.
+  - **Log → Prices:** shows WOQOD's current price and whether it's in your sheet, and has a "Fetch from WOQOD
+    and save" button. You can set any month's price by hand, up to next month. A manual price is **locked**:
+    WOQOD never overwrites it, and Unlock hands the month back to WOQOD.
+  - Every price change is recorded in App_Log.
+  - **Tested:** 57 unit tests; a 9-step API run on the DEV sheet (save, no-op, manual, lock, unlock, restore,
+    bad month, bad price); the cron triggered locally; the screen at phone size. DEV cleaned up afterwards.
 
 What you've decided so far:
 

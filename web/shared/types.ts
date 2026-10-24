@@ -88,3 +88,9 @@ export interface WriteResponse {
   data: DataResponse;
   result: { id: string; row: number | null };
 }
+
+/** Response to a price change: the fresh sheet plus what happened (a skip is not an error). */
+export interface PriceWriteResponse {
+  data: DataResponse;
+  outcome: { written: boolean; message: string; month?: string; price?: number };
+}

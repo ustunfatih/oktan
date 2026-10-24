@@ -1,7 +1,7 @@
 import { COL_INDEX, PlanError, type CellValue, type Plan } from "../shared/writes";
 import type { Entry } from "../shared/types";
 import type { Env } from "./env";
-import { batchUpdate, getMeta } from "./sheets";
+import { batchUpdate, getMeta, type SheetMeta } from "./sheets";
 
 const LOG_TAB = "App_Log";
 const LOG_SHEET_ID = 6000;
@@ -12,7 +12,7 @@ const INPUT_SPANS: [number, number][] = [
   [15, 16], // P
 ];
 
-const cell = (value: CellValue) => {
+export const cell = (value: CellValue) => {
   if (value === null) return {};
   if (typeof value === "number") return { userEnteredValue: { numberValue: value } };
   if (typeof value === "boolean") return { userEnteredValue: { boolValue: value } };
@@ -20,7 +20,7 @@ const cell = (value: CellValue) => {
 };
 
 export interface LogRecord {
-  action: "add" | "edit" | "delete";
+  action: "add" | "edit" | "delete" | "price";
   email: string;
   entryId: string;
   before: Partial<Entry> | null;
@@ -73,20 +73,23 @@ export async function applyPlan(env: Env, spreadsheetId: string, plan: Plan, ent
     }
   }
 
+  requests.push(...appLogRequests(meta, [log.action, log.email, log.entryId, JSON.stringify(log.before), JSON.stringify(log.after)]));
+
+  await batchUpdate(env, spreadsheetId, requests);
+}
+
+/** Requests that append one row to the hidden App_Log tab, creating the tab first if needed. */
+export function appLogRequests(meta: SheetMeta, values: CellValue[]): unknown[] {
+  const requests: unknown[] = [];
   if (!meta.tabs.some((t) => t.title === LOG_TAB)) {
     requests.push(
       { addSheet: { properties: { sheetId: LOG_SHEET_ID, title: LOG_TAB, hidden: true, gridProperties: { rowCount: 1000, columnCount: 6, frozenRowCount: 1 } } } },
       { appendCells: { sheetId: LOG_SHEET_ID, fields: "userEnteredValue", rows: [{ values: ["Time (UTC)", "Action", "By", "Entry ID", "Before", "After"].map(cell) }] } },
     );
   }
-  const logSheetId = meta.tabs.find((t) => t.title === LOG_TAB)?.sheetId ?? LOG_SHEET_ID;
+  const sheetId = meta.tabs.find((t) => t.title === LOG_TAB)?.sheetId ?? LOG_SHEET_ID;
   requests.push({
-    appendCells: {
-      sheetId: logSheetId,
-      fields: "userEnteredValue",
-      rows: [{ values: [new Date().toISOString(), log.action, log.email, log.entryId, JSON.stringify(log.before), JSON.stringify(log.after)].map(cell) }],
-    },
+    appendCells: { sheetId, fields: "userEnteredValue", rows: [{ values: [new Date().toISOString(), ...values].map(cell) }] },
   });
-
-  await batchUpdate(env, spreadsheetId, requests);
+  return requests;
 }

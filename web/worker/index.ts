@@ -1,12 +1,13 @@
 import { Hono, type Context } from "hono";
 import { requireAccess } from "./access";
-import { activeSheet, MODE_COOKIE, type ActiveSheet, type Env } from "./env";
+import { activeSheet, LIVE_SHEET_ID, MODE_COOKIE, type ActiveSheet, type Env } from "./env";
 import { GoogleAuthError } from "./google";
 import { readWorkbook, SheetsApiError } from "./sheets";
 import { fetchWoqod } from "./woqod";
+import { refreshFromWoqod, writeMonthPrice, type PriceOutcome } from "./prices";
 import { applyPlan } from "./writes";
 import { parseEntries, parsePrices, parseSettings, SheetLayoutError } from "../shared/parse";
-import type { DataResponse, Entry, WriteResponse } from "../shared/types";
+import type { DataResponse, Entry, PriceWriteResponse, WriteResponse } from "../shared/types";
 import { planAdd, planDelete, planEdit, PlanError, validateEntry, type EntryInput, type FieldErrors } from "../shared/writes";
 
 type App = { Bindings: Env; Variables: { email: string; sheet: ActiveSheet } };
@@ -127,6 +128,38 @@ app.delete("/api/entries/:id", async (c) => {
   }));
 });
 
+// ── Fuel prices ────────────────────────────────────────────────────────────
+
+const LOCKED = "Saving to your live sheet isn't switched on. Use test mode (DEV sheet) to try it.";
+
+async function priceResponse(c: Context<App>, run: () => Promise<PriceOutcome>) {
+  if (!c.get("sheet").canWrite) return c.json({ error: LOCKED }, 403);
+  const outcome = await run();
+  const res: PriceWriteResponse = { data: (await load(c, true)).body, outcome };
+  return c.json(res);
+}
+
+/** Months a price can be typed for: anything up to next month (WOQOD announces on the 1st). */
+function checkMonth(month: string) {
+  const today = qatarToday();
+  const [y, m] = today.split("-").map(Number) as [number, number];
+  const next = m === 12 ? `${y + 1}-01` : `${y}-${String(m + 1).padStart(2, "0")}`;
+  return /^\d{4}-\d{2}$/.test(month) && month >= "2020-01" && month <= next;
+}
+
+app.post("/api/prices/refresh", (c) => priceResponse(c, () => refreshFromWoqod(c.env, c.get("sheet").id, c.get("email"))));
+
+app.put("/api/prices/:month", async (c) => {
+  const month = c.req.param("month");
+  const { price } = await c.req.json<{ price: number }>();
+  if (!checkMonth(month)) return c.json({ error: "Pick a month up to next month." }, 400);
+  return priceResponse(c, () => writeMonthPrice(c.env, c.get("sheet").id, month, Number(price), "Manual", c.get("email")));
+});
+
+app.post("/api/prices/:month/unlock", (c) =>
+  priceResponse(c, () => writeMonthPrice(c.env, c.get("sheet").id, c.req.param("month"), 0, "Sheet", c.get("email"))),
+);
+
 app.notFound((c) => c.json({ error: "Not found" }, 404));
 
 app.onError((err, c) => {
@@ -137,4 +170,31 @@ app.onError((err, c) => {
   return c.json({ error: "Unexpected error" }, 500);
 });
 
-export default app;
+/**
+ * Monthly price check (see "triggers" in wrangler.jsonc: 06:00 Qatar time on the 1st–5th).
+ * Saves WOQOD's price for the new month to the live sheet and the DEV copy; manual prices are kept.
+ */
+async function monthlyPriceCheck(env: Env) {
+  const targets = [{ id: env.SHEET_ID, allowed: env.SHEET_ID !== LIVE_SHEET_ID || env.LIVE_WRITES === "true" }];
+  if (env.DEV_SHEET_ID && env.DEV_SHEET_ID !== env.SHEET_ID) targets.push({ id: env.DEV_SHEET_ID, allowed: true });
+  for (const t of targets) {
+    const label = t.id === LIVE_SHEET_ID ? "live sheet" : "DEV sheet";
+    if (!t.allowed) {
+      console.log(`Price check: ${label} skipped (live writes locked)`);
+      continue;
+    }
+    try {
+      const r = await refreshFromWoqod(env, t.id, "monthly check");
+      console.log(`Price check: ${label}: ${r.message}`);
+    } catch (e) {
+      console.error(`Price check: ${label} failed: ${e instanceof Error ? e.message : String(e)}`);
+    }
+  }
+}
+
+export default {
+  fetch: app.fetch,
+  scheduled(_controller, env, ctx) {
+    ctx.waitUntil(monthlyPriceCheck(env));
+  },
+} satisfies ExportedHandler<Env>;
