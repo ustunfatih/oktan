@@ -10,9 +10,9 @@ struct SplashView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     /// How long the splash should stay up (one full animation run + a beat).
-    static let minimumDisplayDuration: TimeInterval = OilDropAnimation.totalDuration + 0.4
+    static let minimumDisplayDuration: TimeInterval = 0.65
     /// Display duration when Reduce Motion is on.
-    static let reducedMotionDisplayDuration: TimeInterval = 1.2
+    static let reducedMotionDisplayDuration: TimeInterval = 0.35
 
     var body: some View {
         ZStack {

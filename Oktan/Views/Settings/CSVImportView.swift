@@ -140,6 +140,7 @@ struct CSVImportView: View {
                 mappingPicker("Odometer End", selection: $fieldMapping.odometerEndColumn)
                 mappingPicker("Station", selection: $fieldMapping.gasStationColumn)
                 mappingPicker("Drive Mode", selection: $fieldMapping.driveModeColumn)
+                mappingPicker("Full Refill", selection: $fieldMapping.isFullRefillColumn)
                 mappingPicker("Notes", selection: $fieldMapping.notesColumn)
             }
             
@@ -239,6 +240,14 @@ struct CSVImportView: View {
                     }
                 }
             }
+
+            if let totalRows = parseResult?.totalRows, totalRows > previewEntries.count {
+                Section {
+                    Text("Showing the first \(previewEntries.count) of \(totalRows) rows. All rows are validated before the atomic import is saved.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
             
             Section {
                 Button("Import Entries") {
@@ -329,23 +338,28 @@ struct CSVImportView: View {
         switch result {
         case .success(let urls):
             guard let url = urls.first else { return }
-            guard url.startAccessingSecurityScopedResource() else {
-                errorMessage = "Unable to access the file"
-                return
-            }
-            defer { url.stopAccessingSecurityScopedResource() }
-            
-            do {
-                parseResult = try CSVImportService.parseCSV(from: url)
-                if let result = parseResult, !result.isEmpty {
-                    fieldMapping = CSVImportService.suggestMapping(for: result.headers)
-                    currentStep = .mapFields
-                    errorMessage = nil
-                } else {
-                    errorMessage = "The CSV file appears to be empty"
+            Task {
+                guard url.startAccessingSecurityScopedResource() else {
+                    errorMessage = "Unable to access the file"
+                    return
                 }
-            } catch {
-                errorMessage = "Failed to read file: \(error.localizedDescription)"
+                defer { url.stopAccessingSecurityScopedResource() }
+
+                do {
+                    let parsed = try await Task.detached(priority: .userInitiated) {
+                        try CSVImportService.parseCSV(from: url)
+                    }.value
+                    parseResult = parsed
+                    if !parsed.isEmpty {
+                        fieldMapping = CSVImportService.suggestMapping(for: parsed.headers)
+                        currentStep = .mapFields
+                        errorMessage = nil
+                    } else {
+                        errorMessage = "The CSV file appears to be empty"
+                    }
+                } catch {
+                    errorMessage = "Failed to read file: \(error.localizedDescription)"
+                }
             }
         case .failure(let error):
             errorMessage = "Failed to select file: \(error.localizedDescription)"
@@ -354,14 +368,15 @@ struct CSVImportView: View {
     
     private func generatePreview() {
         guard let result = parseResult else { return }
-        previewEntries = CSVImportService.generatePreview(from: result, mapping: fieldMapping)
+        previewEntries = CSVImportService.generatePreview(from: result, mapping: fieldMapping, limit: 200)
         currentStep = .preview
     }
     
     private func performImport() {
         guard let result = parseResult else { return }
         currentStep = .importing
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+        Task { @MainActor in
+            await Task.yield()
             importResult = CSVImportService.importEntries(
                 from: result,
                 mapping: fieldMapping,

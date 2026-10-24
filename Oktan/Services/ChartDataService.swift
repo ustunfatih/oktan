@@ -7,10 +7,13 @@ enum ChartDataService {
     
     /// Data point for time-based charts
     struct TimeSeriesPoint: Identifiable {
-        let id = UUID()
         let date: Date
         let value: Double
         let label: String?
+
+        var id: String {
+            "\(date.timeIntervalSinceReferenceDate)|\(value)|\(label ?? "")"
+        }
         
         init(date: Date, value: Double, label: String? = nil) {
             self.date = date
@@ -21,15 +24,15 @@ enum ChartDataService {
     
     /// Data point for comparison charts
     struct ComparisonPoint: Identifiable {
-        let id = UUID()
         let category: String
         let value: Double
         let color: String
+
+        var id: String { category }
     }
     
     /// Monthly aggregated data
     struct MonthlyData: Identifiable {
-        let id = UUID()
         let month: Date
         let monthLabel: String
         let totalDistance: Double
@@ -38,6 +41,8 @@ enum ChartDataService {
         let averageEfficiency: Double?
         let averageCostPerKM: Double?
         let fillUpCount: Int
+
+        var id: Date { month }
     }
     
     /// Period comparison data
@@ -64,24 +69,20 @@ enum ChartDataService {
     
     /// Gets efficiency trend data points
     static func efficiencyTrend(from entries: [FuelEntry]) -> [TimeSeriesPoint] {
-        entries
-            .filter { $0.litersPer100KM != nil }
-            .sorted { $0.date < $1.date }
-            .map { TimeSeriesPoint(date: $0.date, value: $0.litersPer100KM!, label: $0.gasStation) }
+        FuelCycleService.completedCycles(from: entries)
+            .map { TimeSeriesPoint(date: $0.date, value: $0.litersPer100KM, label: $0.station) }
     }
     
     /// Gets rolling average efficiency (smoothed trend line)
     static func rollingAverageEfficiency(from entries: [FuelEntry], windowSize: Int = 3) -> [TimeSeriesPoint] {
-        let sorted = entries
-            .filter { $0.litersPer100KM != nil }
-            .sorted { $0.date < $1.date }
+        let sorted = FuelCycleService.completedCycles(from: entries)
         
         guard sorted.count >= windowSize else { return [] }
         
         var result: [TimeSeriesPoint] = []
         for i in (windowSize - 1)..<sorted.count {
             let window = sorted[(i - windowSize + 1)...i]
-            let avg = window.compactMap { $0.litersPer100KM }.reduce(0, +) / Double(windowSize)
+            let avg = window.reduce(0) { $0 + $1.litersPer100KM } / Double(windowSize)
             result.append(TimeSeriesPoint(date: sorted[i].date, value: avg))
         }
         return result
@@ -91,10 +92,8 @@ enum ChartDataService {
     
     /// Gets cost per km trend data
     static func costPerKMTrend(from entries: [FuelEntry]) -> [TimeSeriesPoint] {
-        entries
-            .filter { $0.costPerKM != nil }
-            .sorted { $0.date < $1.date }
-            .map { TimeSeriesPoint(date: $0.date, value: $0.costPerKM!) }
+        FuelCycleService.completedCycles(from: entries)
+            .map { TimeSeriesPoint(date: $0.date, value: $0.costPerKM) }
     }
     
     /// Gets total cost per month
@@ -122,12 +121,14 @@ enum ChartDataService {
     
     /// Gets efficiency comparison by drive mode
     static func driveModeComparison(from entries: [FuelEntry]) -> [ComparisonPoint] {
-        let modes = Dictionary(grouping: entries.filter { $0.litersPer100KM != nil }) { $0.driveMode }
+        let modes = Dictionary(grouping: FuelCycleService.completedCycles(from: entries)) { $0.driveMode }
         
         return FuelEntry.DriveMode.allCases.compactMap { mode -> ComparisonPoint? in
             guard let modeEntries = modes[mode], !modeEntries.isEmpty else { return nil }
             
-            let avgEfficiency = modeEntries.compactMap { $0.litersPer100KM }.reduce(0, +) / Double(modeEntries.count)
+            let distance = modeEntries.reduce(0) { $0 + $1.distance }
+            let liters = modeEntries.reduce(0) { $0 + $1.liters }
+            let avgEfficiency = liters / distance * 100
             
             let color: String
             switch mode {
@@ -149,28 +150,39 @@ enum ChartDataService {
         formatter.dateFormat = "MMM yyyy"
         
         var monthlyGroups: [Date: [FuelEntry]] = [:]
+        var cycleGroups: [Date: [FuelCycleService.Cycle]] = [:]
         
         for entry in entries {
             let components = calendar.dateComponents([.year, .month], from: entry.date)
             guard let monthStart = calendar.date(from: components) else { continue }
             monthlyGroups[monthStart, default: []].append(entry)
         }
+
+        for cycle in FuelCycleService.completedCycles(from: entries) {
+            let components = calendar.dateComponents([.year, .month], from: cycle.date)
+            guard let monthStart = calendar.date(from: components) else { continue }
+            cycleGroups[monthStart, default: []].append(cycle)
+        }
         
         return monthlyGroups.map { month, monthEntries in
             let distance = monthEntries.compactMap { $0.distance }.reduce(0, +)
             let liters = monthEntries.reduce(0) { $0 + $1.totalLiters }
             let cost = monthEntries.reduce(0) { $0 + $1.totalCost }
+            let completedCycles = cycleGroups[month] ?? []
+            let cycleDistance = completedCycles.reduce(0) { $0 + $1.distance }
+            let litersForEfficiency = completedCycles.reduce(0) { $0 + $1.liters }
+            let costForEfficiency = completedCycles.reduce(0) { $0 + $1.cost }
             
             let avgEfficiency: Double?
-            if distance > 0 {
-                avgEfficiency = (liters / distance) * 100
+            if cycleDistance > 0 {
+                avgEfficiency = (litersForEfficiency / cycleDistance) * 100
             } else {
                 avgEfficiency = nil
             }
             
             let avgCostPerKM: Double?
-            if distance > 0 {
-                avgCostPerKM = cost / distance
+            if cycleDistance > 0 {
+                avgCostPerKM = costForEfficiency / cycleDistance
             } else {
                 avgCostPerKM = nil
             }
@@ -218,8 +230,23 @@ enum ChartDataService {
 
     /// Prediction for the next fill-up
     struct FillupPrediction {
+        enum Confidence {
+            case high
+            case medium
+            case low
+
+            var displayName: String {
+                switch self {
+                case .high: return String(localized: "High confidence")
+                case .medium: return String(localized: "Medium confidence")
+                case .low: return String(localized: "Early estimate")
+                }
+            }
+        }
+
         let date: Date
         let estimatedCost: Double?
+        let confidence: Confidence
     }
 
     /// Predicts when the next fill-up is due and its likely cost,
@@ -237,7 +264,22 @@ enum ChartDataService {
         let recentCosts = entries.sorted { $0.date < $1.date }.suffix(5).map(\.totalCost)
         let estimatedCost = recentCosts.isEmpty ? nil : recentCosts.reduce(0, +) / Double(recentCosts.count)
 
-        return FillupPrediction(date: predicted, estimatedCost: estimatedCost)
+        let sorted = entries.sorted { $0.date < $1.date }
+        let intervals = zip(sorted, sorted.dropFirst()).map {
+            max(0, $1.date.timeIntervalSince($0.date) / 86_400)
+        }
+        let variance = intervals.reduce(0) { $0 + pow($1 - averageDays, 2) } / Double(intervals.count)
+        let coefficient = sqrt(variance) / averageDays
+        let confidence: FillupPrediction.Confidence
+        if intervals.count >= 4, coefficient < 0.25 {
+            confidence = .high
+        } else if intervals.count >= 2, coefficient < 0.6 {
+            confidence = .medium
+        } else {
+            confidence = .low
+        }
+
+        return FillupPrediction(date: predicted, estimatedCost: estimatedCost, confidence: confidence)
     }
 
     /// Gets fill-up frequency by day of week
@@ -289,13 +331,13 @@ enum ChartDataService {
     static func generateInsights(from entries: [FuelEntry]) -> [String] {
         var insights: [String] = []
         
-        let completed = entries.filter { $0.litersPer100KM != nil }
+        let completed = FuelCycleService.completedCycles(from: entries)
         
         // Best/worst efficiency
-        if let best = completed.min(by: { ($0.litersPer100KM ?? 0) < ($1.litersPer100KM ?? 0) }),
-           let worst = completed.max(by: { ($0.litersPer100KM ?? 0) < ($1.litersPer100KM ?? 0) }),
-           let bestEff = best.litersPer100KM,
-           let worstEff = worst.litersPer100KM {
+        if let best = completed.min(by: { $0.litersPer100KM < $1.litersPer100KM }),
+           let worst = completed.max(by: { $0.litersPer100KM < $1.litersPer100KM }) {
+            let bestEff = best.litersPer100KM
+            let worstEff = worst.litersPer100KM
             insights.append("Best efficiency: \(String(format: "%.1f", bestEff)) L/100km on \(best.date.formatted(date: .abbreviated, time: .omitted))")
             insights.append("Worst efficiency: \(String(format: "%.1f", worstEff)) L/100km on \(worst.date.formatted(date: .abbreviated, time: .omitted))")
         }
@@ -315,12 +357,37 @@ enum ChartDataService {
         if let avgDays = averageDaysBetweenFillups(from: entries) {
             insights.append("You fill up every \(String(format: "%.0f", avgDays)) days on average")
         }
+
+        if completed.count >= 4 {
+            let recent = completed.suffix(2).map(\.litersPer100KM).reduce(0, +) / 2
+            let baselineCycles = completed.dropLast(2).suffix(6)
+            let baseline = baselineCycles.map(\.litersPer100KM).reduce(0, +) / Double(baselineCycles.count)
+            let change = (recent - baseline) / baseline * 100
+            if abs(change) >= 8 {
+                let direction = change > 0 ? "higher" : "lower"
+                insights.append("Recent fuel use is \(String(format: "%.0f", abs(change)))% \(direction) than your baseline")
+            }
+        }
+
+        let priced = entries.sorted { $0.date < $1.date }
+        if priced.count >= 6 {
+            let recentPrice = priced.suffix(3).map(\.pricePerLiter).reduce(0, +) / 3
+            let earlier = priced.dropLast(3).suffix(3)
+            let earlierPrice = earlier.map(\.pricePerLiter).reduce(0, +) / Double(earlier.count)
+            if earlierPrice > 0 {
+                let change = (recentPrice - earlierPrice) / earlierPrice * 100
+                if abs(change) >= 5 {
+                    insights.append("Your recent unit fuel price changed by \(String(format: "%.0f", change))%")
+                }
+            }
+        }
         
         // Monthly spending trend
         let monthlyData = aggregateMonthly(from: entries)
         if monthlyData.count >= 2 {
             let current = monthlyData.last!
             let previous = monthlyData[monthlyData.count - 2]
+            guard previous.totalCost > 0 else { return insights }
             let change = ((current.totalCost - previous.totalCost) / previous.totalCost) * 100
             if abs(change) > 10 {
                 let direction = change > 0 ? "increased" : "decreased"

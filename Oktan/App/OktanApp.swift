@@ -43,6 +43,7 @@ struct OktanApp: App {
     @State private var appSettings = AppSettings()
     @State private var authManager = AuthenticationManager()
     @State private var premiumManager = PremiumManager()
+    @State private var appLockManager = AppLockManager()
     @State private var showSplash = true
     @Environment(\.scenePhase) private var scenePhase
     @State private var isInitialized = false
@@ -86,6 +87,7 @@ struct OktanApp: App {
                     .environment(errorHandler)
                     .environment(notificationService)
                     .environment(premiumManager)
+                    .environment(appLockManager)
                     .environment(milestoneService)
                     .errorAlert(errorHandler)
                     .opacity(showSplash ? 0 : 1)
@@ -95,23 +97,35 @@ struct OktanApp: App {
                     SplashView()
                         .transition(.opacity)
                 }
+
+                if !showSplash, appLockManager.isLocked {
+                    AppLockView()
+                        .environment(appLockManager)
+                        .transition(.opacity)
+                }
             }
             .tint(appSettings.currentTheme.accent)
             .preferredColorScheme(appSettings.effectiveColorScheme)
+            .environment(\.locale, appSettings.locale)
             .environment(appSettings)
             .task {
+                let startupBegan = Date()
                 // Initialize
                 await initialize()
                 
                 // Check credential state on app launch
                 authManager.checkCredentialState()
+                await premiumManager.synchronizeIdentity(userID: authManager.currentUser?.id)
 
                 // Dismiss splash once startup work is done and the oil-drop
                 // animation has completed one full run.
                 let splashDuration = UIAccessibility.isReduceMotionEnabled
                     ? SplashView.reducedMotionDisplayDuration
                     : SplashView.minimumDisplayDuration
-                try? await Task.sleep(for: .seconds(splashDuration))
+                let elapsed = Date().timeIntervalSince(startupBegan)
+                if elapsed < splashDuration {
+                    try? await Task.sleep(for: .seconds(splashDuration - elapsed))
+                }
                 withAnimation(.easeOut(duration: 0.4)) {
                     showSplash = false
                 }
@@ -119,7 +133,12 @@ struct OktanApp: App {
             .onChange(of: scenePhase) { _, newPhase in
                 if newPhase == .active {
                     notificationService.clearBadge()
+                } else if newPhase == .background {
+                    appLockManager.lockIfNeeded()
                 }
+            }
+            .onChange(of: authManager.currentUser?.id) { _, userID in
+                Task { await premiumManager.synchronizeIdentity(userID: userID) }
             }
             .onChange(of: carRepository?.selectedCar?.id) { _, newCarId in
                 repository.activeCarId = newCarId

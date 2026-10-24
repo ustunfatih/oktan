@@ -2,7 +2,14 @@
   "sourceLanguage" : "en",
   "strings" : {
     "*" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "*"
+          }
+        }
+      }
     },
     "%@ %@" : {
       "localizations" : {
@@ -10,6 +17,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "%1$@ %2$@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ %@"
           }
         }
       }
@@ -21,11 +34,24 @@
             "state" : "new",
             "value" : "%1$@ %2$@ - %3$@"
           }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ %@ - %@"
+          }
         }
       }
     },
     "%@ is not available on this device." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ bu aygıtta kullanılamıyor."
+          }
+        }
+      }
     },
     "%@. %@. %@" : {
       "localizations" : {
@@ -34,38 +60,114 @@
             "state" : "new",
             "value" : "%1$@. %2$@. %3$@"
           }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@. %@. %@"
+          }
         }
       }
     },
     "%@%%" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@%%"
+          }
+        }
+      }
     },
     "%lld" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld"
+          }
+        }
+      }
     },
     "%lld models" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld model"
+          }
+        }
+      }
     },
     "%lld rows found" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld satır bulundu"
+          }
+        }
+      }
     },
     "%lld tracked trips" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld takip edilen yolculuk"
+          }
+        }
+      }
     },
     "%lldL" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld L"
+          }
+        }
+      }
     },
     "7 days" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "7 gün"
+          }
+        }
+      }
     },
     "14 days" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "14 gün"
+          }
+        }
+      }
     },
     "21 days" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "21 gün"
+          }
+        }
+      }
     },
     "30 days" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "30 gün"
+          }
+        }
+      }
     },
     "About" : {
       "localizations" : {
@@ -98,7 +200,14 @@
       }
     },
     "Account Benefits" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hesap Avantajları"
+          }
+        }
+      }
     },
     "Add Fill-up" : {
       "localizations" : {
@@ -111,10 +220,24 @@
       }
     },
     "Add new fill-up" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yeni yakıt alımı ekle"
+          }
+        }
+      }
     },
     "Add odometer readings to see efficiency trends" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verimlilik eğilimlerini görmek için kilometre bilgisi ekleyin"
+          }
+        }
+      }
     },
     "Add odometer start/end to chart efficiency" : {
       "extractionState" : "stale",
@@ -128,7 +251,14 @@
       }
     },
     "Add some fill-ups to enable export" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dışa aktarmayı etkinleştirmek için yakıt alımı ekleyin"
+          }
+        }
+      }
     },
     "Add Your Car" : {
       "localizations" : {
@@ -161,7 +291,14 @@
       }
     },
     "An unexpected error occurred: %@" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beklenmeyen bir hata oluştu: %@"
+          }
+        }
+      }
     },
     "An unknown error occurred." : {
       "localizations" : {
@@ -215,7 +352,14 @@
       }
     },
     "At a Glance" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir Bakışta"
+          }
+        }
+      }
     },
     "Average" : {
       "localizations" : {
@@ -228,13 +372,34 @@
       }
     },
     "Average efficiency, all time" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tüm zamanların ortalama verimliliği"
+          }
+        }
+      }
     },
     "Average Interval" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ortalama Aralık"
+          }
+        }
+      }
     },
     "Avg: %@" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ort: %@"
+          }
+        }
+      }
     },
     "Back" : {
       "localizations" : {
@@ -258,7 +423,14 @@
       }
     },
     "Benefits" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avantajlar"
+          }
+        }
+      }
     },
     "Cancel" : {
       "localizations" : {
@@ -292,16 +464,44 @@
       }
     },
     "Check that you have permission to save files." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dosya kaydetme izniniz olduğunu kontrol edin."
+          }
+        }
+      }
     },
     "Check your Apple ID settings and try again." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Kimliği ayarlarınızı kontrol edip yeniden deneyin."
+          }
+        }
+      }
     },
     "Check your Wi-Fi or cellular connection." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wi-Fi veya hücresel bağlantınızı kontrol edin."
+          }
+        }
+      }
     },
     "Choose File" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dosya Seç"
+          }
+        }
+      }
     },
     "Choose your preferred units for tracking fuel consumption." : {
       "localizations" : {
@@ -334,10 +534,24 @@
       }
     },
     "Comma decimal (1,5)" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ondalık virgül (1,5)"
+          }
+        }
+      }
     },
     "Completed with Issues" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sorunlarla Tamamlandı"
+          }
+        }
+      }
     },
     "Confirm" : {
       "localizations" : {
@@ -371,7 +585,14 @@
       }
     },
     "Cost" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maliyet"
+          }
+        }
+      }
     },
     "Cost per %@" : {
       "localizations" : {
@@ -384,25 +605,74 @@
       }
     },
     "Cost per kilometer trend chart" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kilometre başına maliyet eğilim grafiği"
+          }
+        }
+      }
     },
     "Cost: %@" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maliyet: %@"
+          }
+        }
+      }
     },
     "Cost/km" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maliyet/km"
+          }
+        }
+      }
     },
     "Could not generate image: %@" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Görsel oluşturulamadı: %@"
+          }
+        }
+      }
     },
     "Could not read file: %@" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dosya okunamadı: %@"
+          }
+        }
+      }
     },
     "Could not write file: %@" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dosyaya yazılamadı: %@"
+          }
+        }
+      }
     },
     "Count" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adet"
+          }
+        }
+      }
     },
     "Currency" : {
       "localizations" : {
@@ -425,7 +695,14 @@
       }
     },
     "Data Export" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Veri Dışa Aktarma"
+          }
+        }
+      }
     },
     "Data Management" : {
       "localizations" : {
@@ -438,7 +715,14 @@
       }
     },
     "Data migration failed: %@" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Veri taşıma başarısız oldu: %@"
+          }
+        }
+      }
     },
     "Date" : {
       "localizations" : {
@@ -451,19 +735,54 @@
       }
     },
     "Date Format" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tarih Biçimi"
+          }
+        }
+      }
     },
     "Date, Odometer Start, Odometer End, Liters, Price per Liter, Station, Drive Mode, Full Refill, Notes" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tarih, Başlangıç Kilometresi, Bitiş Kilometresi, Litre, Litre Fiyatı, İstasyon, Sürüş Modu, Tam Dolum, Notlar"
+          }
+        }
+      }
     },
     "Day" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gün"
+          }
+        }
+      }
     },
     "DD.MM.YYYY" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GG.AA.YYYY"
+          }
+        }
+      }
     },
     "DD/MM/YYYY" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GG/AA/YYYY"
+          }
+        }
+      }
     },
     "Delete" : {
       "localizations" : {
@@ -556,7 +875,14 @@
       }
     },
     "Drive Mode Details" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sürüş Modu Ayrıntıları"
+          }
+        }
+      }
     },
     "Drive modes" : {
       "extractionState" : "stale",
@@ -601,10 +927,24 @@
       }
     },
     "Efficiency by Drive Mode" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sürüş Moduna Göre Verimlilik"
+          }
+        }
+      }
     },
     "Efficiency Trend" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verimlilik Eğilimi"
+          }
+        }
+      }
     },
     "Efficiency trend (%@)" : {
       "extractionState" : "stale",
@@ -618,7 +958,14 @@
       }
     },
     "Efficiency trend chart showing %lld data points" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld veri noktası gösteren verimlilik eğilim grafiği"
+          }
+        }
+      }
     },
     "Electric" : {
       "localizations" : {
@@ -631,10 +978,24 @@
       }
     },
     "Enable in Settings" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ayarlar'da Etkinleştir"
+          }
+        }
+      }
     },
     "Enable Notifications" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bildirimleri Etkinleştir"
+          }
+        }
+      }
     },
     "End" : {
       "localizations" : {
@@ -647,16 +1008,44 @@
       }
     },
     "Entries" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kayıtlar"
+          }
+        }
+      }
     },
     "Error" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hata"
+          }
+        }
+      }
     },
     "Error: %@" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hata: %@"
+          }
+        }
+      }
     },
     "Errors" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hatalar"
+          }
+        }
+      }
     },
     "Export" : {
       "localizations" : {
@@ -669,10 +1058,24 @@
       }
     },
     "Export failed: %@" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dışa aktarma başarısız oldu: %@"
+          }
+        }
+      }
     },
     "Export options" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dışa aktarma seçenekleri"
+          }
+        }
+      }
     },
     "Export to CSV" : {
       "localizations" : {
@@ -685,22 +1088,64 @@
       }
     },
     "Export to PDF" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PDF Olarak Dışa Aktar"
+          }
+        }
+      }
     },
     "Failed to delete: %@" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Silinemedi: %@"
+          }
+        }
+      }
     },
     "Failed to load data: %@" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Veriler yüklenemedi: %@"
+          }
+        }
+      }
     },
     "Failed to save: %@" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaydedilemedi: %@"
+          }
+        }
+      }
     },
     "Features" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Özellikler"
+          }
+        }
+      }
     },
     "File not found: %@" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dosya bulunamadı: %@"
+          }
+        }
+      }
     },
     "Fill-up" : {
       "localizations" : {
@@ -713,7 +1158,14 @@
       }
     },
     "Fill-up entry" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yakıt alımı kaydı"
+          }
+        }
+      }
     },
     "Fill-up on %@ at %@" : {
       "localizations" : {
@@ -722,14 +1174,34 @@
             "state" : "new",
             "value" : "Fill-up on %1$@ at %2$@"
           }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ tarihinde %@ istasyonunda yakıt alımı"
+          }
         }
       }
     },
     "Fill-up Patterns" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yakıt Alım Düzeni"
+          }
+        }
+      }
     },
     "Fill-up Reminders" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yakıt Alımı Hatırlatıcıları"
+          }
+        }
+      }
     },
     "Fill-ups" : {
       "localizations" : {
@@ -742,7 +1214,14 @@
       }
     },
     "Frequency" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sıklık"
+          }
+        }
+      }
     },
     "Fuel" : {
       "extractionState" : "stale",
@@ -756,10 +1235,24 @@
       }
     },
     "Fuel Configuration" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yakıt Yapılandırması"
+          }
+        }
+      }
     },
     "Fuel summary" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yakıt özeti"
+          }
+        }
+      }
     },
     "Fuel Tracking" : {
       "localizations" : {
@@ -802,7 +1295,14 @@
       }
     },
     "Gas station name" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Akaryakıt istasyonu adı"
+          }
+        }
+      }
     },
     "Generating car image..." : {
       "localizations" : {
@@ -826,13 +1326,34 @@
       }
     },
     "Generating Image..." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Görsel Oluşturuluyor..."
+          }
+        }
+      }
     },
     "Get a gentle nudge when you haven't logged entries in a while." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir süredir kayıt eklemediğinizde nazik bir hatırlatma alın."
+          }
+        }
+      }
     },
     "Get reminders to log your fill-ups and track your fuel efficiency." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yakıt alımlarınızı kaydetmek ve verimliliğinizi takip etmek için hatırlatıcı alın."
+          }
+        }
+      }
     },
     "GitHub Repository" : {
       "localizations" : {
@@ -845,7 +1366,14 @@
       }
     },
     "Go to Profile to sign in." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oturum açmak için Profil'e gidin."
+          }
+        }
+      }
     },
     "Home" : {
       "localizations" : {
@@ -869,31 +1397,94 @@
       }
     },
     "Import Complete" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İçe Aktarma Tamamlandı"
+          }
+        }
+      }
     },
     "Import data from other fuel tracking apps or manage your existing data." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diğer yakıt takip uygulamalarından veri aktarın veya mevcut verilerinizi yönetin."
+          }
+        }
+      }
     },
     "Import Entries" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kayıtları İçe Aktar"
+          }
+        }
+      }
     },
     "Import failed: %@" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İçe aktarma başarısız oldu: %@"
+          }
+        }
+      }
     },
     "Import from CSV" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CSV'den İçe Aktar"
+          }
+        }
+      }
     },
     "Importing entries..." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kayıtlar içe aktarılıyor..."
+          }
+        }
+      }
     },
     "Inactivity Reminder" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Etkinlik Olmadığında Hatırlat"
+          }
+        }
+      }
     },
     "Insights" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İçgörüler"
+          }
+        }
+      }
     },
     "Invalid" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geçersiz"
+          }
+        }
+      }
     },
     "Invalid %@: %@" : {
       "localizations" : {
@@ -902,11 +1493,24 @@
             "state" : "new",
             "value" : "Invalid %1$@: %2$@"
           }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geçersiz %@: %@"
+          }
         }
       }
     },
     "Invalid Date" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geçersiz Tarih"
+          }
+        }
+      }
     },
     "Invalid response from Apple." : {
       "localizations" : {
@@ -919,7 +1523,14 @@
       }
     },
     "Keep logging fill-ups to unlock insights about your driving patterns." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sürüş alışkanlıklarınız hakkında içgörüler edinmek için yakıt alımlarını kaydetmeye devam edin."
+          }
+        }
+      }
     },
     "Keep your data synced across devices" : {
       "localizations" : {
@@ -942,7 +1553,14 @@
       }
     },
     "L" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L"
+          }
+        }
+      }
     },
     "Language" : {
       "localizations" : {
@@ -965,7 +1583,14 @@
       }
     },
     "Limited Notifications" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sınırlı Bildirimler"
+          }
+        }
+      }
     },
     "liters" : {
       "extractionState" : "stale",
@@ -989,7 +1614,14 @@
       }
     },
     "Log different drive modes to compare performance" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Performansı karşılaştırmak için farklı sürüş modlarını kaydedin"
+          }
+        }
+      }
     },
     "Log drive modes to see performance deltas" : {
       "extractionState" : "stale",
@@ -1034,16 +1666,44 @@
       }
     },
     "Made with love for drivers" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sürücüler için sevgiyle yapıldı"
+          }
+        }
+      }
     },
     "Make" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marka"
+          }
+        }
+      }
     },
     "Make sure the file format is correct." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dosya biçiminin doğru olduğundan emin olun."
+          }
+        }
+      }
     },
     "Make sure you have enough storage space." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yeterli depolama alanınız olduğundan emin olun."
+          }
+        }
+      }
     },
     "Manage fuel logs for all your vehicles" : {
       "localizations" : {
@@ -1066,16 +1726,44 @@
       }
     },
     "Milestones" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kilometre Taşları"
+          }
+        }
+      }
     },
     "MM/DD/YYYY" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AA/GG/YYYY"
+          }
+        }
+      }
     },
     "Mode" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mod"
+          }
+        }
+      }
     },
     "Model" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Model"
+          }
+        }
+      }
     },
     "models" : {
       "extractionState" : "stale",
@@ -1089,13 +1777,34 @@
       }
     },
     "Month" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ay"
+          }
+        }
+      }
     },
     "Month-over-Month" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aydan Aya"
+          }
+        }
+      }
     },
     "Monthly Spending" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aylık Harcama"
+          }
+        }
+      }
     },
     "Multiple Cars" : {
       "localizations" : {
@@ -1129,16 +1838,44 @@
       }
     },
     "No Entries Yet" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Henüz Kayıt Yok"
+          }
+        }
+      }
     },
     "No internet connection. Please check your network settings." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İnternet bağlantısı yok. Ağ ayarlarınızı kontrol edin."
+          }
+        }
+      }
     },
     "No reminders will be sent." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hatırlatıcı gönderilmeyecek."
+          }
+        }
+      }
     },
     "Not mapped" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eşlenmedi"
+          }
+        }
+      }
     },
     "Notes" : {
       "localizations" : {
@@ -1151,13 +1888,34 @@
       }
     },
     "Notifications" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bildirimler"
+          }
+        }
+      }
     },
     "Notifications Disabled" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bildirimler Kapalı"
+          }
+        }
+      }
     },
     "Notifications Enabled" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bildirimler Açık"
+          }
+        }
+      }
     },
     "Odometer" : {
       "localizations" : {
@@ -1170,13 +1928,34 @@
       }
     },
     "Odometer end reading" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bitiş kilometre değeri"
+          }
+        }
+      }
     },
     "Odometer start reading" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Başlangıç kilometre değeri"
+          }
+        }
+      }
     },
     "Off" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kapalı"
+          }
+        }
+      }
     },
     "OK" : {
       "localizations" : {
@@ -1189,22 +1968,65 @@
       }
     },
     "Oktan" : {
-      "comment" : "App name - not translated"
+      "comment" : "App name - not translated",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oktan"
+          }
+        }
+      }
     },
     "Oktan Pro Active" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oktan Pro Etkin"
+          }
+        }
+      }
     },
     "Open Settings" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ayarları Aç"
+          }
+        }
+      }
     },
     "Opens a form to log a new refuel" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yeni yakıt alımı kaydetme formunu açar"
+          }
+        }
+      }
     },
     "Operation was cancelled." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İşlem iptal edildi."
+          }
+        }
+      }
     },
     "Optional Fields" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İsteğe Bağlı Alanlar"
+          }
+        }
+      }
     },
     "Optional notes (e.g., AC on, cargo)" : {
       "localizations" : {
@@ -1217,22 +2039,54 @@
       }
     },
     "Options" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seçenekler"
+          }
+        }
+      }
     },
     "PDF Export" : {
-
-    },
-    "PDF export will be available in the next update. Please use CSV export for now." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PDF Dışa Aktarma"
+          }
+        }
+      }
     },
     "Permission" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İzin"
+          }
+        }
+      }
     },
     "Please correct the field and try again." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alanı düzeltip yeniden deneyin."
+          }
+        }
+      }
     },
     "Please enable notifications in Settings to receive fill-up reminders." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yakıt alımı hatırlatıcıları için Ayarlar'dan bildirimleri etkinleştirin."
+          }
+        }
+      }
     },
     "Please enter a valid price per liter." : {
       "extractionState" : "stale",
@@ -1257,7 +2111,14 @@
       }
     },
     "Please restart the app and try again." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uygulamayı yeniden başlatıp tekrar deneyin."
+          }
+        }
+      }
     },
     "Please restart the app for language changes to take effect." : {
       "localizations" : {
@@ -1270,10 +2131,24 @@
       }
     },
     "Please try again. If the problem persists, restart the app." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lütfen yeniden deneyin. Sorun sürerse uygulamayı yeniden başlatın."
+          }
+        }
+      }
     },
     "Preview Import" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İçe Aktarmayı Önizle"
+          }
+        }
+      }
     },
     "Price per liter" : {
       "localizations" : {
@@ -1306,7 +2181,14 @@
       }
     },
     "Received invalid response from server." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sunucudan geçersiz yanıt alındı."
+          }
+        }
+      }
     },
     "Recent" : {
       "localizations" : {
@@ -1340,10 +2222,24 @@
       }
     },
     "Recent Efficiency" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son Verimlilik"
+          }
+        }
+      }
     },
     "Recent efficiency, last 5 fill-ups" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son 5 yakıt alımının verimliliği"
+          }
+        }
+      }
     },
     "Recent fill-ups" : {
       "localizations" : {
@@ -1356,13 +2252,34 @@
       }
     },
     "Remind after" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Şu süreden sonra hatırlat"
+          }
+        }
+      }
     },
     "Reminders" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hatırlatıcılar"
+          }
+        }
+      }
     },
     "Report Type" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rapor Türü"
+          }
+        }
+      }
     },
     "Reports" : {
       "localizations" : {
@@ -1375,7 +2292,14 @@
       }
     },
     "Required Fields" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gerekli Alanlar"
+          }
+        }
+      }
     },
     "Restart Required" : {
       "localizations" : {
@@ -1388,7 +2312,14 @@
       }
     },
     "Retry" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yeniden Dene"
+          }
+        }
+      }
     },
     "Save" : {
       "localizations" : {
@@ -1401,7 +2332,14 @@
       }
     },
     "Save (disabled, complete required fields)" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaydet (devre dışı, gerekli alanları doldurun)"
+          }
+        }
+      }
     },
     "Save Car" : {
       "localizations" : {
@@ -1414,10 +2352,24 @@
       }
     },
     "Save fill-up" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yakıt alımını kaydet"
+          }
+        }
+      }
     },
     "Saved!" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaydedildi!"
+          }
+        }
+      }
     },
     "Search makes..." : {
       "extractionState" : "stale",
@@ -1441,7 +2393,14 @@
       }
     },
     "Select a CSV file containing your fuel records. We'll help you map the columns to the correct fields." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yakıt kayıtlarınızı içeren bir CSV dosyası seçin. Sütunları doğru alanlarla eşleştirmenize yardımcı olacağız."
+          }
+        }
+      }
     },
     "Select Make" : {
       "extractionState" : "stale",
@@ -1466,13 +2425,34 @@
       }
     },
     "Select Year" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yıl Seç"
+          }
+        }
+      }
     },
     "Selected" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seçildi"
+          }
+        }
+      }
     },
     "Server error (%lld). Please try again later." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sunucu hatası (%lld). Lütfen daha sonra yeniden deneyin."
+          }
+        }
+      }
     },
     "Set up your car to track fuel efficiency" : {
       "localizations" : {
@@ -1506,7 +2486,14 @@
       }
     },
     "Sign in failed: %@" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oturum açılamadı: %@"
+          }
+        }
+      }
     },
     "Sign in failed. Please try again." : {
       "localizations" : {
@@ -1549,7 +2536,14 @@
       }
     },
     "Sign in with Apple" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple ile Giriş Yap"
+          }
+        }
+      }
     },
     "Sign Out" : {
       "localizations" : {
@@ -1562,7 +2556,14 @@
       }
     },
     "Sign out failed: %@" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oturum kapatılamadı: %@"
+          }
+        }
+      }
     },
     "Signed in with Apple" : {
       "localizations" : {
@@ -1575,13 +2576,34 @@
       }
     },
     "Skip duplicates" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yinelenenleri atla"
+          }
+        }
+      }
     },
     "Smart Reminders" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Akıllı Hatırlatıcılar"
+          }
+        }
+      }
     },
     "Something went wrong" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir sorun oluştu"
+          }
+        }
+      }
     },
     "Start" : {
       "localizations" : {
@@ -1604,7 +2626,14 @@
       }
     },
     "Supported Columns" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desteklenen Sütunlar"
+          }
+        }
+      }
     },
     "Sync your data across devices and unlock premium features" : {
       "localizations" : {
@@ -1658,13 +2687,34 @@
       }
     },
     "The image data is invalid or corrupted." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Görsel verisi geçersiz veya bozuk."
+          }
+        }
+      }
     },
     "The request timed out. Please try again." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İstek zaman aşımına uğradı. Lütfen yeniden deneyin."
+          }
+        }
+      }
     },
     "Theme" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tema"
+          }
+        }
+      }
     },
     "This action cannot be undone." : {
       "localizations" : {
@@ -1697,10 +2747,24 @@
       }
     },
     "Time" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saat"
+          }
+        }
+      }
     },
     "Too many requests. Please wait a moment and try again." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Çok fazla istek gönderildi. Biraz bekleyip yeniden deneyin."
+          }
+        }
+      }
     },
     "Total cost" : {
       "extractionState" : "stale",
@@ -1741,6 +2805,12 @@
             "state" : "new",
             "value" : "Total distance %1$@, total spent %2$@, %3$lld fill-ups"
           }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toplam mesafe %@, toplam harcama %@, %lld yakıt alımı"
+          }
         }
       }
     },
@@ -1756,7 +2826,14 @@
       }
     },
     "Total Fuel" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toplam Yakıt"
+          }
+        }
+      }
     },
     "Total liters purchased" : {
       "localizations" : {
@@ -1820,16 +2897,44 @@
       }
     },
     "Try Again" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tekrar Dene"
+          }
+        }
+      }
     },
     "Try again or skip the image." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yeniden deneyin veya görseli atlayın."
+          }
+        }
+      }
     },
     "Try again. If this persists, contact support." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yeniden deneyin. Sorun sürerse destekle iletişime geçin."
+          }
+        }
+      }
     },
     "Try selecting a different image." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Farklı bir görsel seçmeyi deneyin."
+          }
+        }
+      }
     },
     "Units & Currency" : {
       "localizations" : {
@@ -1842,22 +2947,64 @@
       }
     },
     "Unknown status" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bilinmeyen durum"
+          }
+        }
+      }
     },
     "Unlock Oktan Pro" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oktan Pro'nun Kilidini Aç"
+          }
+        }
+      }
     },
     "Unlock Premium" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Premium'un Kilidini Aç"
+          }
+        }
+      }
     },
     "Update to the latest iOS version if available." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Varsa en yeni iOS sürümüne güncelleyin."
+          }
+        }
+      }
     },
     "Valid" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geçerli"
+          }
+        }
+      }
     },
     "Vehicle Details" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Araç Ayrıntıları"
+          }
+        }
+      }
     },
     "Volume" : {
       "localizations" : {
@@ -1870,7 +3017,14 @@
       }
     },
     "Wait a few moments and try again." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Biraz bekleyip yeniden deneyin."
+          }
+        }
+      }
     },
     "We only use your Apple ID to identify you. Your data stays private." : {
       "localizations" : {
@@ -1883,16 +3037,44 @@
       }
     },
     "Year" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yıl"
+          }
+        }
+      }
     },
     "You need to sign in to access this feature." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu özelliğe erişmek için oturum açmanız gerekir."
+          }
+        }
+      }
     },
     "You'll receive a daily reminder at %@." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Her gün %@ saatinde hatırlatıcı alacaksınız."
+          }
+        }
+      }
     },
     "You'll receive a monthly reminder." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Her ay bir hatırlatıcı alacaksınız."
+          }
+        }
+      }
     },
     "You'll receive a reminder every %@ at %@." : {
       "localizations" : {
@@ -1901,26 +3083,272 @@
             "state" : "new",
             "value" : "You'll receive a reminder every %1$@ at %2$@."
           }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Her %@ günü %@ saatinde hatırlatıcı alacaksınız."
+          }
         }
       }
     },
     "You'll receive a reminder every 2 weeks." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Her 2 haftada bir hatırlatıcı alacaksınız."
+          }
+        }
+      }
     },
     "You'll receive a reminder every 3 days." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Her 3 günde bir hatırlatıcı alacaksınız."
+          }
+        }
+      }
     },
     "You'll receive a reminder if you haven't logged a fill-up in %lld days." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld gün boyunca yakıt alımı kaydetmezseniz hatırlatıcı alacaksınız."
+          }
+        }
+      }
     },
     "Your data may be corrupted. Try reinstalling the app." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verileriniz bozulmuş olabilir. Uygulamayı yeniden yüklemeyi deneyin."
+          }
+        }
+      }
     },
     "Your session has expired. Please sign in again." : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oturumunuzun süresi doldu. Lütfen yeniden giriş yapın."
+          }
+        }
+      }
     },
     "YYYY-MM-DD" : {
-
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "YYYY-AA-GG"
+          }
+        }
+      }
+    },
+    "After CarPlay disconnects, Oktan can check once for a nearby gas station and suggest logging the fill-up. Location is not stored." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CarPlay bağlantısı kesildikten sonra Oktan yakındaki bir akaryakıt istasyonunu bir kez kontrol edip yakıt alımını kaydetmenizi önerebilir. Konum saklanmaz."
+          }
+        }
+      }
+    },
+    "Enable Location in Settings" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ayarlar'da Konumu Etkinleştir"
+          }
+        }
+      }
+    },
+    "Keep a private profile and connect your Oktan Pro purchase" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Özel bir profil tutun ve Oktan Pro satın alımınızı bağlayın"
+          }
+        }
+      }
+    },
+    "Keep fuel logs on this device" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yakıt kayıtlarını bu aygıtta saklayın"
+          }
+        }
+      }
+    },
+    "Last fill-up" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son yakıt alımı"
+          }
+        }
+      }
+    },
+    "Location access enabled" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Konum erişimi etkin"
+          }
+        }
+      }
+    },
+    "Location permission will be requested" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Konum izni istenecek"
+          }
+        }
+      }
+    },
+    "Private Profile" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Özel Profil"
+          }
+        }
+      }
+    },
+    "Private Storage" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Özel Depolama"
+          }
+        }
+      }
+    },
+    "Purchase Restore" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Satın Alımı Geri Yükleme"
+          }
+        }
+      }
+    },
+    "Recent logs" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son kayıtlar"
+          }
+        }
+      }
+    },
+    "Restore Oktan Pro through the App Store" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oktan Pro'yu App Store üzerinden geri yükleyin"
+          }
+        }
+      }
+    },
+    "Smart Refuel" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Akıllı Yakıt Alımı"
+          }
+        }
+      }
+    },
+    "Smart Refuel Detection" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Akıllı Yakıt Alımı Algılama"
+          }
+        }
+      }
+    },
+    "App Lock" : {"extractionState":"manual","localizations":{"tr":{"stringUnit":{"state":"translated","value":"Uygulama Kilidi"}}}},
+    "Authenticate to view your fuel records." : {"extractionState":"manual","localizations":{"tr":{"stringUnit":{"state":"translated","value":"Yakıt kayıtlarınızı görüntülemek için kimliğinizi doğrulayın."}}}},
+    "Authentication failed. Please try again." : {"extractionState":"manual","localizations":{"tr":{"stringUnit":{"state":"translated","value":"Kimlik doğrulama başarısız oldu. Lütfen yeniden deneyin."}}}},
+    "Choose a receipt photo to fill in recognized date, liters, unit price, and station. Review every value before saving." : {"extractionState":"manual","localizations":{"tr":{"stringUnit":{"state":"translated","value":"Algılanan tarih, litre, birim fiyat ve istasyonu doldurmak için bir fiş fotoğrafı seçin. Kaydetmeden önce her değeri kontrol edin."}}}},
+    "Early estimate" : {"extractionState":"manual","localizations":{"tr":{"stringUnit":{"state":"translated","value":"İlk tahmin"}}}},
+    "Filled %lld fields. Please verify the values." : {"extractionState":"manual","localizations":{"tr":{"stringUnit":{"state":"translated","value":"%lld alan dolduruldu. Lütfen değerleri kontrol edin."}}}},
+    "Full Refill" : {"extractionState":"manual","localizations":{"tr":{"stringUnit":{"state":"translated","value":"Depoyu Tam Doldurma"}}}},
+    "Generate Online Image" : {"extractionState":"manual","localizations":{"tr":{"stringUnit":{"state":"translated","value":"Çevrimiçi Görsel Oluştur"}}}},
+    "High confidence" : {"extractionState":"manual","localizations":{"tr":{"stringUnit":{"state":"translated","value":"Yüksek güven"}}}},
+    "Image Unavailable" : {"extractionState":"manual","localizations":{"tr":{"stringUnit":{"state":"translated","value":"Görsel Kullanılamıyor"}}}},
+    "Locks Oktan after it moves to the background and uses your device passcode, Face ID, Touch ID, or Optic ID." : {"extractionState":"manual","localizations":{"tr":{"stringUnit":{"state":"translated","value":"Oktan arka plana geçtiğinde kilitlenir ve aygıt parolanızı, Face ID, Touch ID veya Optic ID’yi kullanır."}}}},
+    "Medium confidence" : {"extractionState":"manual","localizations":{"tr":{"stringUnit":{"state":"translated","value":"Orta güven"}}}},
+    "Next 10,000 km checkpoint" : {"extractionState":"manual","localizations":{"tr":{"stringUnit":{"state":"translated","value":"Sonraki 10.000 km kontrolü"}}}},
+    "No readable text was found on this receipt." : {"extractionState":"manual","localizations":{"tr":{"stringUnit":{"state":"translated","value":"Bu fişte okunabilir metin bulunamadı."}}}},
+    "Oktan is Locked" : {"extractionState":"manual","localizations":{"tr":{"stringUnit":{"state":"translated","value":"Oktan Kilitli"}}}},
+    "Open Oktan directly to a new fill-up form." : {"extractionState":"manual","localizations":{"tr":{"stringUnit":{"state":"translated","value":"Oktan’ı doğrudan yeni yakıt kaydı formunda açın."}}}},
+    "Optional: sends the selected year, make, and model to external image providers." : {"extractionState":"manual","localizations":{"tr":{"stringUnit":{"state":"translated","value":"İsteğe bağlı: seçilen yıl, marka ve modeli harici görsel sağlayıcılara gönderir."}}}},
+    "Partial fill" : {"extractionState":"manual","localizations":{"tr":{"stringUnit":{"state":"translated","value":"Kısmi dolum"}}}},
+    "Projected month-end spend" : {"extractionState":"manual","localizations":{"tr":{"stringUnit":{"state":"translated","value":"Tahmini ay sonu harcaması"}}}},
+    "Protect your fuel records" : {"extractionState":"manual","localizations":{"tr":{"stringUnit":{"state":"translated","value":"Yakıt kayıtlarınızı koruyun"}}}},
+    "Quick Log" : {"extractionState":"manual","localizations":{"tr":{"stringUnit":{"state":"translated","value":"Hızlı Kayıt"}}}},
+    "Reading Receipt…" : {"extractionState":"manual","localizations":{"tr":{"stringUnit":{"state":"translated","value":"Fiş Okunuyor…"}}}},
+    "Require Authentication" : {"extractionState":"manual","localizations":{"tr":{"stringUnit":{"state":"translated","value":"Kimlik Doğrulama Gerektir"}}}},
+    "Scan Receipt" : {"extractionState":"manual","localizations":{"tr":{"stringUnit":{"state":"translated","value":"Fişi Tara"}}}},
+    "Security" : {"extractionState":"manual","localizations":{"tr":{"stringUnit":{"state":"translated","value":"Güvenlik"}}}},
+    "Set up a device passcode or biometric authentication first." : {"extractionState":"manual","localizations":{"tr":{"stringUnit":{"state":"translated","value":"Önce bir aygıt parolası veya biyometrik kimlik doğrulama ayarlayın."}}}},
+    "Showing the first %lld of %lld rows. All rows are validated before the atomic import is saved." : {"extractionState":"manual","localizations":{"tr":{"stringUnit":{"state":"translated","value":"%2$lld satırın ilk %1$lld tanesi gösteriliyor. Tek işlemli içe aktarma kaydedilmeden önce tüm satırlar doğrulanır."}}}},
+    "Text was detected, but no fuel values could be identified." : {"extractionState":"manual","localizations":{"tr":{"stringUnit":{"state":"translated","value":"Metin algılandı ancak yakıt değerleri belirlenemedi."}}}},
+    "The online image could not be generated. You can still save the vehicle without one." : {"extractionState":"manual","localizations":{"tr":{"stringUnit":{"state":"translated","value":"Çevrimiçi görsel oluşturulamadı. Aracı görsel olmadan da kaydedebilirsiniz."}}}},
+    "The selected receipt image could not be read." : {"extractionState":"manual","localizations":{"tr":{"stringUnit":{"state":"translated","value":"Seçilen fiş görseli okunamadı."}}}},
+    "Turn off Oktan app lock" : {"extractionState":"manual","localizations":{"tr":{"stringUnit":{"state":"translated","value":"Oktan uygulama kilidini kapatın"}}}},
+    "Unlock Oktan" : {"extractionState":"manual","localizations":{"tr":{"stringUnit":{"state":"translated","value":"Oktan’ın Kilidini Aç"}}}},
+    "Unlock with %@" : {"extractionState":"manual","localizations":{"tr":{"stringUnit":{"state":"translated","value":"%@ ile Kilidi Aç"}}}},
+    "Your profile is stored securely on this device" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profiliniz bu aygıtta güvenli biçimde saklanır"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

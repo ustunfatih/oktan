@@ -12,12 +12,14 @@ protocol FuelRepositoryProtocol: ObservableObject where ObjectWillChangePublishe
     func add(_ entry: FuelEntry) -> Bool
     
     /// Updates an existing fuel entry
-    func update(_ entry: FuelEntry)
+    @discardableResult
+    func update(_ entry: FuelEntry) -> Bool
     
     /// Deletes a fuel entry
-    func delete(_ entry: FuelEntry)
+    @discardableResult
+    func delete(_ entry: FuelEntry) -> Bool
     
-    /// Seeds with sample data if empty
+    /// Loads persisted data during app startup
     func bootstrapIfNeeded()
     
     /// Returns a summary of all fuel entries

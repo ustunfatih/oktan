@@ -1,7 +1,9 @@
 import SwiftUI
+import CoreLocation
 
 struct NotificationSettingsView: View {
     @Bindable var notificationService: NotificationService
+    @State private var locationManager = LocationManager.shared
     @State private var showingPermissionAlert = false
     
     var body: some View {
@@ -13,6 +15,7 @@ struct NotificationSettingsView: View {
             if notificationService.isAuthorized {
                 reminderSection
                 inactivitySection
+                smartRefuelSection
             }
         }
         .onAppear {
@@ -25,6 +28,41 @@ struct NotificationSettingsView: View {
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("Please enable notifications in Settings to receive fill-up reminders.")
+        }
+    }
+
+    private var smartRefuelSection: some View {
+        Section {
+            Toggle("Smart Refuel Detection", isOn: Binding(
+                get: { locationManager.smartRefuelEnabled },
+                set: { enabled in
+                    locationManager.smartRefuelEnabled = enabled
+                    if enabled {
+                        locationManager.requestPermission()
+                    }
+                }
+            ))
+
+            if locationManager.smartRefuelEnabled {
+                switch locationManager.permissionStatus {
+                case .denied, .restricted:
+                    Button("Enable Location in Settings") {
+                        notificationService.openSettings()
+                    }
+                case .notDetermined:
+                    Label("Location permission will be requested", systemImage: "location.circle")
+                        .foregroundStyle(.secondary)
+                case .authorizedAlways, .authorizedWhenInUse:
+                    Label("Location access enabled", systemImage: "checkmark.circle.fill")
+                        .foregroundStyle(.green)
+                @unknown default:
+                    EmptyView()
+                }
+            }
+        } header: {
+            Text("Smart Refuel")
+        } footer: {
+            Text("After CarPlay disconnects, Oktan can check once for a nearby gas station and suggest logging the fill-up. Location is not stored.")
         }
     }
     

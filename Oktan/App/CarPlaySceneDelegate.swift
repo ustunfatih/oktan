@@ -8,7 +8,6 @@ class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate {
     
     func templateApplicationScene(_ templateApplicationScene: CPTemplateApplicationScene, didConnect interfaceController: CPInterfaceController) {
         self.interfaceController = interfaceController
-        print("CarPlay Connected")
         
         // Simple Dashboard Interface
         // Since we are primarily using this for Disconnect detection, the UI can be minimal.
@@ -29,8 +28,6 @@ class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate {
     // MARK: - Disconnection (Smart Refuel Trigger)
     
     func templateApplicationScene(_ templateApplicationScene: CPTemplateApplicationScene, didDisconnectInterfaceController interfaceController: CPInterfaceController) {
-        print("CarPlay Disconnected - Triggering Smart Refuel Check")
-        
         // Trigger the Location Manager to check if we are at a gas station
         // This works because the app is briefly awakened/active during the transition.
         LocationManager.shared.checkForGasStation()

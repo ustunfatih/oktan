@@ -20,12 +20,14 @@ struct ThemeCard: View {
                     }
                 }
 
-                Text("9.9")
-                    .font(theme.displayFont(relativeTo: .title))
-                    .foregroundStyle(.primary)
-                + Text(" L/100")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                HStack(alignment: .firstTextBaseline, spacing: 0) {
+                    Text("9.9")
+                        .font(theme.displayFont(relativeTo: .title))
+                        .foregroundStyle(.primary)
+                    Text(" L/100")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(theme.name)

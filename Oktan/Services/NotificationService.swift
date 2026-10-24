@@ -1,4 +1,5 @@
 import Foundation
+import OSLog
 import UserNotifications
 import UIKit
 
@@ -6,6 +7,7 @@ import UIKit
 @MainActor
 @Observable
 final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
+    private let logger = Logger(subsystem: "com.oktan.app", category: "Notifications")
     
     // MARK: - Types
     
@@ -146,8 +148,11 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
         let weekDayRaw = UserDefaults.standard.integer(forKey: "reminderWeekDay")
         self.reminderWeekDay = WeekDay(rawValue: weekDayRaw) ?? .monday
         
-        let savedHour = UserDefaults.standard.integer(forKey: "reminderHour")
-        self.reminderHour = savedHour > 0 ? savedHour : 9 // Default to 9 AM
+        if UserDefaults.standard.object(forKey: "reminderHour") != nil {
+            self.reminderHour = UserDefaults.standard.integer(forKey: "reminderHour")
+        } else {
+            self.reminderHour = 9
+        }
         
         self.inactivityReminderEnabled = UserDefaults.standard.bool(forKey: "inactivityReminderEnabled")
         
@@ -167,9 +172,15 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
     // MARK: - UNUserNotificationCenterDelegate
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        if response.notification.request.identifier == NotificationID.smartRefuel {
+        switch response.notification.request.identifier {
+        case NotificationID.fillupReminder,
+             NotificationID.inactivityReminder,
+             NotificationID.nextFillupReminder,
+             NotificationID.smartRefuel:
             // Signal to show add fuel screen
             self.shouldShowAddFuel = true
+        default:
+            break
         }
         completionHandler()
     }
@@ -187,7 +198,7 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
         let settings = await center.notificationSettings()
         
         authorizationStatus = settings.authorizationStatus
-        isAuthorized = settings.authorizationStatus == .authorized
+        isAuthorized = [.authorized, .provisional, .ephemeral].contains(settings.authorizationStatus)
     }
     
     /// Requests notification permissions
@@ -207,7 +218,7 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
             
             return granted
         } catch {
-            print("Notification authorization error: \(error)")
+            logger.error("Authorization request failed: \(error.localizedDescription, privacy: .private)")
             return false
         }
     }
@@ -223,8 +234,8 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
     
     /// Schedules all reminders based on current settings
     func scheduleReminders() async {
-        // Cancel existing reminders first
-        await cancelAllReminders()
+        let center = UNUserNotificationCenter.current()
+        center.removePendingNotificationRequests(withIdentifiers: [NotificationID.fillupReminder])
         
         guard isAuthorized, reminderFrequency != .never else { return }
         
@@ -274,11 +285,9 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
         
         do {
             try await center.add(request)
-            #if DEBUG
-            print("📬 Scheduled fill-up reminder: \(reminderFrequency.displayName)")
-            #endif
+            logger.debug("Scheduled recurring fill-up reminder")
         } catch {
-            print("Failed to schedule reminder: \(error)")
+            logger.error("Fill-up reminder scheduling failed: \(error.localizedDescription, privacy: .private)")
         }
     }
     
@@ -316,11 +325,9 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
         
         do {
             try await center.add(request)
-            #if DEBUG
-            print("📬 Scheduled inactivity reminder for \(triggerDate)")
-            #endif
+            logger.debug("Scheduled inactivity reminder")
         } catch {
-            print("Failed to schedule inactivity reminder: \(error)")
+            logger.error("Inactivity reminder scheduling failed: \(error.localizedDescription, privacy: .private)")
         }
     }
     
@@ -353,7 +360,7 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
         do {
             try await center.add(request)
         } catch {
-            print("Failed to schedule next fill-up reminder: \(error)")
+            logger.error("Prediction reminder scheduling failed: \(error.localizedDescription, privacy: .private)")
         }
     }
 
@@ -381,13 +388,7 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
         let center = UNUserNotificationCenter.current()
         let requests = await center.pendingNotificationRequests()
         
-        print("📬 Pending notifications:")
-        for request in requests {
-            print("  - \(request.identifier): \(request.content.title)")
-            if let trigger = request.trigger as? UNCalendarNotificationTrigger {
-                print("    Next: \(trigger.nextTriggerDate()?.description ?? "unknown")")
-            }
-        }
+        logger.debug("Pending notification count: \(requests.count)")
     }
     #endif
 }

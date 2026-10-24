@@ -3,11 +3,14 @@ import UniformTypeIdentifiers
 
 /// Service for importing fuel data from CSV files
 enum CSVImportService {
+
+    private nonisolated static let maximumFileSize = 10 * 1_024 * 1_024
+    private nonisolated static let maximumRows = 50_000
     
     // MARK: - Types
     
     /// Result of parsing a CSV file
-    struct ParseResult {
+    struct ParseResult: Sendable {
         let headers: [String]
         let rows: [[String]]
         let totalRows: Int
@@ -83,55 +86,92 @@ enum CSVImportService {
         
         var isFullSuccess: Bool { failedCount == 0 && duplicateCount == 0 }
     }
+
+    private struct DuplicateKey: Hashable {
+        let day: Date
+        let liters: Int
+        let price: Int
+        let odometerEnd: Int?
+        let station: String
+
+        init(_ entry: FuelEntry, calendar: Calendar = .current) {
+            day = calendar.startOfDay(for: entry.date)
+            liters = Int((entry.totalLiters * 1_000).rounded())
+            price = Int((entry.pricePerLiter * 1_000).rounded())
+            odometerEnd = entry.odometerEnd.map { Int($0.rounded()) }
+            station = entry.gasStation.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        }
+    }
     
     // MARK: - CSV Parsing
     
     /// Parses a CSV file from URL
-    static func parseCSV(from url: URL) throws -> ParseResult {
+    nonisolated static func parseCSV(from url: URL) throws -> ParseResult {
+        let values = try url.resourceValues(forKeys: [.fileSizeKey])
+        if let fileSize = values.fileSize, fileSize > maximumFileSize {
+            throw OktanError.importFailed(reason: "The CSV file exceeds the 10 MB limit")
+        }
         let content = try String(contentsOf: url, encoding: .utf8)
-        return parseCSV(content: content)
+        let result = parseCSV(content: content)
+        if result.totalRows > maximumRows {
+            throw OktanError.importFailed(reason: "The CSV file exceeds the 50,000 row limit")
+        }
+        return result
     }
     
     /// Parses CSV content string
-    static func parseCSV(content: String) -> ParseResult {
+    nonisolated static func parseCSV(content: String) -> ParseResult {
         var rows: [[String]] = []
         var headers: [String] = []
         
-        let lines = content.components(separatedBy: .newlines)
-            .filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
-        
-        for (index, line) in lines.enumerated() {
-            let columns = parseCSVLine(line)
-            
-            if index == 0 {
-                headers = columns
-            } else {
-                rows.append(columns)
-            }
-        }
-        
-        return ParseResult(headers: headers, rows: rows, totalRows: rows.count)
-    }
-    
-    /// Parses a single CSV line handling quoted fields
-    private static func parseCSVLine(_ line: String) -> [String] {
-        var result: [String] = []
-        var currentField = ""
+        var parsedRows: [[String]] = []
+        var row: [String] = []
+        var field = ""
         var inQuotes = false
-        
-        for char in line {
-            if char == "\"" {
+        var index = content.startIndex
+
+        while index < content.endIndex {
+            let character = content[index]
+            let nextIndex = content.index(after: index)
+
+            if character == "\"" {
+                if inQuotes, nextIndex < content.endIndex, content[nextIndex] == "\"" {
+                    field.append("\"")
+                    index = content.index(after: nextIndex)
+                    continue
+                }
                 inQuotes.toggle()
-            } else if char == "," && !inQuotes {
-                result.append(currentField.trimmingCharacters(in: .whitespaces))
-                currentField = ""
+            } else if character == ",", !inQuotes {
+                row.append(field.trimmingCharacters(in: .whitespaces))
+                field = ""
+            } else if character.isNewline, !inQuotes {
+                // Swift folds "\r\n" into one Character, so CRLF files land
+                // here exactly once per line break.
+                row.append(field.trimmingCharacters(in: .whitespaces))
+                field = ""
+                if !row.allSatisfy({ $0.isEmpty }) {
+                    parsedRows.append(row)
+                }
+                row = []
             } else {
-                currentField.append(char)
+                field.append(character)
+            }
+            index = nextIndex
+        }
+
+        if !field.isEmpty || !row.isEmpty {
+            row.append(field.trimmingCharacters(in: .whitespaces))
+            if !row.allSatisfy({ $0.isEmpty }) {
+                parsedRows.append(row)
             }
         }
-        
-        result.append(currentField.trimmingCharacters(in: .whitespaces))
-        return result
+
+        if let first = parsedRows.first {
+            headers = first
+            rows = Array(parsedRows.dropFirst())
+        }
+
+        return ParseResult(headers: headers, rows: rows, totalRows: rows.count)
     }
     
     // MARK: - Field Mapping Suggestions
@@ -348,8 +388,10 @@ enum CSVImportService {
         var duplicateCount = 0
         var errors: [String] = []
         
-        let existingDates = Set(repository.entries.map { $0.date.timeIntervalSince1970 })
+        var existingEntries = Set(repository.entries.map { DuplicateKey($0) })
         
+        var entriesToInsert: [FuelEntry] = []
+
         for (index, row) in parseResult.rows.enumerated() {
             let preview = createPreviewEntry(from: row, rowNumber: index + 2, mapping: mapping)
             
@@ -360,17 +402,21 @@ enum CSVImportService {
             }
             
             // Check for duplicates
-            if skipDuplicates && existingDates.contains(entry.date.timeIntervalSince1970) {
+            let duplicateKey = DuplicateKey(entry)
+            if skipDuplicates && existingEntries.contains(duplicateKey) {
                 duplicateCount += 1
                 continue
             }
             
-            if repository.add(entry) {
-                successCount += 1
-            } else {
-                failedCount += 1
-                errors.append("Row \(index + 2): Failed to save entry")
-            }
+            entriesToInsert.append(entry)
+            existingEntries.insert(duplicateKey)
+        }
+
+        if repository.addBatch(entriesToInsert) {
+            successCount = entriesToInsert.count
+        } else if !entriesToInsert.isEmpty {
+            failedCount += entriesToInsert.count
+            errors.append(repository.lastError?.errorDescription ?? "The import transaction could not be saved")
         }
         
         return ImportResult(

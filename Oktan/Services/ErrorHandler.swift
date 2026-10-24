@@ -1,9 +1,11 @@
 import SwiftUI
+import OSLog
 
 /// Centralized error handling and presentation
 @MainActor
 @Observable
 final class ErrorHandler {
+    private let logger = Logger(subsystem: "com.oktan.app", category: "Errors")
     
     // MARK: - Properties
     
@@ -38,13 +40,7 @@ final class ErrorHandler {
         self.retryAction = retryAction
         self.retryCount = 0
         
-        // Log error for debugging
-        #if DEBUG
-        print("🔴 Error: \(oktanError.errorDescription ?? "Unknown")")
-        if let suggestion = oktanError.recoverySuggestion {
-            print("   Suggestion: \(suggestion)")
-        }
-        #endif
+        logger.error("\(oktanError.errorDescription ?? "Unknown", privacy: .private)")
         
         // Haptic feedback for errors
         let generator = UINotificationFeedbackGenerator()
@@ -59,9 +55,7 @@ final class ErrorHandler {
         self.retryAction = retryAction
         self.retryCount = 0
         
-        #if DEBUG
-        print("🔴 Error: \(error.errorDescription ?? "Unknown")")
-        #endif
+        logger.error("\(error.errorDescription ?? "Unknown", privacy: .private)")
         
         let generator = UINotificationFeedbackGenerator()
         generator.notificationOccurred(.error)

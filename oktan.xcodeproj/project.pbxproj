@@ -59,7 +59,22 @@
 		BC5E9AC82EE9D5FB00489193 /* Exceptions for "oktan" folder in "oktan" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				COMPLIANCE/AUDIT_REPORT.md,
+				COMPLIANCE/PR_DECLARATION.md,
+				COMPLIANCE/README.md,
+				COMPLIANCE/ROADMAP.md,
+				COMPLIANCE/SCREEN_INDEX.md,
+				COMPLIANCE/TRACEABILITY_MATRIX.md,
 				Info.plist,
+				Resources/Localizable.xcstrings.tmp,
+				ci/bible_check_config.json,
+				ci/scripts/check_pr_declaration.py,
+				ci/scripts/check_screen_registry.py,
+				ci/scripts/check_shell_usage.py,
+				ci/scripts/check_traceability_matrix.py,
+				ci/scripts/ios26_api_forbid_check.py,
+				ci/scripts/ios26_bible_check.py,
+				ci/scripts/ios26_component_allowlist_check.py,
 			);
 			target = BC5E9A942EE9D52800489193 /* oktan */;
 		};

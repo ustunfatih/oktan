@@ -43,6 +43,11 @@ private struct ReportPDFView: View {
         return "\(first.date.formatted(date: .abbreviated, time: .omitted)) – \(last.date.formatted(date: .abbreviated, time: .omitted))"
     }
 
+    private var cyclesByEntryID: [UUID: FuelCycleService.Cycle] {
+        Dictionary(uniqueKeysWithValues: FuelCycleService.completedCycles(from: entries)
+            .map { ($0.id, $0) })
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             // Header
@@ -98,7 +103,7 @@ private struct ReportPDFView: View {
                         Text(entry.gasStation)
                         Text(settings.formatVolume(entry.totalLiters))
                         Text(settings.formatCost(entry.totalCost))
-                        Text(entry.litersPer100KM.map { settings.formatEfficiency($0) } ?? "—")
+                        Text(cyclesByEntryID[entry.id].map { settings.formatEfficiency($0.litersPer100KM) } ?? "—")
                     }
                     .font(.caption)
                 }

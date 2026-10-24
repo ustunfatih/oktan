@@ -43,8 +43,9 @@ final class FuelRepositorySD {
     }
     
     /// Updates an existing fuel entry
-    func update(_ entry: FuelEntry) {
-        guard validate(entry) else { return }
+    @discardableResult
+    func update(_ entry: FuelEntry) -> Bool {
+        guard validate(entry) else { return false }
         
         let descriptor = FetchDescriptor<FuelEntrySD>(
             predicate: #Predicate { $0.entryId == entry.id }
@@ -55,14 +56,17 @@ final class FuelRepositorySD {
                 existing.update(from: entry)
                 try modelContext.save()
                 loadEntries()
+                return true
             }
         } catch {
             print("Failed to update entry: \(error)")
         }
+        return false
     }
     
     /// Deletes a fuel entry
-    func delete(_ entry: FuelEntry) {
+    @discardableResult
+    func delete(_ entry: FuelEntry) -> Bool {
         let descriptor = FetchDescriptor<FuelEntrySD>(
             predicate: #Predicate { $0.entryId == entry.id }
         )
@@ -72,30 +76,17 @@ final class FuelRepositorySD {
                 modelContext.delete(existing)
                 try modelContext.save()
                 loadEntries()
+                return true
             }
         } catch {
             print("Failed to delete entry: \(error)")
         }
+        return false
     }
     
-    /// Loads entries from SwiftData and seeds if empty
+    /// Loads entries from SwiftData
     func bootstrapIfNeeded() {
         loadEntries()
-        
-        if entries.isEmpty {
-            // Seed with sample data
-            for entry in SeedData.entries {
-                let sdEntry = FuelEntrySD(from: entry)
-                modelContext.insert(sdEntry)
-            }
-            
-            do {
-                try modelContext.save()
-                loadEntries()
-            } catch {
-                print("Failed to seed data: \(error)")
-            }
-        }
     }
     
     // MARK: - Summary

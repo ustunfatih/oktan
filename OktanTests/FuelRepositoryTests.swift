@@ -242,7 +242,7 @@ final class FuelRepositoryTests: XCTestCase {
         XCTAssertEqual(summary.averageCostPerKM!, 0.2, accuracy: 0.001)
     }
     
-    func testSummaryExcludesEntriesWithoutDistance() {
+    func testSummaryIncludesAllPurchasesButExcludesMissingDistanceFromEfficiency() {
         // Entry with distance
         let completeEntry = makeEntry(odometerStart: 0, odometerEnd: 100, totalLiters: 10)
         // Entry without distance
@@ -253,9 +253,11 @@ final class FuelRepositoryTests: XCTestCase {
         
         let summary = repository.summary()
         
-        // Only complete entry should count for distance/liters calculations
+        // Purchases remain in totals, while distance-based efficiency uses
+        // only completed tank cycles.
         XCTAssertEqual(summary.totalDistance, 100, accuracy: 0.001)
-        XCTAssertEqual(summary.totalLiters, 10, accuracy: 0.001)
+        XCTAssertEqual(summary.totalLiters, 60, accuracy: 0.001)
+        XCTAssertEqual(summary.averageLitersPer100KM ?? -1, 10, accuracy: 0.001)
     }
     
     func testSummaryRecentAverageWithLessThan5Entries() {

@@ -34,6 +34,11 @@ struct HomeView: View {
     private var summary: FuelSummary {
         repository.summary()
     }
+
+    private var cycleEfficiencyByEntryID: [UUID: Double] {
+        Dictionary(uniqueKeysWithValues: FuelCycleService.completedCycles(from: repository.visibleEntries)
+            .map { ($0.id, $0.litersPer100KM) })
+    }
     
     var body: some View {
         ListShell(title: "Home") {
@@ -70,7 +75,7 @@ struct HomeView: View {
             }
 
             // Planning Section (prediction + budget)
-            if nextFillupPrediction != nil || settings.monthlyBudget != nil {
+            if nextFillupPrediction != nil || settings.monthlyBudget != nil || projectedMonthSpend != nil || serviceCheckpoint != nil {
                 Section {
                     planningSection
                 } header: {
@@ -321,6 +326,21 @@ struct HomeView: View {
             .reduce(0) { $0 + $1.totalCost }
     }
 
+    private var projectedMonthSpend: Double? {
+        guard currentMonthSpend > 0 else { return nil }
+        let calendar = Calendar.current
+        let day = calendar.component(.day, from: Date())
+        guard day >= 3,
+              let days = calendar.range(of: .day, in: .month, for: Date())?.count else { return nil }
+        return currentMonthSpend / Double(day) * Double(days)
+    }
+
+    private var serviceCheckpoint: (odometer: Double, remaining: Double)? {
+        guard let latest = repository.visibleEntries.compactMap(\.odometerEnd).max() else { return nil }
+        let checkpoint = (floor(latest / 10_000) + 1) * 10_000
+        return (checkpoint, checkpoint - latest)
+    }
+
     @ViewBuilder
     private var planningSection: some View {
         if let prediction = nextFillupPrediction {
@@ -344,6 +364,9 @@ struct HomeView: View {
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
+                    Text(prediction.confidence.displayName)
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
                 }
             }
             .accessibilityElement(children: .combine)
@@ -367,6 +390,25 @@ struct HomeView: View {
             .accessibilityLabel("Monthly budget")
             .accessibilityValue("\(settings.formatCost(currentMonthSpend)) spent of \(settings.formatCost(budget))")
         }
+
+        if let projectedMonthSpend {
+            LabeledContent {
+                Text("~\(settings.formatCost(projectedMonthSpend))")
+                    .font(.headline)
+            } label: {
+                Label("Projected month-end spend", systemImage: "chart.line.uptrend.xyaxis")
+            }
+        }
+
+        if let serviceCheckpoint {
+            LabeledContent {
+                Text(settings.formatDistance(serviceCheckpoint.remaining))
+                    .font(.headline)
+            } label: {
+                Label("Next 10,000 km checkpoint", systemImage: "wrench.and.screwdriver")
+            }
+            .accessibilityValue("\(settings.formatDistance(serviceCheckpoint.remaining)) remaining until \(settings.formatDistance(serviceCheckpoint.odometer))")
+        }
     }
 
     // MARK: - Recent Activity Section
@@ -381,7 +423,11 @@ struct HomeView: View {
             }
         } else {
             ForEach(repository.visibleEntries.suffix(3).reversed()) { entry in
-                RecentEntryRow(entry: entry, settings: settings)
+                RecentEntryRow(
+                    entry: entry,
+                    efficiency: cycleEfficiencyByEntryID[entry.id],
+                    settings: settings
+                )
             }
         }
     }
@@ -406,6 +452,7 @@ struct HomeView: View {
 
 private struct RecentEntryRow: View {
     let entry: FuelEntry
+    let efficiency: Double?
     let settings: AppSettings
     
     var body: some View {
@@ -423,7 +470,7 @@ private struct RecentEntryRow: View {
             VStack(alignment: .trailing) {
                 Text(settings.formatCost(entry.totalCost))
                     .font(.headline)
-                if let lPer100 = entry.litersPer100KM {
+                if let lPer100 = efficiency {
                     Text(settings.formatEfficiency(lPer100))
                         .font(.caption)
                         .foregroundStyle(.secondary)
@@ -433,7 +480,7 @@ private struct RecentEntryRow: View {
         // Accessibility
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Fill-up on \(AccessibilityHelper.speakableDate(entry.date)) at \(entry.gasStation)")
-        .accessibilityValue("\(settings.formatCost(entry.totalCost))" + (entry.litersPer100KM.map { ", efficiency \(settings.formatEfficiency($0))" } ?? ""))
+        .accessibilityValue("\(settings.formatCost(entry.totalCost))" + (efficiency.map { ", efficiency \(settings.formatEfficiency($0))" } ?? ""))
         .accessibilityIdentifier(AccessibilityID.trackingEntryRow)
     }
 }

@@ -1,6 +1,7 @@
 import Foundation
 import Combine
 import SwiftData
+import WidgetKit
 
 @MainActor
 final class FuelRepository: ObservableObject {
@@ -59,11 +60,6 @@ final class FuelRepository: ObservableObject {
 
     func bootstrapIfNeeded() {
         loadEntries()
-        if entries.isEmpty {
-            for entry in SeedData.entries {
-                _ = add(entry)
-            }
-        }
     }
 
     /// One-time adoption of legacy entries (no carId) by the given car.
@@ -96,6 +92,7 @@ final class FuelRepository: ObservableObject {
             do {
                 try context.save()
             } catch {
+                context.rollback()
                 lastError = .saveFailed(reason: error.localizedDescription)
                 return false
             }
@@ -106,76 +103,221 @@ final class FuelRepository: ObservableObject {
         entries.append(entry)
         entries.sort { $0.date < $1.date }
         cachedSummary = nil
-        persistIfJSON()
+        guard persistIfJSON() else {
+            entries.removeAll { $0.id == entry.id }
+            cachedSummary = nil
+            return false
+        }
+        reloadWidget()
         return true
     }
 
-    func update(_ entry: FuelEntry) {
-        guard let index = entries.firstIndex(where: { $0.id == entry.id }), validate(entry) else { return }
+    /// Inserts an import as one transaction so large CSV files do not save once per row.
+    @discardableResult
+    func addBatch(_ newEntries: [FuelEntry]) -> Bool {
+        guard !newEntries.isEmpty else { return true }
+
+        var preparedEntries = newEntries
+        for index in preparedEntries.indices {
+            if preparedEntries[index].carId == nil {
+                preparedEntries[index].carId = activeCarId
+            }
+            if let validationError = validateWithError(preparedEntries[index]) {
+                lastError = validationError
+                return false
+            }
+        }
+
+        switch storageMode {
+        case .swiftData(let context):
+            for entry in preparedEntries {
+                context.insert(FuelEntrySD(from: entry))
+            }
+            do {
+                try context.save()
+            } catch {
+                context.rollback()
+                lastError = .saveFailed(reason: error.localizedDescription)
+                return false
+            }
+        case .json:
+            let previousEntries = entries
+            entries.append(contentsOf: preparedEntries)
+            entries.sort { $0.date < $1.date }
+            cachedSummary = nil
+            guard persistIfJSON() else {
+                entries = previousEntries
+                cachedSummary = nil
+                return false
+            }
+            reloadWidget()
+            return true
+        }
+
+        entries.append(contentsOf: preparedEntries)
+        entries.sort { $0.date < $1.date }
+        cachedSummary = nil
+        reloadWidget()
+        return true
+    }
+
+    @discardableResult
+    func update(_ entry: FuelEntry) -> Bool {
+        guard let index = entries.firstIndex(where: { $0.id == entry.id }) else {
+            lastError = .saveFailed(reason: "The entry no longer exists")
+            return false
+        }
+        if let validationError = validateWithError(entry) {
+            lastError = validationError
+            return false
+        }
         
         switch storageMode {
         case .swiftData(let context):
             let descriptor = FetchDescriptor<FuelEntrySD>(
                 predicate: #Predicate { $0.entryId == entry.id }
             )
-            if let existing = try? context.fetch(descriptor).first {
+            do {
+                guard let existing = try context.fetch(descriptor).first else {
+                    lastError = .saveFailed(reason: "The entry no longer exists")
+                    return false
+                }
                 existing.update(from: entry)
-                try? context.save()
+                try context.save()
+            } catch {
+                context.rollback()
+                lastError = .saveFailed(reason: error.localizedDescription)
+                return false
             }
         case .json:
-            break
+            let previous = entries[index]
+            entries[index] = entry
+            entries.sort { $0.date < $1.date }
+            cachedSummary = nil
+            guard persistIfJSON() else {
+                if let updatedIndex = entries.firstIndex(where: { $0.id == previous.id }) {
+                    entries[updatedIndex] = previous
+                    entries.sort { $0.date < $1.date }
+                }
+                cachedSummary = nil
+                return false
+            }
+            reloadWidget()
+            return true
         }
         
         entries[index] = entry
         entries.sort { $0.date < $1.date }
         cachedSummary = nil
-        persistIfJSON()
+        reloadWidget()
+        return true
     }
 
-    func delete(_ entry: FuelEntry) {
+    @discardableResult
+    func delete(_ entry: FuelEntry) -> Bool {
+        guard let index = entries.firstIndex(where: { $0.id == entry.id }) else {
+            lastError = .deleteFailed(reason: "The entry no longer exists")
+            return false
+        }
+
         switch storageMode {
         case .swiftData(let context):
             let descriptor = FetchDescriptor<FuelEntrySD>(
                 predicate: #Predicate { $0.entryId == entry.id }
             )
-            if let existing = try? context.fetch(descriptor).first {
+            do {
+                guard let existing = try context.fetch(descriptor).first else {
+                    lastError = .deleteFailed(reason: "The entry no longer exists")
+                    return false
+                }
                 context.delete(existing)
-                try? context.save()
+                try context.save()
+            } catch {
+                context.rollback()
+                lastError = .deleteFailed(reason: error.localizedDescription)
+                return false
             }
         case .json:
-            break
+            entries.remove(at: index)
+            cachedSummary = nil
+            guard persistIfJSON() else {
+                entries.append(entry)
+                entries.sort { $0.date < $1.date }
+                cachedSummary = nil
+                return false
+            }
+            reloadWidget()
+            return true
         }
         
-        entries.removeAll { $0.id == entry.id }
+        entries.remove(at: index)
         cachedSummary = nil
-        persistIfJSON()
+        reloadWidget()
+        return true
+    }
+
+    /// Deletes the full log in one save operation.
+    @discardableResult
+    func deleteAll() -> Bool {
+        guard !entries.isEmpty else { return true }
+        let previousEntries = entries
+
+        switch storageMode {
+        case .swiftData(let context):
+            do {
+                let storedEntries = try context.fetch(FetchDescriptor<FuelEntrySD>())
+                for storedEntry in storedEntries {
+                    context.delete(storedEntry)
+                }
+                try context.save()
+            } catch {
+                context.rollback()
+                lastError = .deleteFailed(reason: error.localizedDescription)
+                return false
+            }
+        case .json:
+            entries.removeAll()
+            cachedSummary = nil
+            guard persistIfJSON() else {
+                entries = previousEntries
+                cachedSummary = nil
+                return false
+            }
+            reloadWidget()
+            return true
+        }
+
+        entries.removeAll()
+        cachedSummary = nil
+        reloadWidget()
+        return true
     }
 
     func summary() -> FuelSummary {
         if let cachedSummary {
             return cachedSummary
         }
-        let completed = visibleEntries.compactMap { entry -> FuelEntry? in
-            guard entry.distance != nil else { return nil }
-            return entry
-        }
-
+        let completed = visibleEntries.filter { $0.distance != nil }
+        let cycles = FuelCycleService.completedCycles(from: visibleEntries)
         let distance = completed.compactMap { $0.distance }.reduce(0, +)
-        let liters = completed.reduce(0) { $0 + $1.totalLiters }
-        let cost = completed.reduce(0) { $0 + $1.totalCost }
+        let cycleDistance = cycles.reduce(0) { $0 + $1.distance }
+        let litersForEfficiency = cycles.reduce(0) { $0 + $1.liters }
+        let costForEfficiency = cycles.reduce(0) { $0 + $1.cost }
+        let totalLiters = visibleEntries.reduce(0) { $0 + $1.totalLiters }
+        let totalCost = visibleEntries.reduce(0) { $0 + $1.totalCost }
 
-        let lPer100 = distance > 0 ? (liters / distance) * 100 : nil
-        let costPerKM = distance > 0 ? cost / distance : nil
+        let lPer100 = cycleDistance > 0 ? (litersForEfficiency / cycleDistance) * 100 : nil
+        let costPerKM = cycleDistance > 0 ? costForEfficiency / cycleDistance : nil
 
-        let recent = Array(completed.suffix(5))
-        let recentLPer100 = recent.compactMap { $0.litersPer100KM }.average()
-        let recentCostPerKM = recent.compactMap { $0.costPerKM }.average()
+        let recent = Array(cycles.suffix(5))
+        let recentLPer100 = recent.map(\.litersPer100KM).average()
+        let recentCostPerKM = recent.map(\.costPerKM).average()
 
-        let modes = Dictionary(grouping: completed, by: { $0.driveMode })
+        let modes = Dictionary(grouping: cycles, by: { $0.driveMode })
             .mapValues { group -> DriveModeBreakdown in
-                let modeDistance = group.compactMap { $0.distance }.reduce(0, +)
-                let modeLiters = group.reduce(0) { $0 + $1.totalLiters }
-                let modeCost = group.reduce(0) { $0 + $1.totalCost }
+                let modeDistance = group.reduce(0) { $0 + $1.distance }
+                let modeLiters = group.reduce(0) { $0 + $1.liters }
+                let modeCost = group.reduce(0) { $0 + $1.cost }
 
                 let lPer100 = modeDistance > 0 ? (modeLiters / modeDistance) * 100 : nil
                 let costPerKM = modeDistance > 0 ? modeCost / modeDistance : nil
@@ -184,8 +326,8 @@ final class FuelRepository: ObservableObject {
 
         let result = FuelSummary(
             totalDistance: distance,
-            totalLiters: liters,
-            totalCost: cost,
+            totalLiters: totalLiters,
+            totalCost: totalCost,
             averageLitersPer100KM: lPer100,
             averageCostPerKM: costPerKM,
             recentAverageLitersPer100KM: recentLPer100,
@@ -218,12 +360,16 @@ final class FuelRepository: ObservableObject {
     private func loadEntries() {
         switch storageMode {
         case .json(let url, _, let decoder):
-            guard let data = try? Data(contentsOf: url),
-                  let decoded = try? decoder.decode([FuelEntry].self, from: data) else {
+            guard FileManager.default.fileExists(atPath: url.path) else {
                 return
             }
-            entries = decoded
-            cachedSummary = nil
+            do {
+                let data = try Data(contentsOf: url)
+                entries = try decoder.decode([FuelEntry].self, from: data)
+                cachedSummary = nil
+            } catch {
+                lastError = .loadFailed(reason: error.localizedDescription)
+            }
 
         case .swiftData(let context):
             let descriptor = FetchDescriptor<FuelEntrySD>(
@@ -234,16 +380,42 @@ final class FuelRepository: ObservableObject {
                 entries = sdEntries.map { $0.toFuelEntry() }
                 cachedSummary = nil
             } catch {
-                print("Failed to load entries: \(error)")
+                lastError = .loadFailed(reason: error.localizedDescription)
             }
         }
     }
     
     /// Persists to disk only if using JSON storage
-    private func persistIfJSON() {
-        guard case .json(let url, let encoder, _) = storageMode else { return }
-        guard let data = try? encoder.encode(entries) else { return }
-        try? data.write(to: url, options: .atomic)
+    @discardableResult
+    private func persistIfJSON() -> Bool {
+        guard case .json(let url, let encoder, _) = storageMode else { return true }
+        do {
+            let data = try encoder.encode(entries)
+            try data.write(to: url, options: [.atomic, .completeFileProtection])
+            return true
+        } catch {
+            lastError = .saveFailed(reason: error.localizedDescription)
+            return false
+        }
+    }
+
+    private func reloadWidget() {
+        let defaults = UserDefaults(suiteName: "group.com.oktan.data")
+        if let last = entries.last {
+            defaults?.set(last.date.timeIntervalSinceReferenceDate, forKey: "widget.lastDate")
+            defaults?.set(last.totalCost, forKey: "widget.lastCost")
+            let recentEfficiencies = FuelCycleService.completedCycles(from: entries).suffix(10).map(\.litersPer100KM)
+            let average = recentEfficiencies.isEmpty
+                ? nil
+                : recentEfficiencies.reduce(0, +) / Double(recentEfficiencies.count)
+            defaults?.set(average, forKey: "widget.efficiency")
+            defaults?.set(entries.count, forKey: "widget.entryCount")
+        } else {
+            for key in ["widget.lastDate", "widget.lastCost", "widget.efficiency", "widget.entryCount"] {
+                defaults?.removeObject(forKey: key)
+            }
+        }
+        WidgetCenter.shared.reloadTimelines(ofKind: "QuickStatsWidget")
     }
 
     // MARK: - CSV Export
@@ -264,6 +436,8 @@ final class FuelRepository: ObservableObject {
         dateFormatter.dateFormat = "yyyy-MM-dd"
 
         var csv = "Date,Odometer_Start,Odometer_End,Total_Liters,Price_per_Liter,Total_Cost,Full_Refill,Drive_Mode,Gas_Station,Distance_KM,L_per_100KM,Cost_per_KM,Notes\n"
+        let cyclesByEntryID = Dictionary(uniqueKeysWithValues: FuelCycleService.completedCycles(from: entries)
+            .map { ($0.id, $0) })
 
         for entry in entries.sorted(by: { $0.date < $1.date }) {
             let date = dateFormatter.string(from: entry.date)
@@ -276,8 +450,9 @@ final class FuelRepository: ObservableObject {
             let driveMode = entry.driveMode.rawValue
             let station = Self.csvEscape(entry.gasStation)
             let distance = entry.distance.map { String(format: "%.0f", $0) } ?? ""
-            let lPer100 = entry.litersPer100KM.map { String(format: "%.2f", $0) } ?? ""
-            let costPerKM = entry.costPerKM.map { String(format: "%.3f", $0) } ?? ""
+            let cycle = cyclesByEntryID[entry.id]
+            let lPer100 = cycle.map { String(format: "%.2f", $0.litersPer100KM) } ?? ""
+            let costPerKM = cycle.map { String(format: "%.3f", $0.costPerKM) } ?? ""
             let notes = Self.csvEscape(entry.notes ?? "")
 
             csv += "\(date),\(odometerStart),\(odometerEnd),\(liters),\(price),\(totalCost),\(fullRefill),\(driveMode),\(station),\(distance),\(lPer100),\(costPerKM),\(notes)\n"

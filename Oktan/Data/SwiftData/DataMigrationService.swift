@@ -78,7 +78,7 @@ enum DataMigrationService {
         }
         
         do {
-            let data = try Data(contentsOf: fuelEntriesURL)
+            guard let data = await readData(from: fuelEntriesURL) else { return 0 }
             let decoder = JSONDecoder()
             decoder.dateDecodingStrategy = .iso8601
             let legacyEntries = try decoder.decode([FuelEntry].self, from: data)
@@ -104,7 +104,7 @@ enum DataMigrationService {
         }
         
         do {
-            let data = try Data(contentsOf: selectedCarURL)
+            guard let data = await readData(from: selectedCarURL) else { return false }
             let decoder = JSONDecoder()
             let legacyCar = try decoder.decode(Car.self, from: data)
             
@@ -116,6 +116,12 @@ enum DataMigrationService {
             print("Failed to migrate car: \(error)")
             return false
         }
+    }
+
+    private nonisolated static func readData(from url: URL) async -> Data? {
+        await Task.detached(priority: .utility) {
+            try? Data(contentsOf: url, options: [.mappedIfSafe])
+        }.value
     }
     
     // MARK: - Cleanup
