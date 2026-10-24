@@ -1,5 +1,6 @@
 import { useEffect, useState, type ComponentType } from "react";
 import { DataProvider, useData } from "./data";
+import { ErrorBoundary } from "./ErrorBoundary";
 import { fmt, fmtAgo } from "./format";
 import { BarsIcon, DropIcon, GaugeIcon, GearIcon, PlusIcon, RefreshIcon } from "./icons";
 import { Dashboard } from "./pages/Dashboard";
@@ -34,10 +35,12 @@ function Shell() {
       <TopBar />
       <TestModeStrip />
       <main className="page">
-        {route === "/" && <Dashboard />}
-        {route === "/analytics" && <Analytics />}
-        {route === "/log" && <Log />}
-        {route === "/settings" && <Settings />}
+        <ErrorBoundary resetKey={`${route} ${data?.fetchedAt ?? ""}`}>
+          {route === "/" && <Dashboard />}
+          {route === "/analytics" && <Analytics />}
+          {route === "/log" && <Log />}
+          {route === "/settings" && <Settings />}
+        </ErrorBoundary>
       </main>
       <nav className="bottom-nav" aria-label="Main">
         {TABS.map(({ to, label, icon: Icon }) => (

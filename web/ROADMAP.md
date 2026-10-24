@@ -92,6 +92,24 @@ Progress log:
   - **Fixed:** the fuel-grade and drive-mode pickers in Settings overflowed at phone width. They now take the full row.
   - **Tested:** 64 unit tests, typecheck, colour-contrast check of every text/background pair in all 5 themes,
     screenshots of each theme at desktop and phone size, an overflow sweep of every page at 375 px in all 5 themes.
+  - Committed as `a7a22c9`.
+- 24 Oct — **Phase 8 (hardening) deployed** (version `26090273`, uncommitted).
+  - **Google quota:** a 429 is retried up to 3 times (about 6 s, honouring Retry-After). Read errors from Google
+    (5xx) are retried too; write errors are not, because the write may have landed. A rejected access token is
+    dropped and fetched again once.
+  - **Clear messages:** "Google Sheets is busy", "refused access (check sharing)", "can't find the spreadsheet",
+    and "had a problem", instead of one generic error.
+  - **Error reporting:** one JSON log line per write, per failure, per retry and per price check. Browser crashes
+    and unhandled errors are posted to `/api/client-error` (max 5 per page) and land in the same Worker logs. A crash
+    on one screen shows "This screen hit a problem" while the top bar and tabs keep working, and retries when
+    fresh data arrives.
+  - **API tests:** `worker/app.test.ts` runs 21 tests through the real routes with Google faked: sign-in, cache,
+    live lock, write guards, an atomic add with App_Log, validation and conflict refusals, every quota/failure path,
+    client-error logging, the cron skip. A deliberate bug in the retry rule was caught by the tests.
+  - **README.md:** architecture, commands, and ops notes (rotating the Google key, changing who can sign in,
+    months and prices, locking the live sheet, logs, quota, a troubleshooting table, backups, sheet editing rules).
+  - **Tested:** 85 tests and typecheck; local run against the DEV sheet (data read, log lines, browser error and
+    promise reports, crash screen and its recovery).
   - **Tested:** 64 unit tests; an 11-step API run on the DEV sheet (tank size flows into the sheet's
     formulas; invalid grade refused; add/archive/reorder; rename refused without history and applied with
     it; deleting a used station refused; full restore); the screen at desktop and phone sizes.

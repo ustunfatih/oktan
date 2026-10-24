@@ -26,6 +26,11 @@ function parseKey(raw: string | undefined): ServiceAccountKey {
   return key as ServiceAccountKey;
 }
 
+/** Forgets the cached token, e.g. after Google rejected it or the key was rotated. */
+export function clearAccessToken() {
+  cached = null;
+}
+
 /** OAuth access token for the service account, cached until a minute before it expires. */
 export async function getAccessToken(rawKey: string | undefined): Promise<string> {
   const key = parseKey(rawKey);
