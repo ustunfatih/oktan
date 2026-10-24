@@ -136,6 +136,14 @@ struct SettingsView: View {
             Section("Notifications") {
                 NotificationLink()
             }
+
+            Section("Security") {
+                NavigationLink {
+                    AppLockSettingsView()
+                } label: {
+                    Label("App Lock", systemImage: "lock.shield")
+                }
+            }
             
             // Data Section
             Section {
@@ -232,9 +240,7 @@ struct DataManagementView: View {
         }
         .confirmationDialog("Delete All Data?", isPresented: $showingResetConfirmation, titleVisibility: .visible) {
             Button("Delete All", role: .destructive) {
-                for entry in repository.entries {
-                    repository.delete(entry)
-                }
+                repository.deleteAll()
             }
             Button("Cancel", role: .cancel) {}
         } message: {
@@ -282,7 +288,7 @@ struct AboutView: View {
                 featureRow(icon: "fuelpump.fill", title: "Fuel Tracking", description: "Log every fill-up with detailed information")
                 featureRow(icon: "chart.line.uptrend.xyaxis", title: "Analytics", description: "Track efficiency trends and costs over time")
                 featureRow(icon: "car.fill", title: "Multiple Cars", description: "Manage fuel logs for all your vehicles")
-                featureRow(icon: "icloud.fill", title: "Cloud Sync", description: "Keep your data synced across devices")
+                featureRow(icon: "lock.iphone", title: "Private Storage", description: "Keep fuel logs on this device")
             } header: {
                 Text("Features")
             }

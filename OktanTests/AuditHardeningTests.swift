@@ -6,6 +6,11 @@ import XCTest
 @MainActor
 final class AuditHardeningTests: XCTestCase {
 
+    override func setUp() {
+        super.setUp()
+        KeychainStore.useInMemoryStoreForTesting()
+    }
+
     // MARK: - CSV Escaping
 
     func testCSVEscapeNeutralizesFormulaPrefixes() {

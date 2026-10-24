@@ -545,12 +545,12 @@ struct RecordsView: View {
     private var records: [AnalyticsService.FuelRecord] {
         var result: [AnalyticsService.FuelRecord] = []
 
-        if let longest = entries.filter({ $0.distance != nil }).max(by: { ($0.distance ?? 0) < ($1.distance ?? 0) }),
-           let distance = longest.distance {
+        if let longest = FuelCycleService.completedCycles(from: entries)
+            .max(by: { $0.distance < $1.distance }) {
             result.append(.init(
                 id: "longest",
                 title: String(localized: "Longest tank range"),
-                value: settings.formatDistance(distance),
+                value: settings.formatDistance(longest.distance),
                 subtitle: longest.date.formatted(date: .abbreviated, time: .omitted),
                 icon: "road.lanes"
             ))
@@ -564,12 +564,12 @@ struct RecordsView: View {
                 icon: "tag.fill"
             ))
         }
-        if let best = entries.filter({ $0.litersPer100KM != nil }).min(by: { ($0.litersPer100KM ?? .infinity) < ($1.litersPer100KM ?? .infinity) }),
-           let efficiency = best.litersPer100KM {
+        if let best = FuelCycleService.completedCycles(from: entries)
+            .min(by: { $0.litersPer100KM < $1.litersPer100KM }) {
             result.append(.init(
                 id: "best-efficiency",
                 title: String(localized: "Best efficiency"),
-                value: settings.formatEfficiency(efficiency),
+                value: settings.formatEfficiency(best.litersPer100KM),
                 subtitle: "\(best.driveMode.rawValue) · \(best.date.formatted(date: .abbreviated, time: .omitted))",
                 icon: "leaf.fill"
             ))

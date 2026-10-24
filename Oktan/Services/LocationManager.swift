@@ -1,20 +1,29 @@
 import Foundation
 import CoreLocation
 import MapKit
+import OSLog
 import UserNotifications
 
 @Observable
 final class LocationManager: NSObject, CLLocationManagerDelegate {
     static let shared = LocationManager()
+    private let logger = Logger(subsystem: "com.oktan.app", category: "Location")
     
     private let manager = CLLocationManager()
     var currentLocation: CLLocation?
     var permissionStatus: CLAuthorizationStatus = .notDetermined
+    var smartRefuelEnabled: Bool {
+        didSet {
+            UserDefaults.standard.set(smartRefuelEnabled, forKey: "smartRefuelEnabled")
+        }
+    }
     
     override init() {
+        self.smartRefuelEnabled = UserDefaults.standard.bool(forKey: "smartRefuelEnabled")
         super.init()
         manager.delegate = self
         manager.desiredAccuracy = kCLLocationAccuracyHundredMeters // Don't need super high precision for gas stations
+        permissionStatus = manager.authorizationStatus
     }
     
     func requestPermission() {
@@ -35,18 +44,19 @@ final class LocationManager: NSObject, CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("Location Manager Error: \(error)")
+        logger.error("Location update failed: \(error.localizedDescription, privacy: .private)")
     }
     
     // MARK: - Smart Refuel Logic
     
     /// Triggered when CarPlay disconnects
     func checkForGasStation() {
-        print("CarPlay Disconnected: Checking for gas stations...")
+        guard smartRefuelEnabled else { return }
+        logger.debug("Smart Refuel location check started")
         
         // Ensure we have permission
         guard manager.authorizationStatus == .authorizedWhenInUse || manager.authorizationStatus == .authorizedAlways else {
-            print("Location permission not granted for Smart Refuel.")
+            logger.notice("Smart Refuel skipped because location is not authorized")
             return
         }
         
@@ -60,7 +70,7 @@ final class LocationManager: NSObject, CLLocationManagerDelegate {
             try? await Task.sleep(for: .seconds(2))
             
             guard let location = manager.location ?? currentLocation else {
-                print("Could not determine location.")
+                logger.notice("Smart Refuel could not obtain a location")
                 return
             }
             
@@ -83,14 +93,12 @@ final class LocationManager: NSObject, CLLocationManagerDelegate {
                 let itemLocation = firstMatch.location
                 let distance = itemLocation.distance(from: location)
                 
-                print("Nearest Gas Station: \(firstMatch.name ?? "Unknown") at \(Int(distance))m")
-                
                 if distance < 150 { // If within 150 meters
                     sendRefuelNotification(stationName: firstMatch.name)
                 }
             }
         } catch {
-            print("Gas Station Search Failed: \(error)")
+            logger.error("Gas-station search failed: \(error.localizedDescription, privacy: .private)")
         }
         
         manager.stopUpdatingLocation()

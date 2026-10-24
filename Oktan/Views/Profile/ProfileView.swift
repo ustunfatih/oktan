@@ -49,8 +49,8 @@ struct ProfileView: View {
         
         // Benefits Section
         Section {
-            benefitRow(icon: "icloud.fill", title: "Cloud Sync", description: "Access your data on all devices")
-            benefitRow(icon: "lock.shield.fill", title: "Secure Backup", description: "Never lose your fuel logs")
+            benefitRow(icon: "lock.iphone", title: "Private Profile", description: "Your profile is stored securely on this device")
+            benefitRow(icon: "arrow.clockwise.icloud", title: "Purchase Restore", description: "Restore Oktan Pro through the App Store")
             benefitRow(icon: "chart.bar.fill", title: "Advanced Analytics", description: "Detailed insights and trends")
         } header: {
             Text("Account Benefits")
@@ -87,7 +87,7 @@ struct ProfileView: View {
                 Text("Sign in to Oktan")
                     .font(.title2.bold())
 
-                Text("Sync your data across devices and unlock premium features")
+                Text("Keep a private profile and connect your Oktan Pro purchase")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
@@ -99,8 +99,8 @@ struct ProfileView: View {
         
         // Benefits Section
         Section {
-            benefitRow(icon: "icloud.fill", title: "Cloud Sync", description: "Access your data on all devices")
-            benefitRow(icon: "lock.shield.fill", title: "Secure Backup", description: "Never lose your fuel logs")
+            benefitRow(icon: "lock.iphone", title: "Private Profile", description: "Your profile is stored securely on this device")
+            benefitRow(icon: "arrow.clockwise.icloud", title: "Purchase Restore", description: "Restore Oktan Pro through the App Store")
             benefitRow(icon: "chart.bar.fill", title: "Advanced Analytics", description: "Detailed insights and trends")
         } header: {
             Text("Benefits")

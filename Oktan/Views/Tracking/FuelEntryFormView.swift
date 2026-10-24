@@ -1,4 +1,5 @@
 import SwiftUI
+import PhotosUI
 
 struct FuelEntryFormView: View {
     @Environment(\.dismiss) private var dismiss
@@ -136,6 +137,9 @@ struct FuelEntryFormView: View {
 
     @State private var errorMessage: String?
     @State private var showSuccess = false
+    @State private var receiptItem: PhotosPickerItem?
+    @State private var isScanningReceipt = false
+    @State private var receiptStatus: String?
 
     init(existingEntry: FuelEntry? = nil) {
         self.existingEntry = existingEntry
@@ -144,6 +148,27 @@ struct FuelEntryFormView: View {
     var body: some View {
         ZStack {
             FormShell(title: isEditing ? "Edit Fill-up" : "Add Fill-up") {
+                Section {
+                    PhotosPicker(selection: $receiptItem, matching: .images) {
+                        Label(
+                            isScanningReceipt ? "Reading Receipt…" : "Scan Receipt",
+                            systemImage: "doc.text.viewfinder"
+                        )
+                    }
+                    .disabled(isScanningReceipt)
+
+                    if isScanningReceipt {
+                        ProgressView()
+                    }
+                    if let receiptStatus {
+                        Text(receiptStatus)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                } footer: {
+                    Text("Choose a receipt photo to fill in recognized date, liters, unit price, and station. Review every value before saving.")
+                }
+
                 Section("Fill-up") {
                     DatePicker("Date", selection: date, displayedComponents: [.date])
                         .accessibilityLabel("Purchase date")
@@ -245,6 +270,10 @@ struct FuelEntryFormView: View {
             }
         }
         .onAppear(perform: setupForm)
+        .onChange(of: receiptItem) { _, item in
+            guard let item else { return }
+            scanReceipt(item)
+        }
     }
 
     /// The previous entry's end reading when the entered start diverges from it
@@ -252,7 +281,7 @@ struct FuelEntryFormView: View {
     private var odometerGapWarning: Double? {
         guard !isEditing,
               let previousEnd = repository.visibleEntries.last?.odometerEnd,
-              let start = Double(draftOdometerStart),
+              let start = parseNumber(draftOdometerStart),
               abs(start - previousEnd) > 0.5 else { return nil }
         return previousEnd
     }
@@ -263,8 +292,8 @@ struct FuelEntryFormView: View {
         let startValue = isEditing ? _odometerStart : draftOdometerStart
         let endValue = isEditing ? _odometerEnd : draftOdometerEnd
         
-        guard Double(litersValue) ?? 0 > 0, Double(priceValue) ?? 0 > 0 else { return false }
-        if let start = Double(startValue), let end = Double(endValue), end < start { return false }
+        guard parseNumber(litersValue) ?? 0 > 0, parseNumber(priceValue) ?? 0 > 0 else { return false }
+        if let start = parseNumber(startValue), let end = parseNumber(endValue), end < start { return false }
         return true
     }
 
@@ -296,6 +325,52 @@ struct FuelEntryFormView: View {
         draftDriveModeRaw = last.driveMode.rawValue
         draftGasStation = last.gasStation
         draftIsFull = last.isFullRefill
+    }
+
+    private func scanReceipt(_ item: PhotosPickerItem) {
+        isScanningReceipt = true
+        receiptStatus = nil
+        errorMessage = nil
+
+        Task {
+            defer {
+                isScanningReceipt = false
+                receiptItem = nil
+            }
+            do {
+                guard let data = try await item.loadTransferable(type: Data.self) else {
+                    throw ReceiptScannerService.ScanError.invalidImage
+                }
+                let result = try await ReceiptScannerService.scan(imageData: data)
+                applyReceipt(result)
+            } catch {
+                errorMessage = error.localizedDescription
+            }
+        }
+    }
+
+    private func applyReceipt(_ result: ReceiptScannerService.Result) {
+        var recognizedFields = 0
+        if let receiptDate = result.date {
+            date.wrappedValue = receiptDate
+            recognizedFields += 1
+        }
+        if let receiptLiters = result.liters {
+            liters.wrappedValue = String(format: "%.2f", receiptLiters)
+            recognizedFields += 1
+        }
+        if let receiptPrice = result.pricePerLiter {
+            pricePerLiter.wrappedValue = String(format: "%.3f", receiptPrice)
+            recognizedFields += 1
+        }
+        if let receiptStation = result.station {
+            gasStation.wrappedValue = receiptStation
+            recognizedFields += 1
+        }
+
+        receiptStatus = recognizedFields > 0
+            ? String(localized: "Filled \(recognizedFields) fields. Please verify the values.")
+            : String(localized: "Text was detected, but no fuel values could be identified.")
     }
 
     private func save() {
@@ -332,11 +407,11 @@ struct FuelEntryFormView: View {
             notesValue = draftNotes
         }
         
-        guard let litersDouble = Double(litersValue), litersDouble > 0 else {
+        guard let litersDouble = parseNumber(litersValue), litersDouble > 0 else {
             errorMessage = "Please enter liters purchased."
             return
         }
-        guard let price = Double(priceValue), price > 0 else {
+        guard let price = parseNumber(priceValue), price > 0 else {
             errorMessage = "Please enter a valid price per liter."
             return
         }
@@ -344,8 +419,8 @@ struct FuelEntryFormView: View {
         let entry = FuelEntry(
             id: existingEntry?.id ?? UUID(),
             date: dateValue,
-            odometerStart: Double(odometerStartValue),
-            odometerEnd: Double(odometerEndValue),
+            odometerStart: parseNumber(odometerStartValue),
+            odometerEnd: parseNumber(odometerEndValue),
             totalLiters: litersDouble,
             pricePerLiter: price,
             gasStation: gasStationValue.isEmpty ? "Unknown" : gasStationValue,
@@ -355,7 +430,11 @@ struct FuelEntryFormView: View {
         )
 
         if isEditing {
-            repository.update(entry)
+            guard repository.update(entry) else {
+                errorMessage = repository.lastError?.errorDescription ?? "The entry could not be updated."
+                repository.clearError()
+                return
+            }
         } else {
             guard repository.add(entry) else {
                 // Show specific error from repository if available
@@ -404,6 +483,26 @@ struct FuelEntryFormView: View {
     private func triggerHapticFeedback() {
         let generator = UINotificationFeedbackGenerator()
         generator.notificationOccurred(.success)
+    }
+
+    private func parseNumber(_ text: String) -> Double? {
+        FuelEntryFormView.parseDecimal(text, locale: settings.locale)
+    }
+
+    /// A single "." or "," is always the decimal separator, so prefilled values
+    /// ("1.659") and decimal-pad input ("1,659") agree in every locale. Only
+    /// grouped input ("1.234,5") goes through the locale's number formatter.
+    static func parseDecimal(_ text: String, locale: Locale) -> Double? {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+        let separators = trimmed.filter { $0 == "." || $0 == "," }
+        if separators.count <= 1 {
+            return Double(trimmed.replacingOccurrences(of: ",", with: "."))
+        }
+        let formatter = NumberFormatter()
+        formatter.locale = locale
+        formatter.numberStyle = .decimal
+        return formatter.number(from: trimmed)?.doubleValue
     }
 }
 

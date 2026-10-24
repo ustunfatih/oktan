@@ -94,7 +94,10 @@ final class AppSettings {
     // MARK: - Selected Units
     
     var currencyCode: String {
-        didSet { UserDefaults.standard.set(currencyCode, forKey: "currencyCode") }
+        didSet {
+            UserDefaults.standard.set(currencyCode, forKey: "currencyCode")
+            widgetDefaults?.set(currencyCode, forKey: "currencyCode")
+        }
     }
     
     var distanceUnit: DistanceUnit {
@@ -106,7 +109,10 @@ final class AppSettings {
     }
     
     var efficiencyUnit: EfficiencyUnit {
-        didSet { UserDefaults.standard.set(efficiencyUnit.rawValue, forKey: "efficiencyUnit") }
+        didSet {
+            UserDefaults.standard.set(efficiencyUnit.rawValue, forKey: "efficiencyUnit")
+            widgetDefaults?.set(efficiencyUnit.rawValue, forKey: "efficiencyUnit")
+        }
     }
     
     var theme: AppTheme {
@@ -146,6 +152,14 @@ final class AppSettings {
         }
     }
 
+    var locale: Locale {
+        switch appLanguage {
+        case .system: return .autoupdatingCurrent
+        case .english: return Locale(identifier: "en")
+        case .turkish: return Locale(identifier: "tr")
+        }
+    }
+
     /// Optional monthly fuel budget in the selected currency. nil = no budget.
     var monthlyBudget: Double? {
         didSet {
@@ -169,6 +183,8 @@ final class AppSettings {
         self.appLanguage = AppLanguage(rawValue: UserDefaults.standard.string(forKey: "appLanguage") ?? "") ?? .system
         let savedBudget = UserDefaults.standard.double(forKey: "monthlyBudget")
         self.monthlyBudget = savedBudget > 0 ? savedBudget : nil
+        widgetDefaults?.set(currencyCode, forKey: "currencyCode")
+        widgetDefaults?.set(efficiencyUnit.rawValue, forKey: "efficiencyUnit")
     }
     
     // MARK: - Theme Migration
@@ -196,6 +212,9 @@ final class AppSettings {
 
     // MARK: - Language
 
+    /// SwiftUI text follows `locale` immediately; `String(localized:)`, system
+    /// dialogs and notifications pick the language up from AppleLanguages on
+    /// the next launch, which is why Settings asks for a restart.
     private func applyLanguage() {
         switch appLanguage {
         case .system:
@@ -205,6 +224,10 @@ final class AppSettings {
         case .turkish:
             UserDefaults.standard.set(["tr"], forKey: "AppleLanguages")
         }
+    }
+
+    private var widgetDefaults: UserDefaults? {
+        UserDefaults(suiteName: "group.com.oktan.data")
     }
     
     // MARK: - Conversion Helpers

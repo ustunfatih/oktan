@@ -129,7 +129,9 @@ struct CarConfirmationView: View {
     
     @State private var tankCapacity: Double
     @State private var carImage: UIImage?
+    @State private var carImageData: Data?
     @State private var isGeneratingImage = false
+    @State private var imageGenerationFailed = false
     
     init(make: CarDatabase.CarMake, model: CarDatabase.CarModel, year: Int, carRepository: CarRepositoryProtocol, onFinish: @escaping () -> Void) {
         self.make = make
@@ -174,6 +176,15 @@ struct CarConfirmationView: View {
             }
 
             Section {
+                Button(action: generateCarImage) {
+                    Label("Generate Online Image", systemImage: "sparkles")
+                }
+                .disabled(isGeneratingImage)
+            } footer: {
+                Text("Optional: sends the selected year, make, and model to external image providers.")
+            }
+
+            Section {
                 Button(action: confirmSelection) {
                     if isGeneratingImage {
                         HStack {
@@ -191,7 +202,12 @@ struct CarConfirmationView: View {
         }
         .navigationTitle("Confirm")
         .task {
-            generateCarImage()
+            loadBundledImage()
+        }
+        .alert("Image Unavailable", isPresented: $imageGenerationFailed) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("The online image could not be generated. You can still save the vehicle without one.")
         }
     }
 
@@ -217,7 +233,6 @@ struct CarConfirmationView: View {
     }
     
     private func generateCarImage() {
-        print("🎯 generateCarImage starting for: \(year) \(make.name) \(model.name)")
         isGeneratingImage = true
         
         Task {
@@ -230,10 +245,19 @@ struct CarConfirmationView: View {
             await MainActor.run {
                 if let data = imageData, let image = UIImage(data: data) {
                     self.carImage = image
+                    self.carImageData = data
+                } else {
+                    self.imageGenerationFailed = true
                 }
                 self.isGeneratingImage = false
             }
         }
+    }
+
+    private func loadBundledImage() {
+        guard let image = CarImageService.loadBundledImage(make: make.name, model: model.name) else { return }
+        carImage = image
+        carImageData = image.jpegData(compressionQuality: 0.82)
     }
     
     private func confirmSelection() {
@@ -242,7 +266,7 @@ struct CarConfirmationView: View {
             model: model.name,
             year: year,
             tankCapacity: tankCapacity,
-            imageData: carImage?.pngData()
+            imageData: carImageData
         )
         
         carRepository.saveCar(car)

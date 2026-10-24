@@ -16,6 +16,7 @@ final class MilestoneService {
     
     func checkMilestones(entries: [FuelEntry], summary: FuelSummary) {
         var newMilestones: [Milestone] = []
+        let cycles = FuelCycleService.completedCycles(from: entries)
         
         // 1. First Drop
         if let firstEntry = entries.sorted(by: { $0.date < $1.date }).first {
@@ -30,26 +31,26 @@ final class MilestoneService {
         }
         
         // 2. Economy Master (Best efficiency)
-        if let bestEfficiency = entries.compactMap({ $0.litersPer100KM }).min(), bestEfficiency > 0 {
+        if let best = cycles.min(by: { $0.litersPer100KM < $1.litersPer100KM }) {
             newMilestones.append(Milestone(
                 id: "economy_master",
                 title: "Economy Master",
-                description: "Achieved your best efficiency: \(String(format: "%.1f", bestEfficiency)) L/100km",
+                description: "Achieved your best efficiency: \(String(format: "%.1f", best.litersPer100KM)) L/100km",
                 icon: "leaf.fill",
                 color: .green,
-                dateAchieved: entries.first(where: { $0.litersPer100KM == bestEfficiency })?.date
+                dateAchieved: best.date
             ))
         }
         
         // 3. Long Haul (Longest distance)
-        if let maxDistance = entries.compactMap({ $0.distance }).max(), maxDistance > 0 {
+        if let longest = cycles.max(by: { $0.distance < $1.distance }) {
             newMilestones.append(Milestone(
                 id: "long_haul",
                 title: "Long Haul",
-                description: "Longest trip on a single tank: \(Int(maxDistance)) km",
+                description: "Longest trip on a single tank: \(Int(longest.distance)) km",
                 icon: "road.lanes",
                 color: .orange,
-                dateAchieved: entries.first(where: { $0.distance == maxDistance })?.date
+                dateAchieved: longest.date
             ))
         }
         
@@ -85,11 +86,11 @@ final class MilestoneService {
 
         // 6. Best Month (lowest average efficiency in a calendar month)
         let calendar = Calendar.current
-        let byMonth = Dictionary(grouping: entries.filter { $0.litersPer100KM != nil }) {
+        let byMonth = Dictionary(grouping: cycles) {
             calendar.dateComponents([.year, .month], from: $0.date)
         }
         let monthAverages = byMonth.compactMapValues { group -> Double? in
-            let values = group.compactMap { $0.litersPer100KM }
+            let values = group.map { $0.litersPer100KM }
             guard values.count >= 2 else { return nil }
             return values.reduce(0, +) / Double(values.count)
         }
@@ -121,4 +122,3 @@ final class MilestoneService {
         self.milestones = newMilestones
     }
 }
-

@@ -8,6 +8,7 @@ import SwiftUI
 struct RootScaffold: View {
     @EnvironmentObject private var repository: FuelRepository
     @Environment(NotificationService.self) private var notificationService
+    @Environment(\.scenePhase) private var scenePhase
 
     /// Persisted tab selection - survives app termination
     @SceneStorage("selectedTab") private var selectedTab: String = "home"
@@ -54,135 +55,69 @@ struct RootScaffold: View {
                 selectedTab = "tracking"
             }
         }
+        .onOpenURL { url in
+            guard url.scheme == "oktan", url.host == "quick-log" else { return }
+            selectedTab = "tracking"
+            notificationService.shouldShowAddFuel = true
+        }
+        .onAppear(perform: consumeQuickLogRequest)
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { consumeQuickLogRequest() }
+        }
+    }
+
+    private func consumeQuickLogRequest() {
+        guard QuickLogRequest.consume() else { return }
+        selectedTab = "tracking"
+        notificationService.shouldShowAddFuel = true
     }
 }
 
 // MARK: - Navigation Wrappers
 
-/// Home tab navigation wrapper with path persistence
+/// Home tab navigation wrapper
 struct HomeNav: View {
-    @SceneStorage("homeNavPathCount") private var navPathCount: Int = 0
-    @State private var path = NavigationPath()
-
     var body: some View {
-        NavigationStack(path: $path) {
+        NavigationStack {
             HomeScreen()
-                .onAppear { restorePath() }
-                .onChange(of: path.count) { _, newCount in
-                    navPathCount = newCount
-                }
-        }
-    }
-
-    private func restorePath() {
-        // Restore path count - actual path restoration would require
-        // storing hashable navigation destinations, which is not needed
-        // for current app structure (no pushed screens in tabs)
-        if navPathCount > 0 {
-            // Path restoration not implemented as there are no pushed screens
-            // in the current navigation structure
-            navPathCount = 0
         }
     }
 }
 
-/// Tracking tab navigation wrapper with path persistence
+/// Tracking tab navigation wrapper
 struct TrackingNav: View {
-    @SceneStorage("trackingNavPathCount") private var navPathCount: Int = 0
-    @State private var path = NavigationPath()
-
     var body: some View {
-        NavigationStack(path: $path) {
+        NavigationStack {
             TrackingScreen()
-                .onAppear { restorePath() }
-                .onChange(of: path.count) { _, newCount in
-                    navPathCount = newCount
-                }
-        }
-    }
-
-    private func restorePath() {
-        // Restore path count - actual path restoration would require
-        // storing hashable navigation destinations, which is not needed
-        // for current app structure (no pushed screens in tabs)
-        if navPathCount > 0 {
-            navPathCount = 0
         }
     }
 }
 
-/// Reports tab navigation wrapper with path persistence
+/// Reports tab navigation wrapper
 struct ReportsNav: View {
-    @SceneStorage("reportsNavPathCount") private var navPathCount: Int = 0
-    @State private var path = NavigationPath()
-
     var body: some View {
-        NavigationStack(path: $path) {
+        NavigationStack {
             ReportsScreen()
-                .onAppear { restorePath() }
-                .onChange(of: path.count) { _, newCount in
-                    navPathCount = newCount
-                }
-        }
-    }
-
-    private func restorePath() {
-        // Restore path count - actual path restoration would require
-        // storing hashable navigation destinations, which is not needed
-        // for current app structure (no pushed screens in tabs)
-        if navPathCount > 0 {
-            navPathCount = 0
         }
     }
 }
 
-/// Profile tab navigation wrapper with path persistence
+/// Profile tab navigation wrapper
 struct ProfileNav: View {
-    @SceneStorage("profileNavPathCount") private var navPathCount: Int = 0
-    @State private var path = NavigationPath()
-
     var body: some View {
-        NavigationStack(path: $path) {
+        NavigationStack {
             ProfileScreen()
-                .onAppear { restorePath() }
-                .onChange(of: path.count) { _, newCount in
-                    navPathCount = newCount
-                }
-        }
-    }
-
-    private func restorePath() {
-        // Restore path count - actual path restoration would require
-        // storing hashable navigation destinations, which is not needed
-        // for current app structure (no pushed screens in tabs)
-        if navPathCount > 0 {
-            navPathCount = 0
         }
     }
 }
 
-/// Settings tab navigation wrapper with path persistence
+/// Settings tab navigation wrapper
 struct SettingsNav: View {
     @Environment(AppSettings.self) private var appSettings
-    @SceneStorage("settingsNavPathCount") private var navPathCount: Int = 0
-    @State private var path = NavigationPath()
 
     var body: some View {
-        NavigationStack(path: $path) {
+        NavigationStack {
             SettingsScreen(settings: appSettings)
-                .onAppear { restorePath() }
-                .onChange(of: path.count) { _, newCount in
-                    navPathCount = newCount
-                }
-        }
-    }
-
-    private func restorePath() {
-        // Restore path count - actual path restoration would require
-        // storing hashable navigation destinations, which is not needed
-        // for current app structure (no pushed screens in tabs)
-        if navPathCount > 0 {
-            navPathCount = 0
         }
     }
 }

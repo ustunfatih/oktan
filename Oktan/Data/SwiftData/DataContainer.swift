@@ -1,10 +1,12 @@
 import Foundation
+import OSLog
 import SwiftData
 import SwiftUI
 
 /// Configures the SwiftData container for the app
 /// Handles model registration, storage location, and iCloud sync preparation
 enum DataContainer {
+    private static let logger = Logger(subsystem: "com.oktan.app", category: "DataContainer")
     
     // MARK: - Schema
     
@@ -25,9 +27,11 @@ enum DataContainer {
         if let groupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupID) {
             url = groupURL.appendingPathComponent("Oktan.sqlite")
         } else {
-            print("WARNING: App Group container unavailable. Fallback to local storage.")
+            logger.warning("App Group container unavailable; using Application Support")
             url = URL.applicationSupportDirectory.appending(path: "Oktan.sqlite")
         }
+
+        protectStoreDirectory(at: url.deletingLastPathComponent())
 
         // The app has no iCloud entitlement, so CloudKit is disabled explicitly
         // instead of letting .automatic fail and fall through at launch.
@@ -56,7 +60,7 @@ enum DataContainer {
         do {
             return try ModelContainer(for: schema, configurations: [localConfiguration])
         } catch {
-            print("Persistent container failed to initialize: \(error). Falling back to default store location.")
+            logger.error("Persistent store initialization failed; using default location: \(error.localizedDescription, privacy: .public)")
 
             let fallbackConfig = ModelConfiguration(
                 schema: schema,
@@ -65,6 +69,18 @@ enum DataContainer {
                 cloudKitDatabase: .none
             )
             return try ModelContainer(for: schema, configurations: [fallbackConfig])
+        }
+    }
+
+    private static func protectStoreDirectory(at url: URL) {
+        do {
+            try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
+            try FileManager.default.setAttributes(
+                [.protectionKey: FileProtectionType.completeUntilFirstUserAuthentication],
+                ofItemAtPath: url.path
+            )
+        } catch {
+            logger.error("Could not apply data protection: \(error.localizedDescription, privacy: .public)")
         }
     }
     
@@ -103,5 +119,4 @@ enum DataContainer {
         return container
     }
 }
-
 

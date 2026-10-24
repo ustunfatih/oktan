@@ -24,7 +24,7 @@ struct ReportsView: View {
         var efficiencyTrend: [ChartDataService.TimeSeriesPoint] = []
         var rollingAverage: [ChartDataService.TimeSeriesPoint] = []
         var monthly: [ChartDataService.MonthlyData] = []
-        var costPerKMEntries: [FuelEntry] = []
+        var costPerKMEntries: [ChartDataService.TimeSeriesPoint] = []
         var driveModeComparison: [ChartDataService.ComparisonPoint] = []
         var dayOfWeek: [ChartDataService.ComparisonPoint] = []
         var averageDays: Double?
@@ -40,7 +40,7 @@ struct ReportsView: View {
             efficiencyTrend: ChartDataService.efficiencyTrend(from: entries),
             rollingAverage: ChartDataService.rollingAverageEfficiency(from: entries),
             monthly: ChartDataService.aggregateMonthly(from: entries),
-            costPerKMEntries: entries.filter { $0.costPerKM != nil },
+            costPerKMEntries: ChartDataService.costPerKMTrend(from: entries),
             driveModeComparison: ChartDataService.driveModeComparison(from: entries),
             dayOfWeek: ChartDataService.fillupsByDayOfWeek(from: entries),
             averageDays: ChartDataService.averageDaysBetweenFillups(from: entries)
@@ -410,7 +410,7 @@ struct ReportsView: View {
                                         Text(point.date.formatted(date: .abbreviated, time: .omitted))
                                             .font(.caption2)
                                             .foregroundStyle(.secondary)
-                                        Text(settings.formatEfficiency(settings.convertEfficiency(point.value)))
+                                        Text(settings.formatEfficiency(point.value))
                                             .font(.caption.bold())
                                     }
                                     .padding()
@@ -473,14 +473,14 @@ struct ReportsView: View {
                 Chart(entries) { entry in
                     AreaMark(
                         x: .value("Date", entry.date),
-                        y: .value("Cost", settings.convertCostPerDistance(entry.costPerKM ?? 0))
+                        y: .value("Cost", settings.convertCostPerDistance(entry.value))
                     )
                     .foregroundStyle(.green.opacity(0.3)) // System color with opacity
                     .interpolationMethod(.catmullRom)
 
                     LineMark(
                         x: .value("Date", entry.date),
-                        y: .value("Cost", settings.convertCostPerDistance(entry.costPerKM ?? 0))
+                        y: .value("Cost", settings.convertCostPerDistance(entry.value))
                     )
                     .foregroundStyle(.green)
                     .lineStyle(StrokeStyle(lineWidth: 2))
@@ -515,7 +515,7 @@ struct ReportsView: View {
                     .opacity(selectedMode == nil || selectedMode == point.category ? 1 : 0.5)
                     .annotation(position: .top) {
                         if selectedMode == point.category || selectedMode == nil {
-                            Text(settings.formatEfficiency(settings.convertEfficiency(point.value)))
+                            Text(settings.formatEfficiency(point.value))
                                 .font(.caption.weight(.medium))
                         }
                     }

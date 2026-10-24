@@ -36,6 +36,11 @@ struct TrackingView: View {
         return sections
     }
 
+    private var cycleEfficiencyByEntryID: [UUID: Double] {
+        Dictionary(uniqueKeysWithValues: FuelCycleService.completedCycles(from: repository.visibleEntries)
+            .map { ($0.id, $0.litersPer100KM) })
+    }
+
     var body: some View {
         ListShell(title: "Tracking") {
             // Header Section
@@ -62,6 +67,7 @@ struct TrackingView: View {
                         ForEach(section.entries) { entry in
                             FuelEntryRow(
                                 entry: entry,
+                                cycleEfficiency: cycleEfficiencyByEntryID[entry.id],
                                 settings: settings,
                                 onEdit: { entryToEdit = entry },
                                 onDelete: { repository.delete(entry) }
@@ -103,6 +109,7 @@ struct TrackingView: View {
 
 private struct FuelEntryRow: View {
     let entry: FuelEntry
+    let cycleEfficiency: Double?
     let settings: AppSettings
     let onEdit: () -> Void
     let onDelete: () -> Void
@@ -118,7 +125,7 @@ private struct FuelEntryRow: View {
         if let distance = entry.distance {
             parts.append("distance \(settings.formatDistance(distance))")
         }
-        if let efficiency = entry.litersPer100KM {
+        if let efficiency = cycleEfficiency {
             parts.append("efficiency \(settings.formatEfficiency(efficiency))")
         }
         parts.append("\(entry.driveMode.rawValue) mode")
@@ -161,12 +168,12 @@ private struct FuelEntryRow: View {
                 }
                 
                 // Efficiency or Mode
-                if let lPer100 = entry.litersPer100KM {
+                if let lPer100 = cycleEfficiency {
                     Label(settings.formatEfficiency(lPer100), systemImage: "leaf.fill")
                         .font(.caption)
                         .foregroundStyle(.green)
                 } else {
-                    Label(entry.driveMode.rawValue, systemImage: "steeringwheel")
+                    Label(entry.isFullRefill ? entry.driveMode.rawValue : String(localized: "Partial fill"), systemImage: entry.isFullRefill ? "steeringwheel" : "circle.lefthalf.filled")
                         .font(.caption)
                         .foregroundStyle(driveModeColor)
                 }

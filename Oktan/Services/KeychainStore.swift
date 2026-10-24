@@ -7,8 +7,24 @@ enum KeychainStore {
 
     private static let service = "com.oktan.keychain"
 
+    #if DEBUG
+    private static var inMemoryTestStore: [String: Data]?
+
+    /// Explicitly enabled by unit tests because an unsigned XCTest host has no
+    /// Keychain entitlement. Release builds do not contain this backend.
+    static func useInMemoryStoreForTesting() {
+        inMemoryTestStore = [:]
+    }
+    #endif
+
     @discardableResult
     static func save(_ data: Data, forKey key: String) -> Bool {
+        #if DEBUG
+        if inMemoryTestStore != nil {
+            inMemoryTestStore?[key] = data
+            return true
+        }
+        #endif
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
@@ -18,12 +34,16 @@ enum KeychainStore {
 
         var attributes = query
         attributes[kSecValueData as String] = data
-        attributes[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlock
+        // Profile credentials never need background or cross-device access.
+        attributes[kSecAttrAccessible as String] = kSecAttrAccessibleWhenUnlockedThisDeviceOnly
 
         return SecItemAdd(attributes as CFDictionary, nil) == errSecSuccess
     }
 
     static func load(forKey key: String) -> Data? {
+        #if DEBUG
+        if let inMemoryTestStore { return inMemoryTestStore[key] }
+        #endif
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
@@ -39,6 +59,12 @@ enum KeychainStore {
 
     @discardableResult
     static func delete(forKey key: String) -> Bool {
+        #if DEBUG
+        if inMemoryTestStore != nil {
+            inMemoryTestStore?.removeValue(forKey: key)
+            return true
+        }
+        #endif
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,

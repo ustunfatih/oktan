@@ -1,9 +1,11 @@
 import SwiftUI
 import RevenueCat
+import OSLog
 
 @MainActor
 @Observable
 class PremiumManager {
+    private let logger = Logger(subsystem: "com.oktan.app", category: "Purchases")
     var isPremium = false
 
     /// The RevenueCat entitlement that unlocks Oktan Pro features.
@@ -22,7 +24,7 @@ class PremiumManager {
         // The API key is injected via Config/Secrets.xcconfig -> Info.plist.
         guard let apiKey = Bundle.main.object(forInfoDictionaryKey: "RevenueCatAPIKey") as? String,
               !apiKey.isEmpty, !apiKey.hasPrefix("$(") else {
-            print("PremiumManager: RevenueCatAPIKey missing from Info.plist; premium features disabled.")
+            logger.warning("RevenueCat API key missing; premium features disabled")
             return
         }
 
@@ -36,7 +38,7 @@ class PremiumManager {
                     self?.updatePremiumStatus(info)
                 }
             } else if let error {
-                print("Failed to fetch customer info: \(error)")
+                self?.logger.error("Customer info refresh failed: \(error.localizedDescription, privacy: .public)")
             }
         }
 
@@ -52,6 +54,25 @@ class PremiumManager {
         isPremium = info.entitlements[Self.proEntitlementID]?.isActive == true
     }
 
+    /// Links App Store purchases to the private Sign in with Apple identifier.
+    /// Signing out returns RevenueCat to an anonymous identity on this device.
+    func synchronizeIdentity(userID: String?) async {
+        guard isConfigured else { return }
+
+        do {
+            if let userID {
+                guard Purchases.shared.appUserID != userID else { return }
+                let result = try await Purchases.shared.logIn(userID)
+                updatePremiumStatus(result.customerInfo)
+            } else if !Purchases.shared.isAnonymous {
+                let info = try await Purchases.shared.logOut()
+                updatePremiumStatus(info)
+            }
+        } catch {
+            logger.error("Purchase identity synchronization failed: \(error.localizedDescription, privacy: .public)")
+        }
+    }
+
     /// Restores purchases (called manually if needed, though stream usually handles it)
     func restore() async {
         guard isConfigured else { return }
@@ -59,7 +80,7 @@ class PremiumManager {
             let info = try await Purchases.shared.restorePurchases()
             updatePremiumStatus(info)
         } catch {
-            print("Restore failed: \(error)")
+            logger.error("Purchase restore failed: \(error.localizedDescription, privacy: .public)")
         }
     }
 }
