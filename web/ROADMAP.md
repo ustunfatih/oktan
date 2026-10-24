@@ -30,7 +30,15 @@ Progress log:
   - Phone layout with a bottom tab bar; a "sign-in expired" state.
   - Charts are hand-drawn SVG instead of ECharts: far lighter, and they match the mockups exactly.
   - 20 unit tests. Checked in the browser at desktop and phone sizes.
-  - Not yet confirmed: whether WOQOD answers Cloudflare's servers (the price card says so if not).
+- 24 Oct — Phase 3 confirmed on your phone, including live WOQOD prices from Cloudflare. Committed as `fdf992a`.
+- 24 Oct — **Phase 4 (Analytics) deployed.**
+  - Filters: period (3M / 6M / 12M / year to date / all), drive mode and station, with a totals strip that
+    follows the filters.
+  - Charts and tables: drive mode comparison, auto-generated insights (best mode, summer vs winter, price
+    change), monthly price step chart with your average paid, km per tank, cumulative spend, stations with
+    share of spend, L/100 km by month heat table, consistency histogram, records board, sortable list of
+    all fill-ups.
+  - 31 unit tests. Checked at desktop and phone sizes; nothing scrolls sideways on a phone.
   - Uncommitted.
 
 What you've decided so far:

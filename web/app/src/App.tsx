@@ -3,6 +3,7 @@ import { DataProvider, useData } from "./data";
 import { fmt, fmtAgo } from "./format";
 import { BarsIcon, DropIcon, GaugeIcon, GearIcon, PlusIcon, RefreshIcon } from "./icons";
 import { Dashboard } from "./pages/Dashboard";
+import { Analytics } from "./pages/Analytics";
 import { ComingSoon } from "./pages/ComingSoon";
 import { Link, RouterProvider, useRouter, type Route } from "./router";
 
@@ -29,7 +30,7 @@ function Shell() {
       <TopBar />
       <main className="page">
         {route === "/" && <Dashboard />}
-        {route === "/analytics" && <ComingSoon title="Analytics" phase="phase 4" />}
+        {route === "/analytics" && <Analytics />}
         {route === "/log" && <ComingSoon title="Log fill-up" phase="phase 5" />}
         {route === "/settings" && <ComingSoon title="Settings" phase="phase 6b" />}
       </main>
