@@ -5,6 +5,7 @@ import { BarsIcon, DropIcon, GaugeIcon, GearIcon, PlusIcon, RefreshIcon } from "
 import { Dashboard } from "./pages/Dashboard";
 import { Analytics } from "./pages/Analytics";
 import { ComingSoon } from "./pages/ComingSoon";
+import { Log } from "./pages/Log";
 import { Link, RouterProvider, useRouter, type Route } from "./router";
 
 const TABS: { to: Route; label: string; icon: ComponentType }[] = [
@@ -28,10 +29,11 @@ function Shell() {
   return (
     <div className="shell">
       <TopBar />
+      <TestModeStrip />
       <main className="page">
         {route === "/" && <Dashboard />}
         {route === "/analytics" && <Analytics />}
-        {route === "/log" && <ComingSoon title="Log fill-up" phase="phase 5" />}
+        {route === "/log" && <Log />}
         {route === "/settings" && <ComingSoon title="Settings" phase="phase 6b" />}
       </main>
       <nav className="bottom-nav" aria-label="Main">
@@ -42,6 +44,20 @@ function Shell() {
           </Link>
         ))}
       </nav>
+    </div>
+  );
+}
+
+/** Always visible while the app is pointed at the DEV copy, so test data is never mistaken for real. */
+function TestModeStrip() {
+  const { data, setSheet, loading } = useData();
+  if (!data || data.sheet !== "dev" || !data.testModeAvailable) return null;
+  return (
+    <div className="test-strip" role="status">
+      <span>TEST MODE · OKTAN DEV SHEET</span>
+      <button type="button" className="link-btn" disabled={loading} onClick={() => setSheet("live")}>
+        Back to live
+      </button>
     </div>
   );
 }

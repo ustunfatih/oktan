@@ -48,6 +48,10 @@ export interface Settings {
 export interface DataResponse {
   email: string;
   sheet: "live" | "dev";
+  /** False while writing to the live sheet is still locked. */
+  canWrite: boolean;
+  /** True when the Worker knows the DEV copy, so the app can offer test mode. */
+  testModeAvailable: boolean;
   /** ISO timestamp of the sheet read (may be up to the cache TTL old). */
   fetchedAt: string;
   entries: Entry[];
@@ -77,4 +81,10 @@ export interface Summary {
   litersPer100Km: number | null;
   costPerKm: number | null;
   avgKmPerTank: number | null;
+}
+
+/** Response to a successful add, edit or delete: the fresh sheet plus where the change landed. */
+export interface WriteResponse {
+  data: DataResponse;
+  result: { id: string; row: number | null };
 }

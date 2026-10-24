@@ -9,7 +9,7 @@ const utc = (iso: string) => new Date(`${iso.length === 7 ? `${iso}-01` : iso}T0
 
 /** 21 Oct 2026 */
 export const fmtDate = (iso: string) =>
-  new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).format(utc(iso));
+  `${Number(iso.slice(8, 10))} ${monthOf(iso).charAt(0)}${monthOf(iso).slice(1).toLowerCase()} ${iso.slice(0, 4)}`;
 
 // Fixed three-letter months: en-GB's Intl output says "Sept", which breaks the column rhythm.
 const MONTHS = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];

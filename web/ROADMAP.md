@@ -39,7 +39,23 @@ Progress log:
     share of spend, L/100 km by month heat table, consistency histogram, records board, sortable list of
     all fill-ups.
   - 31 unit tests. Checked at desktop and phone sizes; nothing scrolls sideways on a phone.
-  - Uncommitted.
+  - Committed as `0e2c235`.
+- 24 Oct — **Phase 5 (Log: add / edit / delete) deployed, with saving to the live sheet locked** (`LIVE_WRITES`
+  "false").
+  - **Test mode** is a switch in the app: you read and write the Oktan DEV copy, and a strip at the top of
+    every page says so.
+  - **Writing:** each save is one atomic sheet update, re-checked against the rows you saw. Deletes shift
+    rows up instead of removing them (rows 2–3 hold the column formulas) and re-link the trips either
+    side. The GasData table grows by itself. A hidden `App_Log` tab records every change.
+  - **Form:** price pre-filled for the fill-up's date (Fuel Prices tab → WOQOD → last known), litres or
+    amount paid, live trip preview, field validation. Undo for adds and edits.
+  - **Tested:** 49 unit tests; a 14-step API run against the DEV sheet (add, conflict, bad odometer, edit,
+    middle delete, growing to row 31, cleanup to identical rows); the full flow in the browser at phone
+    size; the live lock, the test-mode switch and the cross-site/non-JSON refusals locally.
+  - **Known effect:** deleting a fill-up between two others makes the merged trip's L/100 km read low
+    (that fill-up's litres disappear). The delete confirmation explains this and suggests Edit.
+- 24 Oct — You tested add, edit, undo and delete in test mode on your phone. **Live saving unlocked**
+  (`LIVE_WRITES` "true", version `772961ee`); the DEV copy was left clean. Test mode stays available. Phase 5 ✅.
 
 What you've decided so far:
 

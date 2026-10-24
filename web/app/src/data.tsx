@@ -1,7 +1,10 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import type { DataResponse, WoqodResponse } from "../../shared/types";
+import type { FieldErrors } from "../../shared/writes";
 
 export type LoadError = { kind: "session" | "server" | "network"; message: string; detail?: string };
+/** A refused write: the message, any per-field errors, and the fresh sheet when the server sent it. */
+export type WriteError = LoadError & { fields?: FieldErrors; data?: DataResponse };
 
 interface DataState {
   data: DataResponse | null;
@@ -9,6 +12,10 @@ interface DataState {
   /** True while a request is in flight (first load or refresh). */
   loading: boolean;
   refresh: () => void;
+  /** Replace the data with what a write returned. */
+  setData: (data: DataResponse) => void;
+  /** Switch between the live sheet and the DEV copy (test mode). */
+  setSheet: (sheet: "live" | "dev") => Promise<void>;
 }
 
 const CACHE_KEY = "oktan:data:v1";
@@ -32,13 +39,18 @@ function writeCache(data: DataResponse) {
 }
 
 /**
- * GET an API route. When the Cloudflare Access session has expired, Access answers with a redirect
+ * Calls an API route. When the Cloudflare Access session has expired, Access answers with a redirect
  * to its login page; `redirect: "manual"` turns that into an opaque response we can recognise.
  */
-export async function api<T>(path: string): Promise<T> {
+export async function api<T>(path: string, init?: { method: string; body: unknown }): Promise<T> {
   let res: Response;
   try {
-    res = await fetch(path, { redirect: "manual", headers: { accept: "application/json" } });
+    res = await fetch(path, {
+      method: init?.method ?? "GET",
+      redirect: "manual",
+      headers: { accept: "application/json", ...(init ? { "content-type": "application/json" } : {}) },
+      body: init ? JSON.stringify(init.body) : undefined,
+    });
   } catch (e) {
     throw { kind: "network", message: "Can't reach Oktan. Check your connection.", detail: String(e) } satisfies LoadError;
   }
@@ -47,7 +59,13 @@ export async function api<T>(path: string): Promise<T> {
   }
   const body = await res.json().catch(() => ({}));
   if (!res.ok) {
-    throw { kind: "server", message: body.error ?? `Error ${res.status}`, detail: body.detail } satisfies LoadError;
+    throw {
+      kind: "server",
+      message: body.error ?? `Error ${res.status}`,
+      detail: body.detail,
+      fields: body.fields,
+      data: body.data,
+    } satisfies WriteError;
   }
   return body as T;
 }
@@ -55,29 +73,50 @@ export async function api<T>(path: string): Promise<T> {
 const DataContext = createContext<DataState | null>(null);
 
 export function DataProvider({ children }: { children: ReactNode }) {
-  const [data, setData] = useState<DataResponse | null>(readCache);
+  const [data, setDataState] = useState<DataResponse | null>(readCache);
   const [error, setError] = useState<LoadError | null>(null);
   const [loading, setLoading] = useState(true);
   const lastLoad = useRef(0);
 
-  const load = useCallback(async (fresh: boolean) => {
-    setLoading(true);
+  const setData = useCallback((next: DataResponse) => {
+    setDataState(next);
+    setError(null);
+    writeCache(next);
     lastLoad.current = Date.now();
-    try {
-      const next = await api<DataResponse>(`/api/data${fresh ? "?fresh=1" : ""}`);
-      setData(next);
-      setError(null);
-      writeCache(next);
-    } catch (e) {
-      setError(e as LoadError);
-    } finally {
-      setLoading(false);
-    }
   }, []);
+
+  const load = useCallback(
+    async (fresh: boolean) => {
+      setLoading(true);
+      lastLoad.current = Date.now();
+      try {
+        setData(await api<DataResponse>(`/api/data${fresh ? "?fresh=1" : ""}`));
+      } catch (e) {
+        setError(e as LoadError);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [setData],
+  );
+
+  const setSheet = useCallback(
+    async (sheet: "live" | "dev") => {
+      setLoading(true);
+      try {
+        setData(await api<DataResponse>("/api/mode", { method: "POST", body: { sheet } }));
+      } catch (e) {
+        setError(e as LoadError);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [setData],
+  );
 
   useEffect(() => {
     load(false);
-    // Coming back to the app (e.g. after logging a fill-up in the sheet): re-read if stale.
+    // Coming back to the app (e.g. after typing into the sheet directly): re-read if stale.
     const onVisible = () => {
       if (document.visibilityState === "visible" && Date.now() - lastLoad.current > STALE_MS) load(true);
     };
@@ -86,7 +125,9 @@ export function DataProvider({ children }: { children: ReactNode }) {
   }, [load]);
 
   return (
-    <DataContext.Provider value={{ data, error, loading, refresh: () => load(true) }}>{children}</DataContext.Provider>
+    <DataContext.Provider value={{ data, error, loading, refresh: () => load(true), setData, setSheet }}>
+      {children}
+    </DataContext.Provider>
   );
 }
 

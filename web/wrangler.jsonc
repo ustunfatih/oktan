@@ -24,7 +24,12 @@
     "ACCESS_AUD": "dfd8ea178f9eaae74d09346a37bc528ba25209b5f3e3422afedac6259ac7d34b",
     "ALLOWED_EMAIL": "ustunfa@gmail.com",
     // Qatar Fuel Tracking 2026 (live). Local dev overrides this with the DEV copy in .dev.vars.
-    "SHEET_ID": "1Gk9BvaD4bYf9Q3ss-v09Ezr64XrFd9MCMPSMYUEh9P8"
+    "SHEET_ID": "1Gk9BvaD4bYf9Q3ss-v09Ezr64XrFd9MCMPSMYUEh9P8",
+    // Oktan DEV copy, offered in the app as "test mode".
+    "DEV_SHEET_ID": "1MJUHs2YSOssKJBL3neTz7zXSvzrm2ll4dIMJtgvYf58",
+    // "false" locks saving to the live sheet (test mode still works). Unlocked 24 Oct 2026 after the
+    // add/edit/undo/delete flow was approved in test mode.
+    "LIVE_WRITES": "true"
   }
   // Secret (set with `npm run setup:secrets`, never committed): GOOGLE_SA_KEY
 }
