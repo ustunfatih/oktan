@@ -1,0 +1,6 @@
+# Local development only. `npm run setup:secrets -- <key.json>` writes the real .dev.vars for you.
+# Points local dev at the "Oktan DEV" copy so the live sheet is never touched while building.
+SHEET_ID=1MJUHs2YSOssKJBL3neTz7zXSvzrm2ll4dIMJtgvYf58
+# Lets requests from localhost skip the Cloudflare Access check. Ignored on any other host.
+DEV_EMAIL=ustunfa@gmail.com
+GOOGLE_SA_KEY={"client_email":"...","private_key":"..."}

@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Oktan · Cluster · Mobile log</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0A0C0F}
+a{color:#FFB547}a:hover{color:#FFD08A}
+input:focus-visible,button:focus-visible,select:focus-visible{outline:2px solid #4FD1E8;outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 390px; min-height: 1500px; box-sizing: border-box; background: #0A0C0F; color: #E8ECF1; font-family: 'Chakra Petch', system-ui, sans-serif; display: flex; flex-direction: column">
+  <header style="padding: 16px 16px 12px; border-bottom: 1px solid #1F262E">
+    <h1 style="margin: 0; font-size: 22px; font-weight: 600; letter-spacing: 0.06em">LOG</h1>
+    <div role="tablist" aria-label="Log sections" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; margin-top: 12px; background: #11151A; border: 1px solid #1F262E; border-radius: 10px; padding: 4px">
+      <sc-for list="{{tabs}}" as="t" hint-placeholder-count="3">
+        <button type="button" role="tab" aria-selected="{{t.on}}" onClick="{{t.pick}}" style="{{t.style}}">{{t.label}}</button>
+      </sc-for>
+    </div>
+  </header>
+
+  <main style="flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 14px">
+    <sc-if value="{{isFill}}" hint-placeholder-val="{{true}}">
+      <form style="display: flex; flex-direction: column; gap: 14px">
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+          <div style="display: flex; flex-direction: column; gap: 6px"><label for="m1-date" style="font-size: 11px; letter-spacing: 0.14em; color: #8E9AA6">DATE</label><input id="m1-date" type="text" value="24 Oct 2026" style="min-height: 50px; box-sizing: border-box; padding: 0 12px; border-radius: 10px; border: 1px solid #2A333D; background: #11151A; color: #E8ECF1; font-family: 'JetBrains Mono', monospace; font-size: 15px; width: 100%"></div>
+          <div style="display: flex; flex-direction: column; gap: 6px"><label for="m1-odo" style="font-size: 11px; letter-spacing: 0.14em; color: #8E9AA6">ODOMETER KM</label><input id="m1-odo" type="text" inputmode="numeric" value="9183" style="min-height: 50px; box-sizing: border-box; padding: 0 12px; border-radius: 10px; border: 1px solid #2A333D; background: #11151A; color: #E8ECF1; font-family: 'JetBrains Mono', monospace; font-size: 17px; width: 100%"></div>
+          <div style="display: flex; flex-direction: column; gap: 6px"><label for="m1-l" style="font-size: 11px; letter-spacing: 0.14em; color: #8E9AA6">LITRES</label><input id="m1-l" type="text" inputmode="decimal" value="41.80" style="min-height: 50px; box-sizing: border-box; padding: 0 12px; border-radius: 10px; border: 1px solid #2A333D; background: #11151A; color: #E8ECF1; font-family: 'JetBrains Mono', monospace; font-size: 17px; width: 100%"></div>
+          <div style="display: flex; flex-direction: column; gap: 6px"><label for="m1-p" style="font-size: 11px; letter-spacing: 0.14em; color: #FFB547">QAR/L · WOQOD</label><input id="m1-p" type="text" inputmode="decimal" value="2.10" style="min-height: 50px; box-sizing: border-box; padding: 0 12px; border-radius: 10px; border: 1px solid #4A3B17; background: #17140C; color: #FFB547; font-family: 'JetBrains Mono', monospace; font-size: 17px; width: 100%"></div>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px; border-radius: 12px; border: 1px dashed #2A333D"><span style="font-size: 11px; letter-spacing: 0.14em; color: #8E9AA6">TOTAL</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 30px; font-weight: 700">87.78 <span style="font-size: 13px; color: #8E9AA6">QAR</span></span></div>
+        <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; background: #11151A; border: 1px solid #2A333D; border-radius: 10px; padding: 4px">
+          <button type="button" aria-pressed="true" style="min-height: 44px; border: 0; border-radius: 7px; background: #FFB547; color: #0A0C0F; font-family: inherit; font-weight: 700; letter-spacing: 0.08em">ECO</button>
+          <button type="button" style="min-height: 44px; border: 0; border-radius: 7px; background: transparent; color: #C9D1DA; font-family: inherit; letter-spacing: 0.08em">NORMAL</button>
+          <button type="button" style="min-height: 44px; border: 0; border-radius: 7px; background: transparent; color: #C9D1DA; font-family: inherit; letter-spacing: 0.08em">SPORT</button>
+        </div>
+        <div style="display: flex; gap: 8px; overflow-x: auto">
+          <button type="button" aria-pressed="true" style="flex: none; min-height: 44px; padding: 0 14px; border-radius: 999px; border: 1px solid #5BD69A; background: #0F2A22; color: #5BD69A; font-family: inherit">FULL TANK ✓</button>
+          <button type="button" aria-pressed="true" style="flex: none; min-height: 44px; padding: 0 14px; border-radius: 999px; border: 1px solid #FFB547; background: #2A2312; color: #FFB547; font-family: inherit">Dafna</button>
+          <button type="button" style="flex: none; min-height: 44px; padding: 0 14px; border-radius: 999px; border: 1px solid #2A333D; background: transparent; color: #C9D1DA; font-family: inherit">Pearl</button>
+          <button type="button" style="flex: none; min-height: 44px; padding: 0 14px; border-radius: 999px; border: 1px solid #2A333D; background: transparent; color: #C9D1DA; font-family: inherit">+ Other</button>
+        </div>
+        <div style="background: #11151A; border: 1px solid #1F262E; border-radius: 12px; padding: 14px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+          <div><div style="font-size: 10px; letter-spacing: 0.14em; color: #8E9AA6">TRIP</div><div style="font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700">409 km</div></div>
+          <div><div style="font-size: 10px; letter-spacing: 0.14em; color: #8E9AA6">L/100</div><div style="font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; color: #FFB547">9.33</div></div>
+          <div><div style="font-size: 10px; letter-spacing: 0.14em; color: #8E9AA6">QAR/KM</div><div style="font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700">0.196</div></div>
+        </div>
+        <button type="submit" style="min-height: 56px; border: 0; border-radius: 12px; background: #FFB547; color: #0A0C0F; font-family: inherit; font-weight: 700; font-size: 16px; letter-spacing: 0.08em">SAVE TO SHEET</button>
+      </form>
+    </sc-if>
+
+    <sc-if value="{{isHist}}" hint-placeholder-val="{{false}}">
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <div style="font-size: 13px; color: #8E9AA6">Tap Edit to change any field. Deleting re-links the odometer readings of the trips on either side.</div>
+        <sc-for list="{{entries}}" as="e" hint-placeholder-count="4">
+          <div style="background: #11151A; border: 1px solid #1F262E; border-radius: 14px; padding: 12px 14px">
+            <div style="display: flex; align-items: center; gap: 10px">
+              <div style="flex: 1; min-width: 0"><div style="font-family: 'JetBrains Mono', monospace; font-size: 14px">{{e.d}}</div><div style="font-size: 12px; color: #8E9AA6">{{e.sub}}</div></div>
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #FFB547">{{e.tag}}</span>
+              <button type="button" aria-label="Edit fill-up" style="width: 44px; height: 44px; border-radius: 10px; border: 1px solid #2A333D; background: transparent; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20 L4 16 L15 5 L19 9 L8 20 Z" fill="none" stroke="#C9D1DA" style="stroke-width: 2; stroke-linejoin: round"></path></svg></button>
+              <button type="button" aria-label="Delete fill-up" onClick="{{e.ask}}" style="width: 44px; height: 44px; border-radius: 10px; border: 1px solid #4A2420; background: transparent; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7 H19 M9 7 V4 H15 V7 M7 7 L8 20 H16 L17 7" fill="none" stroke="#FF6B5B" style="stroke-width: 2; stroke-linejoin: round"></path></svg></button>
+            </div>
+            <sc-if value="{{e.confirming}}" hint-placeholder-val="{{false}}">
+              <div style="margin-top: 12px; padding: 12px; border-radius: 10px; background: #2A1412; border: 1px solid #4A2420; font-size: 13px; line-height: 1.5; color: #FFC9C2">{{e.warn}}
+                <div style="display: flex; gap: 8px; margin-top: 10px">
+                  <button type="button" onClick="{{e.cancel}}" style="flex: 1; min-height: 44px; border-radius: 8px; border: 1px solid #2A333D; background: transparent; color: #C9D1DA; font-family: inherit">Cancel</button>
+                  <button type="button" onClick="{{e.cancel}}" style="flex: 1; min-height: 44px; border-radius: 8px; border: 0; background: #FF6B5B; color: #0A0C0F; font-family: inherit; font-weight: 700">Delete</button>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{isPrice}}" hint-placeholder-val="{{false}}">
+      <div style="display: flex; flex-direction: column; gap: 12px">
+        <form style="background: #2A2312; border: 1px solid #4A3B17; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 10px">
+          <div style="font-size: 11px; letter-spacing: 0.14em; color: #C9B48A">SET A PRICE BY HAND</div>
+          <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+            <div style="display: flex; flex-direction: column; gap: 6px"><label for="m1-pm" style="font-size: 11px; color: #C9B48A">Month</label><select id="m1-pm" style="min-height: 48px; border-radius: 10px; border: 1px solid #4A3B17; background: #0A0C0F; color: #E8ECF1; font-family: 'JetBrains Mono', monospace; font-size: 14px; padding: 0 8px"><option>Nov 2026</option><option>Oct 2026</option></select></div>
+            <div style="display: flex; flex-direction: column; gap: 6px"><label for="m1-pp" style="font-size: 11px; color: #C9B48A">Super 95, QAR/L</label><input id="m1-pp" type="text" inputmode="decimal" placeholder="2.10" style="min-height: 48px; box-sizing: border-box; border-radius: 10px; border: 1px solid #4A3B17; background: #0A0C0F; color: #FFB547; font-family: 'JetBrains Mono', monospace; font-size: 17px; padding: 0 12px; width: 100%"></div>
+          </div>
+          <button type="submit" style="min-height: 48px; border: 0; border-radius: 10px; background: #FFB547; color: #0A0C0F; font-family: inherit; font-weight: 700; letter-spacing: 0.08em">SAVE PRICE</button>
+          <div style="font-size: 12px; color: #C9B48A; line-height: 1.45">A price you set by hand is never overwritten by the automatic WOQOD fetch.</div>
+        </form>
+        <div style="background: #11151A; border: 1px solid #1F262E; border-radius: 14px; padding: 4px 14px">
+          <sc-for list="{{prices}}" as="p" hint-placeholder-count="5">
+            <div style="display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #1F262E">
+              <div style="flex: 1"><div style="font-family: 'JetBrains Mono', monospace; font-size: 14px">{{p.m}}</div><div style="font-size: 12px; color: #8E9AA6">{{p.src}}</div></div>
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700">{{p.p}}</span>
+              <button type="button" aria-label="Edit price" style="width: 44px; height: 44px; border-radius: 10px; border: 1px solid #2A333D; background: transparent; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20 L4 16 L15 5 L19 9 L8 20 Z" fill="none" stroke="#C9D1DA" style="stroke-width: 2; stroke-linejoin: round"></path></svg></button>
+            </div>
+          </sc-for>
+        </div>
+        <button type="button" style="min-height: 48px; border-radius: 10px; border: 1px solid #2A333D; background: transparent; color: #C9D1DA; font-family: inherit; letter-spacing: 0.08em">↻ FETCH FROM WOQOD NOW</button>
+      </div>
+    </sc-if>
+  </main>
+
+  <nav aria-label="Main" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid #1F262E; background: #0D1014; padding: 8px 8px 20px">
+    <a href="S1-M-Dashboard.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 4px; min-height: 52px; justify-content: center; text-decoration: none; color: #8E9AA6; font-size: 11px; letter-spacing: 0.1em">
+      <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16 A8 8 0 0 1 20 16" fill="none" stroke="#8E9AA6" style="stroke-width: 2; stroke-linecap: round"></path><path d="M12 16 L15 10" fill="none" stroke="#8E9AA6" style="stroke-width: 2; stroke-linecap: round"></path></svg>DASHBOARD</a>
+    <a href="S1-M-Analytics.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 4px; min-height: 52px; justify-content: center; text-decoration: none; color: #8E9AA6; font-size: 11px; letter-spacing: 0.1em">
+      <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20 V11 M12 20 V5 M19 20 V14" fill="none" stroke="#8E9AA6" style="stroke-width: 2; stroke-linecap: round"></path></svg>ANALYTICS</a>
+    <a href="S1-M-Log.dc.html" aria-current="page" style="display: flex; flex-direction: column; align-items: center; gap: 4px; min-height: 52px; justify-content: center; text-decoration: none; color: #FFB547; font-size: 11px; letter-spacing: 0.1em; font-weight: 600">
+      <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="#FFB547" style="stroke-width: 2"></circle><path d="M12 8 V16 M8 12 H16" fill="none" stroke="#FFB547" style="stroke-width: 2; stroke-linecap: round"></path></svg>LOG</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1500}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: 'fill', del: null };
+  }
+  renderVals() {
+    const s = this.state;
+    const base = 'min-height: 44px; border: 0; border-radius: 7px; font-family: inherit; font-size: 13px; letter-spacing: 0.08em; cursor: pointer; ';
+    const tabs = [['fill', 'FILL-UP'], ['hist', 'HISTORY'], ['price', 'PRICES']].map(([id, label]) => ({
+      label, on: s.tab === id,
+      pick: () => this.setState({ tab: id, del: null }),
+      style: base + (s.tab === id ? 'background: #FFB547; color: #0A0C0F; font-weight: 700' : 'background: transparent; color: #C9D1DA'),
+    }));
+    const rows = [
+      ['21 Oct 2026', 'Dafna · 43.34 L · QAR 91.01', 'OPEN'],
+      ['10 Sep 2026', 'Dafna · 42.23 L · QAR 88.68', '9.21'],
+      ['22 Aug 2026', 'Pearl · 44.29 L · QAR 93.01', '9.78'],
+      ['30 Jul 2026', 'Dafna · 42.87 L · QAR 90.03', '9.25'],
+      ['05 Jul 2026', 'Fox Hills · 44.29 L · QAR 93.01', '9.34'],
+    ];
+    const entries = rows.map(([d, sub, tag], i) => ({
+      d, sub, tag,
+      confirming: s.del === i,
+      warn: i === 0 ? 'Delete the 21 Oct fill-up? The 10 Sep trip becomes the open trip again.' : 'Delete the ' + d + ' fill-up? The trips before and after it are joined into one.',
+      ask: () => this.setState({ del: i }),
+      cancel: () => this.setState({ del: null }),
+    }));
+    const prices = [
+      { m: 'Nov 2026', p: '—', src: 'Waiting for WOQOD (1 Nov)' },
+      { m: 'Oct 2026', p: '2.10', src: 'WOQOD · fetched 1 Oct' },
+      { m: 'Sep 2026', p: '2.10', src: 'From sheet' },
+      { m: 'Aug 2026', p: '2.10', src: 'From sheet' },
+      { m: 'Jul 2026', p: '2.10', src: 'From sheet' },
+    ];
+    return { tabs, entries, prices, isFill: s.tab === 'fill', isHist: s.tab === 'hist', isPrice: s.tab === 'price' };
+  }
+}
+</script>
+</body>
+</html>

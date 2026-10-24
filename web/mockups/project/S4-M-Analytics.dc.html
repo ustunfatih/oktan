@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Oktan · Soft Fintech · Mobile analytics</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=DM+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4F6FB}
+a{color:#4F46E5}a:hover{color:#3730A3}
+</style>
+</helmet>
+<div style="width: 390px; min-height: 1500px; box-sizing: border-box; background: #F4F6FB; color: #0F172A; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; display: flex; flex-direction: column">
+  <header style="padding: 20px 16px 8px">
+    <h1 style="margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.02em">Analytics</h1>
+    <div style="display: flex; gap: 8px; margin-top: 12px; overflow-x: auto">
+      <button type="button" style="flex: none; min-height: 40px; padding: 0 14px; border-radius: 12px; border: 1px solid #E2E8F0; background: #FFFFFF; font-family: inherit; font-weight: 600; font-size: 13px">All time ▾</button>
+      <button type="button" style="flex: none; min-height: 40px; padding: 0 14px; border-radius: 12px; border: 1px solid #E2E8F0; background: #FFFFFF; font-family: inherit; font-weight: 600; font-size: 13px">All modes ▾</button>
+      <button type="button" style="flex: none; min-height: 40px; padding: 0 14px; border-radius: 12px; border: 1px solid #E2E8F0; background: #FFFFFF; font-family: inherit; font-weight: 600; font-size: 13px">All stations ▾</button>
+    </div>
+  </header>
+
+  <main style="flex: 1; padding: 8px 16px 24px; display: flex; flex-direction: column; gap: 14px">
+    <div style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px">
+      <div style="flex: none; width: 250px; display: flex; gap: 10px; padding: 14px; border-radius: 16px; background: #ECFDF5"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style="flex: none"><path d="M5 13 L10 18 L19 7" fill="none" stroke="#047857" style="stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round"></path></svg><div style="font-size: 13px; line-height: 1.45"><b>Normal mode wins,</b> 0.31 L/100 km better than Eco.</div></div>
+      <div style="flex: none; width: 250px; display: flex; gap: 10px; padding: 14px; border-radius: 16px; background: #FFFBEB"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style="flex: none"><circle cx="12" cy="12" r="9" fill="none" stroke="#B45309" style="stroke-width: 2"></circle><path d="M12 8 V13 M12 16.5 V17" fill="none" stroke="#B45309" style="stroke-width: 2.5; stroke-linecap: round"></path></svg><div style="font-size: 13px; line-height: 1.45"><b>Summer costs more:</b> 9.54 vs 9.03 in winter.</div></div>
+    </div>
+
+    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 18px; padding: 16px">
+      <h2 style="margin: 0; font-size: 16px; font-weight: 700">Drive modes</h2>
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; align-items: end; height: 170px; margin-top: 14px">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><b style="font-size: 15px">9.04</b><div style="width: 56px; height: 72px; border-radius: 10px; background: #10B981"></div><span style="font-size: 13px; font-weight: 600; color: #475569">Normal</span></div>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><b style="font-size: 15px">9.35</b><div style="width: 56px; height: 94px; border-radius: 10px; background: #4F46E5"></div><span style="font-size: 13px; font-weight: 600; color: #475569">Eco</span></div>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><b style="font-size: 15px">9.65</b><div style="width: 56px; height: 114px; border-radius: 10px; background: #F59E0B"></div><span style="font-size: 13px; font-weight: 600; color: #475569">Sport</span></div>
+      </div>
+    </div>
+
+    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 18px; padding: 16px">
+      <h2 style="margin: 0; font-size: 16px; font-weight: 700">How consistent are you?</h2>
+      <div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; align-items: end; height: 140px; margin-top: 14px">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 4px"><span style="font-size: 12px; font-weight: 700">1</span><div style="width: 100%; height: 10px; border-radius: 6px; background: #C7D2FE"></div></div>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 4px"><span style="font-size: 12px; font-weight: 700">4</span><div style="width: 100%; height: 40px; border-radius: 6px; background: #A5B4FC"></div></div>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 4px"><span style="font-size: 12px; font-weight: 700">10</span><div style="width: 100%; height: 100px; border-radius: 6px; background: #4F46E5"></div></div>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 4px"><span style="font-size: 12px; font-weight: 700">6</span><div style="width: 100%; height: 60px; border-radius: 6px; background: #A5B4FC"></div></div>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 4px"><span style="font-size: 12px; font-weight: 700">1</span><div style="width: 100%; height: 10px; border-radius: 6px; background: #C7D2FE"></div></div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; font-family: 'DM Mono', monospace; font-size: 10px; color: #64748B; text-align: center; margin-top: 6px"><span>8.0</span><span>8.5</span><span>9.0</span><span>9.5</span><span>10.0+</span></div>
+    </div>
+
+    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 18px; padding: 16px">
+      <div style="display: flex; justify-content: space-between; align-items: baseline"><h2 style="margin: 0; font-size: 16px; font-weight: 700">Monthly spend</h2><span style="font-size: 12px; color: #64748B">QAR</span></div>
+      <svg viewBox="0 0 640 220" preserveAspectRatio="none" role="img" aria-label="Monthly spend bars" style="width: 100%; height: 120px; display: block; margin-top: 12px">
+        <rect x="45.9" y="83.4" width="19.3" height="112.6" rx="5" fill="#C7D2FE"></rect><rect x="77" y="52" width="19.3" height="144" rx="5" fill="#C7D2FE"></rect><rect x="139.1" y="45.8" width="19.3" height="150.2" rx="5" fill="#C7D2FE"></rect><rect x="201.2" y="122.2" width="19.3" height="73.8" rx="5" fill="#C7D2FE"></rect><rect x="232.2" y="39.4" width="19.3" height="156.6" rx="5" fill="#C7D2FE"></rect><rect x="263.3" y="113.9" width="19.3" height="82.1" rx="5" fill="#C7D2FE"></rect><rect x="294.3" y="116.8" width="19.3" height="79.2" rx="5" fill="#C7D2FE"></rect><rect x="325.4" y="43.3" width="19.3" height="152.7" rx="5" fill="#4F46E5"></rect><rect x="356.4" y="123.1" width="19.3" height="72.9" rx="5" fill="#4F46E5"></rect><rect x="387.5" y="124" width="19.3" height="72" rx="5" fill="#4F46E5"></rect><rect x="418.5" y="118.6" width="19.3" height="77.4" rx="5" fill="#4F46E5"></rect><rect x="480.6" y="34" width="19.3" height="162" rx="5" fill="#4F46E5"></rect><rect x="511.7" y="31.3" width="19.3" height="164.7" rx="5" fill="#4F46E5"></rect><rect x="542.7" y="112.3" width="19.3" height="83.7" rx="5" fill="#4F46E5"></rect><rect x="573.8" y="116.2" width="19.3" height="79.8" rx="5" fill="#4F46E5"></rect><rect x="604.8" y="114.1" width="19.3" height="81.9" rx="5" fill="#4F46E5"></rect>
+      </svg>
+      <div style="display: flex; justify-content: space-between; font-family: 'DM Mono', monospace; font-size: 11px; color: #64748B; margin-top: 6px"><span>Apr 25</span><span>Jan 26</span><span>Oct 26</span></div>
+    </div>
+
+    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 18px; padding: 16px">
+      <div style="display: flex; justify-content: space-between; align-items: baseline"><h2 style="margin: 0; font-size: 16px; font-weight: 700">Super 95 price</h2><span style="font-family: 'DM Mono', monospace; font-size: 16px; color: #047857">2.10</span></div>
+      <svg viewBox="0 0 640 220" preserveAspectRatio="none" role="img" aria-label="Price history" style="width: 100%; height: 100px; display: block; margin-top: 12px">
+        <path d="M40 67.4 H72.8 V118.9 H105.6 V93.1 H138.3 V93.1 H171.1 V93.1 H203.9 V93.1 H236.7 V67.4 H269.4 V67.4 H302.2 V67.4 H335 V93.1 H367.8 V170.3 H400.6 V144.6 H433.3 V67.4 H466.1 V41.7 H498.9 V41.7 H531.7 V41.7 H564.4 V41.7 H597.2 V41.7 H630 V41.7" fill="none" stroke="#10B981" style="stroke-width: 2.5; vector-effect: non-scaling-stroke"></path>
+      </svg>
+    </div>
+  </main>
+
+  <nav aria-label="Main" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: end; background: #FFFFFF; border-top: 1px solid #E2E8F0; padding: 8px 12px 20px">
+    <a href="S4-M-Dashboard.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 4px; min-height: 52px; justify-content: center; text-decoration: none; color: #64748B; font-size: 12px; font-weight: 600"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="2" fill="none" stroke="#64748B" style="stroke-width: 2"></rect><rect x="14" y="3" width="7" height="5" rx="2" fill="none" stroke="#64748B" style="stroke-width: 2"></rect><rect x="14" y="12" width="7" height="9" rx="2" fill="none" stroke="#64748B" style="stroke-width: 2"></rect><rect x="3" y="16" width="7" height="5" rx="2" fill="none" stroke="#64748B" style="stroke-width: 2"></rect></svg>Dashboard</a>
+    <a href="S4-M-Log.dc.html" aria-label="Log fill-up" style="justify-self: center; width: 60px; height: 60px; margin-top: -30px; border-radius: 20px; background: #4F46E5; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(79,70,229,0.4); text-decoration: none"><svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5 V19 M5 12 H19" fill="none" stroke="#FFFFFF" style="stroke-width: 2.5; stroke-linecap: round"></path></svg></a>
+    <a href="S4-M-Analytics.dc.html" aria-current="page" style="display: flex; flex-direction: column; align-items: center; gap: 4px; min-height: 52px; justify-content: center; text-decoration: none; color: #4338CA; font-size: 12px; font-weight: 700"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20 V10 M10 20 V4 M16 20 V13 M22 20 H2" fill="none" stroke="#4338CA" style="stroke-width: 2.5; stroke-linecap: round"></path></svg>Analytics</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1500}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

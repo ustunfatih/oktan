@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Oktan · Pump Brutalist · Mobile log</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFF8E7}
+a{color:#000000}a:hover{color:#1F4FFF}
+input:focus-visible,button:focus-visible,select:focus-visible{outline:4px solid #1F4FFF;outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 390px; min-height: 1500px; box-sizing: border-box; background: #FFF8E7; color: #000000; font-family: 'Space Grotesk', system-ui, sans-serif; display: flex; flex-direction: column">
+  <header style="padding: 16px; border-bottom: 3px solid #000000">
+    <h1 style="margin: 0; font-size: 30px; font-weight: 700; letter-spacing: -0.03em">LOG</h1>
+    <div role="tablist" aria-label="Log sections" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 10px">
+      <sc-for list="{{tabs}}" as="t" hint-placeholder-count="3">
+        <button type="button" role="tab" aria-selected="{{t.on}}" onClick="{{t.pick}}" style="{{t.style}}">{{t.label}}</button>
+      </sc-for>
+    </div>
+  </header>
+
+  <main style="flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 16px">
+    <sc-if value="{{isFill}}" hint-placeholder-val="{{true}}">
+      <form style="display: flex; flex-direction: column; gap: 14px">
+        <div style="background: #000000; border: 3px solid #000000; box-shadow: 6px 6px 0 #1F4FFF; padding: 14px; display: flex; flex-direction: column; gap: 10px">
+          <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+            <div><label for="m5-l" style="font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; color: #FFD60A">LITRES</label><input id="m5-l" type="text" inputmode="decimal" value="41.80" style="display: block; width: 100%; box-sizing: border-box; min-height: 60px; border: 0; background: #1A1A1A; color: #FFD60A; font-family: 'Space Mono', monospace; font-size: 30px; font-weight: 700; text-align: right; padding: 0 10px"></div>
+            <div><label for="m5-p" style="font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; color: #FFD60A">QAR/L · AUTO</label><input id="m5-p" type="text" inputmode="decimal" value="2.10" style="display: block; width: 100%; box-sizing: border-box; min-height: 60px; border: 0; background: #1A1A1A; color: #FFFFFF; font-family: 'Space Mono', monospace; font-size: 30px; font-weight: 700; text-align: right; padding: 0 10px"></div>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; background: #FFD60A; padding: 8px 12px"><span style="font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 700">TOTAL QAR</span><span style="font-family: 'Space Mono', monospace; font-size: 32px; font-weight: 700">87.78</span></div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+          <div><label for="m5-odo" style="font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700">ODOMETER</label><input id="m5-odo" type="text" inputmode="numeric" value="9183" style="display: block; width: 100%; box-sizing: border-box; min-height: 54px; border: 3px solid #000000; background: #FFFFFF; font-family: 'Space Mono', monospace; font-size: 22px; font-weight: 700; padding: 0 10px"></div>
+          <div><label for="m5-date" style="font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700">DATE</label><input id="m5-date" type="text" value="24 OCT" style="display: block; width: 100%; box-sizing: border-box; min-height: 54px; border: 3px solid #000000; background: #FFFFFF; font-family: 'Space Mono', monospace; font-size: 22px; font-weight: 700; padding: 0 10px"></div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+          <button type="button" aria-pressed="true" style="min-height: 54px; border: 3px solid #000000; background: #1F4FFF; color: #FFFFFF; font-family: inherit; font-size: 16px; font-weight: 700">ECO</button>
+          <button type="button" style="min-height: 54px; border: 3px solid #000000; background: #FFFFFF; font-family: inherit; font-size: 16px; font-weight: 700; box-shadow: 3px 3px 0 #000000">NORMAL</button>
+          <button type="button" style="min-height: 54px; border: 3px solid #000000; background: #FFFFFF; font-family: inherit; font-size: 16px; font-weight: 700; box-shadow: 3px 3px 0 #000000">SPORT</button>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+          <button type="button" aria-pressed="true" style="min-height: 50px; border: 3px solid #000000; background: #FFD60A; font-family: inherit; font-weight: 700">DAFNA</button>
+          <button type="button" style="min-height: 50px; border: 3px solid #000000; background: #FFFFFF; font-family: inherit; font-weight: 700; box-shadow: 3px 3px 0 #000000">PEARL</button>
+          <button type="button" style="min-height: 50px; border: 3px dashed #000000; background: transparent; font-family: inherit; font-weight: 700">+ OTHER</button>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; border: 3px dashed #000000; padding: 10px 12px; background: #FFFFFF; font-family: 'Space Mono', monospace"><span style="font-size: 13px">409 KM · FULL ☑</span><b style="font-size: 22px">9.33</b></div>
+        <button type="submit" style="min-height: 66px; border: 3px solid #000000; background: #FFD60A; font-family: inherit; font-size: 24px; font-weight: 700; box-shadow: 6px 6px 0 #000000">SAVE TO SHEET →</button>
+      </form>
+    </sc-if>
+
+    <sc-if value="{{isHist}}" hint-placeholder-val="{{false}}">
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <sc-for list="{{entries}}" as="e" hint-placeholder-count="4">
+          <div style="border: 3px solid #000000; background: #FFFFFF; padding: 10px 12px">
+            <div style="display: flex; align-items: center; gap: 8px">
+              <div style="flex: 1; min-width: 0"><div style="font-family: 'Space Mono', monospace; font-weight: 700">{{e.d}}</div><div style="font-size: 13px">{{e.sub}}</div></div>
+              <button type="button" style="min-height: 44px; padding: 0 10px; border: 3px solid #000000; background: #FFFFFF; font-family: inherit; font-weight: 700">EDIT</button>
+              <button type="button" onClick="{{e.ask}}" aria-label="Delete entry" style="width: 44px; min-height: 44px; border: 3px solid #000000; background: #000000; color: #FFD60A; font-family: inherit; font-weight: 700; font-size: 18px">×</button>
+            </div>
+            <sc-if value="{{e.confirming}}" hint-placeholder-val="{{false}}">
+              <div style="margin-top: 10px; padding: 10px; background: #FFD60A; border: 3px solid #000000; font-size: 13px; font-weight: 500; line-height: 1.45">{{e.warn}}
+                <div style="display: flex; gap: 8px; margin-top: 8px"><button type="button" onClick="{{e.cancel}}" style="flex: 1; min-height: 44px; border: 3px solid #000000; background: #FFFFFF; font-family: inherit; font-weight: 700">KEEP</button><button type="button" onClick="{{e.cancel}}" style="flex: 1; min-height: 44px; border: 3px solid #000000; background: #000000; color: #FFD60A; font-family: inherit; font-weight: 700">DELETE</button></div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{isPrice}}" hint-placeholder-val="{{false}}">
+      <form style="background: #000000; color: #FFFFFF; border: 3px solid #000000; box-shadow: 6px 6px 0 #1F4FFF; padding: 14px; display: flex; flex-direction: column; gap: 10px">
+        <div style="font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 700; color: #FFD60A">MANUAL PRICE OVERRIDE</div>
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+          <div><label for="m5-pm" style="font-size: 12px; font-weight: 700">MONTH</label><select id="m5-pm" style="display: block; width: 100%; min-height: 52px; border: 0; background: #1A1A1A; color: #FFFFFF; font-family: 'Space Mono', monospace; font-size: 16px; font-weight: 700"><option>NOV 2026</option><option>OCT 2026</option></select></div>
+          <div><label for="m5-pp" style="font-size: 12px; font-weight: 700">SUPER 95</label><input id="m5-pp" type="text" inputmode="decimal" placeholder="0.00" style="display: block; width: 100%; box-sizing: border-box; min-height: 52px; border: 0; background: #1A1A1A; color: #FFD60A; font-family: 'Space Mono', monospace; font-size: 24px; font-weight: 700; text-align: right; padding: 0 10px"></div>
+        </div>
+        <button type="submit" style="min-height: 52px; border: 3px solid #FFD60A; background: #FFD60A; color: #000000; font-family: inherit; font-size: 18px; font-weight: 700">SAVE PRICE</button>
+        <div style="font-family: 'Space Mono', monospace; font-size: 11px; color: #D4D4D4">MANUAL WINS. AUTO-FETCH NEVER OVERWRITES IT.</div>
+      </form>
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <sc-for list="{{prices}}" as="p" hint-placeholder-count="5">
+          <div style="display: flex; align-items: center; gap: 10px; border: 3px solid #000000; background: #FFFFFF; padding: 8px 12px">
+            <div style="flex: 1"><div style="font-family: 'Space Mono', monospace; font-weight: 700">{{p.m}}</div><div style="font-size: 12px">{{p.src}}</div></div>
+            <span style="font-family: 'Space Mono', monospace; font-size: 22px; font-weight: 700">{{p.p}}</span>
+            <button type="button" style="min-height: 44px; padding: 0 10px; border: 3px solid #000000; background: #FFFFFF; font-family: inherit; font-weight: 700">EDIT</button>
+          </div>
+        </sc-for>
+      </div>
+      <button type="button" style="min-height: 52px; border: 3px solid #000000; background: #1F4FFF; color: #FFFFFF; font-family: inherit; font-size: 16px; font-weight: 700; box-shadow: 4px 4px 0 #000000">↻ FETCH WOQOD NOW</button>
+    </sc-if>
+  </main>
+
+  <nav aria-label="Main" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 10px 12px 20px; border-top: 3px solid #000000; background: #FFF8E7">
+    <a href="S5-M-Dashboard.dc.html" style="min-height: 52px; display: flex; align-items: center; justify-content: center; background: #FFFFFF; color: #000000; border: 3px solid #000000; box-shadow: 3px 3px 0 #000000; font-weight: 700; font-size: 14px; text-decoration: none">HOME</a>
+    <a href="S5-M-Analytics.dc.html" style="min-height: 52px; display: flex; align-items: center; justify-content: center; background: #FFFFFF; color: #000000; border: 3px solid #000000; box-shadow: 3px 3px 0 #000000; font-weight: 700; font-size: 14px; text-decoration: none">STATS</a>
+    <a href="S5-M-Log.dc.html" aria-current="page" style="min-height: 52px; display: flex; align-items: center; justify-content: center; background: #000000; color: #FFD60A; border: 3px solid #000000; font-weight: 700; font-size: 14px; text-decoration: none">+ LOG</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1500}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tab: 'fill', del: null };
+  }
+  renderVals() {
+    const s = this.state;
+    const base = 'min-height: 48px; border: 3px solid #000000; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; ';
+    const tabs = [['fill', 'FILL'], ['hist', 'HISTORY'], ['price', 'PRICES']].map(([id, label]) => ({
+      label, on: s.tab === id,
+      pick: () => this.setState({ tab: id, del: null }),
+      style: base + (s.tab === id ? 'background: #000000; color: #FFD60A' : 'background: #FFFFFF; color: #000000; box-shadow: 3px 3px 0 #000000'),
+    }));
+    const rows = [
+      ['21 OCT 26', 'Dafna · 43.34 L · QAR 91.01 · OPEN'],
+      ['10 SEP 26', 'Dafna · 419 km · 9.21'],
+      ['22 AUG 26', 'Pearl · 404 km · 9.78'],
+      ['30 JUL 26', 'Dafna · 434 km · 9.25'],
+      ['05 JUL 26', 'Fox Hills · 430 km · 9.34'],
+    ];
+    const entries = rows.map(([d, sub], i) => ({
+      d, sub,
+      confirming: s.del === i,
+      warn: i === 0 ? 'DELETE 21 OCT? The 10 Sep trip reopens.' : 'DELETE ' + d + '? The trips on both sides merge into one.',
+      ask: () => this.setState({ del: i }),
+      cancel: () => this.setState({ del: null }),
+    }));
+    const prices = [
+      { m: 'NOV 2026', p: '—', src: 'Auto-fetch on 1 Nov' },
+      { m: 'OCT 2026', p: '2.10', src: 'WOQOD' },
+      { m: 'SEP 2026', p: '2.10', src: 'Sheet' },
+      { m: 'AUG 2026', p: '2.10', src: 'Sheet' },
+      { m: 'JUL 2026', p: '2.10', src: 'Sheet' },
+    ];
+    return { tabs, entries, prices, isFill: s.tab === 'fill', isHist: s.tab === 'hist', isPrice: s.tab === 'price' };
+  }
+}
+</script>
+</body>
+</html>

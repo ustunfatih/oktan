@@ -1,0 +1,241 @@
+# Oktan Web — build roadmap (for approval)
+
+Date: 24 Oct 2026 · Status: **in progress — phase 1 done, phase 0 (your accounts) underway** ·
+Earlier analysis: [PLAN.md](PLAN.md) · Setup steps for you: [SETUP-GUIDE.md](SETUP-GUIDE.md) ·
+Mockups: [canvas](https://claude.ai/artifact/HRtPMgnVWjxorb9BbipZB5) (5 themes × desktop + mobile)
+
+Progress log:
+
+- 24 Oct — `wrangler login` done (account `161fc91b…`). `ustunfatih.com` is on Cloudflare; `oktan.` is free.
+- 24 Oct — **Sheet hardening done** (§2). Backup:
+  [Qatar Fuel Tracking 2026 — backup 2026-10-24](https://docs.google.com/spreadsheets/d/1XqyIP3iT-wg1RyqgYOa-bRValaGFHnAbmC-WGjovDMY/edit).
+  Dev copy for building against:
+  [Oktan DEV](https://docs.google.com/spreadsheets/d/1MJUHs2YSOssKJBL3neTz7zXSvzrm2ll4dIMJtgvYf58/edit). It was tested
+  by adding two fill-ups, and every calculation, summary and chart range extended by itself.
+- 24 Oct — Decisions: Google login only (no Apple, no email PIN). A **Settings page** was added (§4b).
+- 24 Oct — Phase 0 done on your side (Zero Trust team `ustunfatih`, Google login tested, Access app with
+  your email only, service account `oktan-sheets@oktan-512607` shared on both sheets).
+- 24 Oct — **Phase 2 skeleton deployed** on branch `feat/web-app` (not committed yet).
+  `oktan.ustunfatih.com` is live and every path redirects to the Access login. workers.dev and preview URLs
+  are off. The Worker also verifies the Access JWT, audience and email on every `/api` call.
+- 24 Oct — **Phase 2 ✅ done.** Key loaded. You confirmed live data on the phone. Local dev reads the Oktan DEV
+  sheet with identical numbers (23 fill-ups, 8,761 km, 9.29 L/100 km, QAR 0.188/km). Secrets and build
+  output are git-ignored. Next: commit phase 2, then phase 3 (Dashboard).
+
+What you've decided so far:
+
+- One car only, permanently. Nothing in the data model handles multiple cars.
+- Google Sheet "Qatar Fuel Tracking 2026" stays the only data store. The sheet is fixed so it keeps counting.
+- The Log tab supports **add, edit and delete** for fill-ups, plus **manual monthly fuel prices**.
+- iOS app is out of scope. All work stays in `web/`.
+- Used mostly on the phone. It is mobile-first and installable to the home screen.
+- Login is required: only you can see or change anything.
+
+---
+
+## 1. Answers to your questions
+
+### "Can you set Cloudflare up for me with the MCP?"
+
+**Mostly yes, but not with an MCP.** No Cloudflare MCP is connected to this session. The one available in
+the directory ("Cloudflare Developer Platform") only covers Workers/KV/D1/R2 listings. It can't do custom
+domains or login protection. Here is how the setup splits:
+
+| Task | Who | How |
+|---|---|---|
+| Install `wrangler` (Cloudflare's CLI) in `web/` | me | npm dev dependency |
+| Log wrangler into your Cloudflare account | **you, once** | run `npx wrangler login` and click *Allow* in the browser |
+| Create the Worker, deploy, set secrets, add the cron | me | wrangler |
+| Attach `oktan.ustunfatih.com` (DNS record + certificate) | me | wrangler `custom_domain` route. Cloudflare creates DNS + certificate automatically |
+| Set up the login wall (Cloudflare Access app + policy) | me **or** you | **Option A:** you create a scoped API token (I give exact permissions) and I script it. **Option B:** I walk you through about 6 clicks in the dashboard |
+| Google Cloud: service account + key (lets the app read and write the sheet) | **you**, guided | Google Cloud Console. I can't create credentials in your Google account |
+| Google Cloud: OAuth client (for "Sign in with Google") | **you**, guided | same console, about 3 minutes |
+
+I'll never ask you to paste a password or secret into chat. Keys go straight into `wrangler secret put` in your
+terminal, or into the Cloudflare dashboard.
+
+### "Can I log in with Google or Apple?"
+
+- **Google: yes.** Cloudflare Access supports it natively. We allow exactly `ustunfa@gmail.com`;
+  everyone else is refused before any page or data loads.
+- **Apple: not natively.** Cloudflare Access has no built-in Apple login. It could be wired in as a
+  "generic OIDC" provider, but that's fragile and costly:
+  - Apple requires a paid **Apple Developer Program** membership ($99/yr).
+  - Apple's client secret is a signed token that expires at least every 6 months, so it needs rotating.
+  - Apple returns the login result in a way generic connectors often don't handle.
+- **Recommended:** Google as the main login, plus **email one-time PIN** as a backup. The PIN is sent to
+  your email address and needs zero setup. If your Apple ID uses an iCloud address, the PIN option covers
+  that too.
+- Optional extra: Cloudflare now also offers "Sign in with Cloudflare". Your Cloudflare account login can
+  itself use Apple, so it's an indirect Apple route at no cost.
+- Session length: 30 days, so you won't be re-logging in at the pump.
+
+### "Keep all of these themes"
+
+I'm reading this as: **all 5 themes ship in the app, with a theme switcher** (like the iOS app's theme
+system). See decision D1. If you meant "keep them on the canvas for now, I'll pick one", tell me.
+That makes phase 7 smaller.
+
+---
+
+## 2. Sheet fixes (phase 1 — ✅ done 24 Oct 2026)
+
+What was actually changed (verified: every existing number is unchanged):
+
+- **Data** (it's a Sheets table, `GasData`): columns B, J, K, L, M, N, O are now **one formula per column**
+  that calculates every row, current and future. You only type A, C–I (or the app does).
+  The open trip now shows a blank "Driven KM" instead of −8,774.
+- **Price lookup** in column E now reads the whole `Fuel Prices` list (it stopped at Dec 2026 before).
+- **Hidden column P "ID"**: a stable ID per fill-up, used by the app for edit and delete.
+- **Calc_Data**: all ranges are open-ended. The station list and month list are generated from the data,
+  so new stations and months appear by themselves. Added "Total Fuel Bought" and "Number of Fill-ups".
+- **Dashboard charts**: all 4 now read to the end of the data.
+- **Fuel Prices**: new "Source" column; months added through Dec 2027. Tank capacity now comes from
+  `Settings`.
+- **New Settings tab**: theme, fuel grade, tank capacity, default drive mode, currency, station list,
+  drive modes. Data's Gas Station column has a dropdown from the station list (other names still allowed).
+
+The original plan for this phase is kept below for reference.
+
+While scoping the fix I found the sheet is **already** missing data in places, not just at row 29:
+
+| Problem found | Effect today | Fix |
+|---|---|---|
+| `Calc_Data` monthly table uses `Data!…$2:$24` | the **next** fill-up (row 25) won't show in monthly km/spend | open-ended ranges (`Data!$J$2:$J`) |
+| `Calc_Data` totals/mode/station use `…$2:$29` | stops counting after 5 more fill-ups | open-ended ranges |
+| Monthly list is 16 typed-in dates (missing Jun-25, Aug-25, May-26; ends Oct-26) | November 2026 onwards never appears | month list generated from the data (`SEQUENCE` from first month to current month) |
+| Station list is typed in (Pearl, Dafna, Onaiza, Fox Hills) | a new station's spend is silently dropped | station list generated with `UNIQUE(FILTER(...))` |
+| Dashboard "Fuel Consumption Trend" chart reads `Data!A1:A23` / `N1:N23` | the 10 Sep 2026 tank already isn't plotted | widen all 4 chart ranges to row 1000 |
+| `Data` formulas copied row by row only to row 29, with placeholder rows (FALSE/0) | new rows have no formulas; placeholders confuse "next empty row" | one formula per column for all rows (B, J–O) and remove the placeholder rows |
+| Column M has `47` typed into the formula | changing tank size in `Fuel Prices!F2` is ignored | point it at `'Fuel Prices'!$F$2` |
+| No stable row identity | editing or deleting from the app could hit the wrong row if rows shift | add column **P "ID"** (hidden, app-managed) |
+| `Fuel Prices` has no source info | can't tell WOQOD from manual entries | add column **D "Source"** (`WOQOD` / `Manual` / `Sheet`) |
+
+How I'll do it safely:
+
+1. **Back up first:** make a full Drive copy "Qatar Fuel Tracking 2026 — backup 2026-10-xx".
+2. Write down every current `Calc_Data` value, apply the changes, then check the numbers match exactly
+   (except where the old formulas were already wrong).
+3. Report what changed, cell by cell.
+4. You keep typing into the sheet by hand exactly as before. The new formulas fill in automatically.
+
+---
+
+## 3. How add, edit and delete work against the sheet
+
+The sheet stores the odometer reading *at a fill-up* in the **previous** row's "Odometer POST". The app
+hides this; you just see one odometer field per fill-up.
+
+| Action | Sheet writes (one atomic `batchUpdate`) |
+|---|---|
+| **Add** fill-up | previous row `C` ← odometer; next free row `A, D–I, P` ← date, litres, price, cost, full, mode, station, new ID |
+| **Edit** odometer | previous row `C` ← new value (this row's `B` updates by formula) |
+| **Edit** any other field | that row's cells |
+| **Delete** latest fill-up | previous row `C` ← empty (its trip becomes "open" again); delete the row |
+| **Delete** a middle fill-up | previous row `C` ← deleted row's `C` (the two trips merge); delete the row |
+| **Delete** the first fill-up | delete the row; the new first row's `B` gets the real value |
+
+Safety:
+
+- The app re-reads the sheet just before writing and checks the row IDs. If something changed (e.g. you
+  typed in the sheet), nothing is written and you're asked to review.
+- Every delete needs confirmation, and the confirmation says what happens to neighbouring trips.
+- Every write is logged to a hidden `App_Log` tab (time, action, before → after) so any change can be undone
+  by hand.
+
+## 4. Fuel prices (auto + manual)
+
+- **Auto:** a Cloudflare cron runs at 06:00 Qatar time on the 1st–3rd of every month and calls WOQOD's
+  JSON endpoint. It writes Super 95 for the month into `Fuel Prices` with Source = `WOQOD`. Fallbacks:
+  parse the retail page HTML, then leave the month empty and show a banner.
+- **Manual:** Log → Prices lets you set or edit any month's price. A **manual price is locked**: the cron
+  never overwrites it. There's also a "Fetch from WOQOD now" button.
+- **When logging:** the price field is pre-filled with the price for the *fill-up's date* (so backdated
+  entries are right), marked with its source, and always editable. Total cost = litres × price, or type
+  the amount paid and litres is calculated.
+
+## 4b. Settings page
+
+A fourth screen, reached from a gear icon in the header on desktop and on phones (the bottom bar keeps
+3 tabs). Everything except the theme is stored in the sheet's `Settings` tab, so it's the same on every
+device and still editable in the sheet.
+
+| Setting | Stored in | Notes |
+|---|---|---|
+| **Theme** | `Settings!B2` + a per-device override | Auto / Cluster / Swiss / Doha / Fintech / Brutalist, with a live preview card for each. "Auto" picks dark or light from the phone's setting. A device can override, e.g. Cluster on the phone and Swiss on the laptop |
+| **Tank capacity (L)** | `Settings!B4` | Drives the Used Fuel / L/100 km formulas. A warning explains that changing it recalculates history |
+| **Stations** | `Settings!E2:E` | Add, rename, reorder, delete. Renaming offers "also rename it in past fill-ups". Deleting a station still used in the log is blocked (archive instead, which hides it from the Log chips) |
+| **Fuel grade** | `Settings!B3` | Super 95 / Premium 91 / Diesel: which WOQOD price is fetched and pre-filled |
+| **Default drive mode** | `Settings!B5` | Pre-selected on the Log form |
+| **Fuel prices** | `Fuel Prices` tab | Shortcut to Log → Prices (manual monthly prices, lock status, "fetch now") |
+| **Data & sync** | — | Last sync time, link to the Google Sheet, "Refresh now", CSV export |
+| **Account** | — | Who is signed in, Sign out (ends the Cloudflare Access session) |
+
+Mockups for this screen (5 themes × phone + desktop) will be added to the canvas at the start of phase 7,
+or earlier if you want to see them first.
+
+---
+
+## 5. Architecture (unchanged from PLAN.md, confirmed)
+
+- One **Cloudflare Worker** serves the app and `/api/*`, plus the cron. Free plan.
+- **Frontend:** Vite + React + TypeScript; ECharts for charts; mobile-first; **PWA**, so it's installable
+  on the iPhone home screen.
+- **API:** Hono, Zod validation. Google Sheets REST via a service account, with JWT signed in the Worker.
+- **Login:** Cloudflare Access in front of everything. The Worker also verifies the Access token on every
+  API call.
+- **Metrics:** one shared TypeScript module, unit-tested to reproduce the sheet (9.29 L/100 km, QAR
+  0.188/km, …).
+- **Development** runs against a **copy** of the sheet ("Oktan DEV"). Your real sheet is only connected once
+  the write paths pass their tests.
+
+Cost: Workers free tier, Access free (≤50 users), Sheets API free → **QAR 0/month** (Apple login would add
+$99/yr).
+
+---
+
+## 6. Phases
+
+Each phase ends with something you can see. I'll stop after phases 2, 5 and 7 for a check-in.
+
+| # | Phase | What's included | Done when | Size |
+|---|---|---|---|---|
+| 0 | **Accounts & access** — *in progress* | You: ~~`wrangler login`~~ ✅; Zero Trust team; Google Cloud service account + key; Google OAuth client; Access app. Me: [SETUP-GUIDE.md](SETUP-GUIDE.md), verify each piece | all credentials stored as secrets, nothing in git | S |
+| 1 | **Sheet hardening** — ✅ *done* | Backup, then the fixes in §2; dev copy of the sheet | Calc_Data numbers verified, new rows calculate automatically | S |
+| 2 | **Skeleton live behind login** | Scaffold `web/` (app, worker, shared); deploy to `oktan.ustunfatih.com`; Access with Google login; "Hello, Fatih" page reading 1 cell from the sheet | you can log in on phone + desktop; a private/incognito window is blocked | M |
+| 3 | **Dashboard** | Read path + caching; KPIs, efficiency trend, monthly spend, prices card, recent fill-ups, next-fill estimate; empty/error states | numbers match the sheet | M |
+| 4 | **Analytics** | Date range + mode + station filters; mode comparison, price history, km per tank, stations, monthly heat-table, distribution, records; full trip list | every chart in the chosen mockups works with filters | M |
+| 5 | **Log: add / edit / delete** | Mobile-first form with live calculations; history list with edit and delete; conflict check; `App_Log` tab; optimistic UI with undo | test fill-up added, edited, deleted on the dev sheet, then on the real sheet with you watching | L |
+| 6 | **Prices** | WOQOD client + monthly cron + fallbacks; manual price screen; price-for-date lookup | November 2026 price appears on 1 Nov automatically; manual lock tested | S |
+| 6b | **Settings page** | §4b: theme picker with previews, tank capacity, station list editor (add/rename/archive), fuel grade, default mode, sync info, sign out | changing a station or tank size in the app shows up in the sheet and vice versa | M |
+| 7 | **Themes & mobile polish** | All 5 themes behind a switcher (D1); bottom tab bar on phone; PWA install + icon; light/dark where the theme allows; accessibility pass | app passes a phone walkthrough in all 5 themes | L |
+| 8 | **Hardening** | Unit + API tests, Sheets quota handling, error reporting, README with ops notes (rotating keys, adding months) | test suite green; handover doc written | S |
+
+Order is strict up to 2, then 3–6 can overlap.
+
+---
+
+## 7. Decisions I need from you
+
+- **D1 — Themes.** ✅ Taken as decided: all 5 themes, picked on the Settings page. Assumed shared layout
+  as recommended below. Original note: Recommended: all 5 share one layout skeleton (same screens, same components). Each
+  theme changes colours, fonts, borders, shadows, the nav style and a few signature details. Examples:
+  the cluster gauge, the Doha sentence-style form, the brutalist pump display. That keeps 5 themes
+  maintainable.
+  - Alternative 1: fully separate layouts per theme (≈2× the phase 7 work).
+  - Alternative 2: pick 1 theme now, add others later.
+- **D2 — Login wall setup.** ✅ Decided: you click through the dashboard with [SETUP-GUIDE.md](SETUP-GUIDE.md).
+  That way the Google client secret goes straight from Google into Cloudflare, and no API token is needed.
+- **D3 — Logins.** ✅ Decided: Google only.
+- **D4 — Default theme** on first load (you can switch any time). Suggestion: 1 Instrument Cluster on dark
+  phones, 4 Soft Fintech on light.
+- **D5 — Repo.** Recommended: create branch `feat/web-app` from `main` and keep everything in `web/`;
+  commits only when you say so.
+
+## 8. What I'll do the moment you approve
+
+1. Phase 1 sheet backup + fixes (I have edit access to the sheet through the Google Sheets connector).
+2. Write the phase 0 guide for the three Google/Cloudflare credentials, and wait for you to finish those.
+3. Scaffold and deploy phase 2.
+
+Reply with "approved", plus your answers to D1–D5, or with any changes to this plan.

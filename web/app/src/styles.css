@@ -1,0 +1,55 @@
+/* Provisional styling (Instrument Cluster palette). The five themes arrive in phase 7. */
+:root {
+  --bg: #0a0c0f;
+  --panel: #11151a;
+  --line: #1f262e;
+  --text: #e8ecf1;
+  --muted: #8e9aa6;
+  --accent: #ffb547;
+  --danger: #ff6b5b;
+  --font: "Chakra Petch", system-ui, -apple-system, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font); }
+
+.shell { min-height: 100dvh; display: flex; flex-direction: column; }
+
+.bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: max(16px, env(safe-area-inset-top)) 16px 14px;
+  border-bottom: 1px solid var(--line);
+}
+.logo { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; letter-spacing: 0.22em; color: var(--accent); }
+.chip { font-family: var(--mono); font-size: 11px; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 6px 10px; }
+
+.content {
+  width: 100%; max-width: 720px; margin: 0 auto;
+  padding: 20px 16px max(32px, env(safe-area-inset-bottom));
+  display: flex; flex-direction: column; gap: 14px;
+}
+
+h1, h2 { margin: 0; font-weight: 600; }
+.hello { font-size: 28px; }
+h2 { font-size: 18px; margin-top: 6px; }
+p { margin: 0; line-height: 1.5; }
+
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 4px; }
+.card.error { border-color: var(--danger); }
+.hero { align-items: center; padding: 24px 16px; }
+.big { font-size: 64px; font-weight: 700; line-height: 1; color: var(--accent); }
+
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.stat .value { font-size: 20px; font-weight: 700; }
+
+.label { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
+.mono { font-family: var(--mono); }
+
+@media (min-width: 640px) {
+  .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}

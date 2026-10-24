@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Oktan · Soft Fintech · Analytics</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=DM+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4F6FB}
+a{color:#4F46E5}a:hover{color:#3730A3}
+</style>
+</helmet>
+<div style="min-height: 1240px; background: #F4F6FB; color: #0F172A; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; display: flex; flex-wrap: wrap; align-items: stretch">
+  <aside style="flex: 1 1 240px; max-width: 280px; min-width: 220px; background: #FFFFFF; border-right: 1px solid #E2E8F0; padding: 28px 20px; box-sizing: border-box; display: flex; flex-direction: column; gap: 28px">
+    <div style="display: flex; align-items: center; gap: 10px; padding: 0 8px">
+      <div style="width: 36px; height: 36px; border-radius: 10px; background: #4F46E5; display: flex; align-items: center; justify-content: center">
+        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 C12 3 6 10 6 14 A6 6 0 0 0 18 14 C18 10 12 3 12 3 Z" fill="#FFFFFF"></path></svg>
+      </div>
+      <span style="font-weight: 800; font-size: 20px; letter-spacing: -0.02em">Oktan</span>
+    </div>
+    <nav aria-label="Main" style="display: flex; flex-direction: column; gap: 4px">
+      <a href="S4-Dashboard.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 10px; color: #475569; font-weight: 600; font-size: 15px; text-decoration: none">
+        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="2" fill="none" stroke="#475569" style="stroke-width: 2"></rect><rect x="14" y="3" width="7" height="5" rx="2" fill="none" stroke="#475569" style="stroke-width: 2"></rect><rect x="14" y="12" width="7" height="9" rx="2" fill="none" stroke="#475569" style="stroke-width: 2"></rect><rect x="3" y="16" width="7" height="5" rx="2" fill="none" stroke="#475569" style="stroke-width: 2"></rect></svg>Dashboard</a>
+      <a href="S4-Analytics.dc.html" aria-current="page" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 10px; background: #EEF2FF; color: #4338CA; font-weight: 700; font-size: 15px; text-decoration: none">
+        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20 V10 M10 20 V4 M16 20 V13 M22 20 H2" fill="none" stroke="#4338CA" style="stroke-width: 2; stroke-linecap: round"></path></svg>Analytics</a>
+      <a href="S4-Log.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 10px; color: #475569; font-weight: 600; font-size: 15px; text-decoration: none">
+        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="#475569" style="stroke-width: 2"></circle><path d="M12 8 V16 M8 12 H16" fill="none" stroke="#475569" style="stroke-width: 2; stroke-linecap: round"></path></svg>Log fill-up</a>
+    </nav>
+    <div style="margin-top: auto; border: 1px solid #E2E8F0; border-radius: 14px; padding: 14px; font-size: 13px; line-height: 1.5">
+      <div style="display: flex; align-items: center; gap: 8px; font-weight: 700"><span style="width: 8px; height: 8px; border-radius: 50%; background: #059669"></span>Google Sheets</div>
+      <div style="color: #64748B">Synced 2 min ago</div>
+    </div>
+  </aside>
+
+  <main style="flex: 999 1 560px; min-width: 0; padding: 32px 40px 48px; box-sizing: border-box; display: flex; flex-direction: column; gap: 24px">
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px">
+      <h1 style="margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -0.02em">Analytics</h1>
+      <div style="display: flex; flex-wrap: wrap; gap: 10px">
+        <button type="button" style="min-height: 44px; padding: 0 16px; border-radius: 12px; border: 1px solid #E2E8F0; background: #FFFFFF; color: #0F172A; font-family: inherit; font-weight: 600; font-size: 14px">16 Apr 2025 – 24 Oct 2026 ▾</button>
+        <button type="button" style="min-height: 44px; padding: 0 16px; border-radius: 12px; border: 1px solid #E2E8F0; background: #FFFFFF; color: #0F172A; font-family: inherit; font-weight: 600; font-size: 14px">All modes ▾</button>
+        <button type="button" style="min-height: 44px; padding: 0 16px; border-radius: 12px; border: 1px solid #E2E8F0; background: #FFFFFF; color: #0F172A; font-family: inherit; font-weight: 600; font-size: 14px">All stations ▾</button>
+        <button type="button" style="min-height: 44px; padding: 0 16px; border-radius: 12px; border: 0; background: #0F172A; color: #FFFFFF; font-family: inherit; font-weight: 600; font-size: 14px">Export CSV</button>
+      </div>
+    </div>
+
+    <section style="display: flex; flex-wrap: wrap; gap: 20px">
+      <div style="flex: 1 1 360px; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 18px; padding: 24px">
+        <h2 style="margin: 0; font-size: 18px; font-weight: 700">Drive mode comparison</h2>
+        <div style="font-size: 13px; color: #64748B; margin-top: 2px">Weighted L/100 km · QAR per km underneath</div>
+        <svg viewBox="0 0 360 230" role="img" aria-label="Bars: Normal 9.04, Eco 9.35, Sport 9.65 L/100 km" style="width: 100%; height: auto; display: block; margin-top: 16px">
+          <line x1="20" x2="350" y1="190" y2="190" stroke="#E2E8F0"></line>
+          <rect x="50" y="101.6" width="56" height="88.4" rx="10" fill="#10B981"></rect>
+          <rect x="152" y="75.25" width="56" height="114.75" rx="10" fill="#4F46E5"></rect>
+          <rect x="254" y="49.75" width="56" height="140.25" rx="10" fill="#F59E0B"></rect>
+          <text x="78" y="92" fill="#0F172A" style="font-size: 16px; font-weight: 800; text-anchor: middle; font-family: 'Plus Jakarta Sans', sans-serif">9.04</text>
+          <text x="180" y="66" fill="#0F172A" style="font-size: 16px; font-weight: 800; text-anchor: middle; font-family: 'Plus Jakarta Sans', sans-serif">9.35</text>
+          <text x="282" y="40" fill="#0F172A" style="font-size: 16px; font-weight: 800; text-anchor: middle; font-family: 'Plus Jakarta Sans', sans-serif">9.65</text>
+          <text x="78" y="208" fill="#475569" style="font-size: 13px; font-weight: 600; text-anchor: middle; font-family: 'Plus Jakarta Sans', sans-serif">Normal</text>
+          <text x="180" y="208" fill="#475569" style="font-size: 13px; font-weight: 600; text-anchor: middle; font-family: 'Plus Jakarta Sans', sans-serif">Eco</text>
+          <text x="282" y="208" fill="#475569" style="font-size: 13px; font-weight: 600; text-anchor: middle; font-family: 'Plus Jakarta Sans', sans-serif">Sport</text>
+          <text x="78" y="225" fill="#64748B" style="font-size: 11px; text-anchor: middle; font-family: 'DM Mono', monospace">0.182/km</text>
+          <text x="180" y="225" fill="#64748B" style="font-size: 11px; text-anchor: middle; font-family: 'DM Mono', monospace">0.193/km</text>
+          <text x="282" y="225" fill="#64748B" style="font-size: 11px; text-anchor: middle; font-family: 'DM Mono', monospace">0.189/km</text>
+        </svg>
+      </div>
+
+      <div style="flex: 1 1 360px; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 18px; padding: 24px">
+        <h2 style="margin: 0; font-size: 18px; font-weight: 700">How consistent are you?</h2>
+        <div style="font-size: 13px; color: #64748B; margin-top: 2px">Number of tanks per L/100 km band</div>
+        <svg viewBox="0 0 360 210" role="img" aria-label="Histogram: 10 of 22 tanks between 9.0 and 9.5 L/100 km" style="width: 100%; height: auto; display: block; margin-top: 16px">
+          <line x1="20" x2="350" y1="170" y2="170" stroke="#E2E8F0"></line>
+          <rect x="30" y="155" width="56" height="15" rx="6" fill="#C7D2FE"></rect>
+          <rect x="96" y="110" width="56" height="60" rx="6" fill="#A5B4FC"></rect>
+          <rect x="162" y="20" width="56" height="150" rx="6" fill="#4F46E5"></rect>
+          <rect x="228" y="80" width="56" height="90" rx="6" fill="#A5B4FC"></rect>
+          <rect x="294" y="155" width="56" height="15" rx="6" fill="#C7D2FE"></rect>
+          <text x="58" y="148" fill="#0F172A" style="font-size: 13px; font-weight: 700; text-anchor: middle">1</text>
+          <text x="124" y="103" fill="#0F172A" style="font-size: 13px; font-weight: 700; text-anchor: middle">4</text>
+          <text x="190" y="44" fill="#FFFFFF" style="font-size: 15px; font-weight: 800; text-anchor: middle">10</text>
+          <text x="256" y="73" fill="#0F172A" style="font-size: 13px; font-weight: 700; text-anchor: middle">6</text>
+          <text x="322" y="148" fill="#0F172A" style="font-size: 13px; font-weight: 700; text-anchor: middle">1</text>
+          <text x="58" y="188" fill="#64748B" style="font-size: 10px; text-anchor: middle; font-family: 'DM Mono', monospace">8.0–8.5</text>
+          <text x="124" y="188" fill="#64748B" style="font-size: 10px; text-anchor: middle; font-family: 'DM Mono', monospace">8.5–9.0</text>
+          <text x="190" y="188" fill="#64748B" style="font-size: 10px; text-anchor: middle; font-family: 'DM Mono', monospace">9.0–9.5</text>
+          <text x="256" y="188" fill="#64748B" style="font-size: 10px; text-anchor: middle; font-family: 'DM Mono', monospace">9.5–10.0</text>
+          <text x="322" y="188" fill="#64748B" style="font-size: 10px; text-anchor: middle; font-family: 'DM Mono', monospace">10.0–10.5</text>
+        </svg>
+      </div>
+
+      <div style="flex: 1 1 300px; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 18px; padding: 24px; display: flex; flex-direction: column; gap: 12px">
+        <h2 style="margin: 0; font-size: 18px; font-weight: 700">Insights</h2>
+        <div style="display: flex; gap: 12px; padding: 14px; border-radius: 14px; background: #ECFDF5">
+          <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M5 13 L10 18 L19 7" fill="none" stroke="#047857" style="stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round"></path></svg>
+          <div style="font-size: 14px; line-height: 1.5"><b>Normal mode is your most efficient,</b> 0.31 L/100 km better than Eco.</div>
+        </div>
+        <div style="display: flex; gap: 12px; padding: 14px; border-radius: 14px; background: #FFFBEB">
+          <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 8 V13 M12 16.5 V17" fill="none" stroke="#B45309" style="stroke-width: 2.5; stroke-linecap: round"></path><circle cx="12" cy="12" r="9" fill="none" stroke="#B45309" style="stroke-width: 2"></circle></svg>
+          <div style="font-size: 14px; line-height: 1.5"><b>Summer costs more.</b> June–August tanks averaged 9.54 vs 9.03 from December to March.</div>
+        </div>
+        <div style="display: flex; gap: 12px; padding: 14px; border-radius: 14px; background: #EEF2FF">
+          <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M4 17 L10 11 L14 15 L20 8" fill="none" stroke="#4338CA" style="stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round"></path></svg>
+          <div style="font-size: 14px; line-height: 1.5"><b>Price is up 13.5%</b> from February's QAR 1.85 low. Each tank now costs about QAR 10.40 more.</div>
+        </div>
+      </div>
+    </section>
+
+    <section style="display: flex; flex-wrap: wrap; gap: 20px">
+      <div style="flex: 1 1 480px; min-width: 0; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 18px; padding: 24px">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px">
+          <h2 style="margin: 0; font-size: 18px; font-weight: 700">Monthly spend</h2>
+          <span style="font-size: 13px; color: #64748B">QAR · average 121 in months with a fill-up</span>
+        </div>
+        <svg viewBox="0 0 640 220" role="img" aria-label="Monthly spend bars" style="width: 100%; height: auto; display: block; margin-top: 16px">
+          <line x1="40" x2="630" y1="151" y2="151" stroke="#F1F5F9"></line>
+          <line x1="40" x2="630" y1="106" y2="106" stroke="#F1F5F9"></line>
+          <line x1="40" x2="630" y1="61" y2="61" stroke="#F1F5F9"></line>
+          <text x="12" y="155" fill="#64748B" style="font-size: 10px; font-family: 'DM Mono', monospace">50</text>
+          <text x="6" y="110" fill="#64748B" style="font-size: 10px; font-family: 'DM Mono', monospace">100</text>
+          <text x="6" y="65" fill="#64748B" style="font-size: 10px; font-family: 'DM Mono', monospace">150</text>
+          <rect x="45.9" y="83.4" width="19.3" height="112.6" rx="6" fill="#C7D2FE"></rect>
+          <rect x="77" y="52" width="19.3" height="144" rx="6" fill="#C7D2FE"></rect>
+          <rect x="139.1" y="45.8" width="19.3" height="150.2" rx="6" fill="#C7D2FE"></rect>
+          <rect x="201.2" y="122.2" width="19.3" height="73.8" rx="6" fill="#C7D2FE"></rect>
+          <rect x="232.2" y="39.4" width="19.3" height="156.6" rx="6" fill="#C7D2FE"></rect>
+          <rect x="263.3" y="113.9" width="19.3" height="82.1" rx="6" fill="#C7D2FE"></rect>
+          <rect x="294.3" y="116.8" width="19.3" height="79.2" rx="6" fill="#C7D2FE"></rect>
+          <rect x="325.4" y="43.3" width="19.3" height="152.7" rx="6" fill="#4F46E5"></rect>
+          <rect x="356.4" y="123.1" width="19.3" height="72.9" rx="6" fill="#4F46E5"></rect>
+          <rect x="387.5" y="124" width="19.3" height="72" rx="6" fill="#4F46E5"></rect>
+          <rect x="418.5" y="118.6" width="19.3" height="77.4" rx="6" fill="#4F46E5"></rect>
+          <rect x="480.6" y="34" width="19.3" height="162" rx="6" fill="#4F46E5"></rect>
+          <rect x="511.7" y="31.3" width="19.3" height="164.7" rx="6" fill="#4F46E5"></rect>
+          <rect x="542.7" y="112.3" width="19.3" height="83.7" rx="6" fill="#4F46E5"></rect>
+          <rect x="573.8" y="116.2" width="19.3" height="79.8" rx="6" fill="#4F46E5"></rect>
+          <rect x="604.8" y="114.1" width="19.3" height="81.9" rx="6" fill="#4F46E5"></rect>
+          <text x="46" y="214" fill="#64748B" style="font-size: 10px; font-family: 'DM Mono', monospace">Apr 25</text>
+          <text x="320" y="214" fill="#64748B" style="font-size: 10px; font-family: 'DM Mono', monospace">Jan 26</text>
+          <text x="596" y="214" fill="#64748B" style="font-size: 10px; font-family: 'DM Mono', monospace">Oct 26</text>
+        </svg>
+      </div>
+      <div style="flex: 1 1 480px; min-width: 0; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 18px; padding: 24px">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px">
+          <h2 style="margin: 0; font-size: 18px; font-weight: 700">Super 95 price history</h2>
+          <span style="font-size: 13px; color: #64748B">QAR/L · WOQOD</span>
+        </div>
+        <svg viewBox="0 0 640 220" role="img" aria-label="Price history step line" style="width: 100%; height: auto; display: block; margin-top: 16px">
+          <line x1="40" x2="630" y1="170.3" y2="170.3" stroke="#F1F5F9"></line>
+          <line x1="40" x2="630" y1="118.9" y2="118.9" stroke="#F1F5F9"></line>
+          <line x1="40" x2="630" y1="67.4" y2="67.4" stroke="#F1F5F9"></line>
+          <text x="4" y="174" fill="#64748B" style="font-size: 10px; font-family: 'DM Mono', monospace">1.85</text>
+          <text x="4" y="123" fill="#64748B" style="font-size: 10px; font-family: 'DM Mono', monospace">1.95</text>
+          <text x="4" y="71" fill="#64748B" style="font-size: 10px; font-family: 'DM Mono', monospace">2.05</text>
+          <path d="M40 67.4 H72.8 V118.9 H105.6 V93.1 H138.3 V93.1 H171.1 V93.1 H203.9 V93.1 H236.7 V67.4 H269.4 V67.4 H302.2 V67.4 H335 V93.1 H367.8 V170.3 H400.6 V144.6 H433.3 V67.4 H466.1 V41.7 H498.9 V41.7 H531.7 V41.7 H564.4 V41.7 H597.2 V41.7 H630 V41.7" fill="none" stroke="#10B981" style="stroke-width: 2.5; stroke-linejoin: round"></path>
+          <circle cx="630" cy="41.7" r="6" fill="#FFFFFF" stroke="#10B981" style="stroke-width: 3"></circle>
+          <text x="560" y="28" fill="#047857" style="font-size: 12px; font-weight: 700; font-family: 'Plus Jakarta Sans', sans-serif">2.10 now</text>
+          <text x="40" y="214" fill="#64748B" style="font-size: 10px; font-family: 'DM Mono', monospace">Apr 25</text>
+          <text x="596" y="214" fill="#64748B" style="font-size: 10px; font-family: 'DM Mono', monospace">Oct 26</text>
+        </svg>
+      </div>
+    </section>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1240}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

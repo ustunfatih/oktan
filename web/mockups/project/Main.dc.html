@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Oktan · Cluster · Dashboard</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0A0C0F}
+a{color:#FFB547}a:hover{color:#FFD08A}
+</style>
+</helmet>
+<div style="min-height: 1240px; background: #0A0C0F; color: #E8ECF1; font-family: 'Chakra Petch', system-ui, sans-serif; box-sizing: border-box; padding: 0 0 48px">
+  <header style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px 32px; padding: 18px 40px; border-bottom: 1px solid #1F262E; background: #0D1014">
+    <div style="display: flex; align-items: center; gap: 10px">
+      <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 C12 2 5 10 5 14.5 A7 7 0 0 0 19 14.5 C19 10 12 2 12 2 Z" fill="none" stroke="#FFB547" style="stroke-width: 2"></path><path d="M9 15 A3 3 0 0 0 12 18" fill="none" stroke="#FFB547" style="stroke-width: 2; stroke-linecap: round"></path></svg>
+      <span style="font-weight: 700; font-size: 20px; letter-spacing: 0.24em">OKTAN</span>
+    </div>
+    <nav aria-label="Main" style="display: flex; gap: 4px; background: #11151A; border: 1px solid #1F262E; border-radius: 10px; padding: 4px">
+      <a href="Main.dc.html" aria-current="page" style="text-decoration: none; padding: 10px 18px; border-radius: 7px; background: #FFB547; color: #0A0C0F; font-weight: 600; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase">Dashboard</a>
+      <a href="S1-Analytics.dc.html" style="text-decoration: none; padding: 10px 18px; border-radius: 7px; color: #C9D1DA; font-weight: 500; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase">Analytics</a>
+      <a href="S1-Log.dc.html" style="text-decoration: none; padding: 10px 18px; border-radius: 7px; color: #C9D1DA; font-weight: 500; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase">Log fill-up</a>
+    </nav>
+    <div style="flex: 1 1 auto"></div>
+    <div style="display: flex; flex-wrap: wrap; gap: 10px; font-family: 'JetBrains Mono', monospace; font-size: 12px">
+      <span style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid #1F262E; border-radius: 999px; color: #8E9AA6"><span style="width: 8px; height: 8px; border-radius: 50%; background: #5BD69A"></span>SHEET SYNCED · 2 MIN AGO</span>
+      <span style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid #1F262E; border-radius: 999px; color: #8E9AA6">ODO 8,774 KM</span>
+    </div>
+  </header>
+
+  <main style="max-width: 1360px; margin: 0 auto; padding: 32px 40px 0; display: flex; flex-direction: column; gap: 20px">
+    <div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 12px">
+      <h1 style="margin: 0; font-size: 28px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase">Vehicle telemetry</h1>
+      <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #8E9AA6">16 APR 2025 → 21 OCT 2026 · 23 FILL-UPS · SUPER 95</span>
+    </div>
+
+    <section style="display: flex; flex-wrap: wrap; gap: 20px">
+      <div style="flex: 1 1 380px; background: #11151A; border: 1px solid #1F262E; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; align-items: center; gap: 4px">
+        <div style="align-self: stretch; display: flex; justify-content: space-between; font-size: 13px; letter-spacing: 0.14em; color: #8E9AA6; text-transform: uppercase"><span>Efficiency</span><span>Lifetime</span></div>
+        <svg viewBox="0 0 300 180" role="img" aria-label="Gauge: 9.29 litres per 100 km on a scale from 7 to 12" style="width: 100%; max-width: 340px; height: auto; display: block">
+          <path d="M30 150 A120 120 0 0 1 270 150" fill="none" stroke="#1F262E" style="stroke-width: 18; stroke-linecap: round"></path>
+          <path d="M30 150 A120 120 0 0 1 134.2 31" fill="none" stroke="#FFB547" style="stroke-width: 18; stroke-linecap: round"></path>
+          <line x1="150" y1="150" x2="136.8" y2="50.9" stroke="#E8ECF1" style="stroke-width: 3; stroke-linecap: round"></line>
+          <circle cx="150" cy="150" r="8" fill="#E8ECF1"></circle>
+          <text x="22" y="174" fill="#8E9AA6" style="font-size: 12px; font-family: 'JetBrains Mono', monospace">7</text>
+          <text x="268" y="174" fill="#8E9AA6" style="font-size: 12px; font-family: 'JetBrains Mono', monospace">12</text>
+        </svg>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 56px; font-weight: 700; line-height: 1; margin-top: -8px">9.29</div>
+        <div style="font-size: 14px; letter-spacing: 0.16em; color: #8E9AA6; text-transform: uppercase">L / 100 km · 10.8 km/L</div>
+        <div style="display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; justify-content: center">
+          <span style="padding: 6px 12px; border-radius: 6px; background: #0F2A22; color: #5BD69A; font-family: 'JetBrains Mono', monospace; font-size: 12px">LAST TRIP 9.21 ▼</span>
+          <span style="padding: 6px 12px; border-radius: 6px; background: #2A2312; color: #FFB547; font-family: 'JetBrains Mono', monospace; font-size: 12px">LAST 5 AVG 9.49</span>
+        </div>
+      </div>
+
+      <div style="flex: 2 1 560px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px">
+        <div style="background: #11151A; border: 1px solid #1F262E; border-radius: 16px; padding: 20px">
+          <div style="font-size: 12px; letter-spacing: 0.14em; color: #8E9AA6; text-transform: uppercase">Cost per km</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 34px; font-weight: 700; margin-top: 10px">0.188 <span style="font-size: 14px; color: #8E9AA6">QAR</span></div>
+          <div style="font-size: 13px; color: #8E9AA6; margin-top: 6px">QAR 18.80 per 100 km</div>
+        </div>
+        <div style="background: #11151A; border: 1px solid #1F262E; border-radius: 16px; padding: 20px">
+          <div style="font-size: 12px; letter-spacing: 0.14em; color: #8E9AA6; text-transform: uppercase">Spent · 2026</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 34px; font-weight: 700; margin-top: 10px">1,052.51 <span style="font-size: 14px; color: #8E9AA6">QAR</span></div>
+          <div style="font-size: 13px; color: #8E9AA6; margin-top: 6px">October: QAR 91.01 · 1 fill</div>
+        </div>
+        <div style="background: #11151A; border: 1px solid #1F262E; border-radius: 16px; padding: 20px">
+          <div style="font-size: 12px; letter-spacing: 0.14em; color: #8E9AA6; text-transform: uppercase">Distance logged</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 34px; font-weight: 700; margin-top: 10px">8,761 <span style="font-size: 14px; color: #8E9AA6">km</span></div>
+          <div style="font-size: 13px; color: #8E9AA6; margin-top: 6px">22 closed trips</div>
+        </div>
+        <div style="background: #11151A; border: 1px solid #1F262E; border-radius: 16px; padding: 20px">
+          <div style="font-size: 12px; letter-spacing: 0.14em; color: #8E9AA6; text-transform: uppercase">Range per tank</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 34px; font-weight: 700; margin-top: 10px">398 <span style="font-size: 14px; color: #8E9AA6">km</span></div>
+          <div style="font-size: 13px; color: #8E9AA6; margin-top: 6px">Theoretical 506 km on 47 L</div>
+        </div>
+        <div style="background: #11151A; border: 1px solid #1F262E; border-radius: 16px; padding: 20px">
+          <div style="font-size: 12px; letter-spacing: 0.14em; color: #8E9AA6; text-transform: uppercase">Fuel bought</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 34px; font-weight: 700; margin-top: 10px">955.3 <span style="font-size: 14px; color: #8E9AA6">L</span></div>
+          <div style="font-size: 13px; color: #8E9AA6; margin-top: 6px">Avg fill 41.5 L · QAR 84.34</div>
+        </div>
+        <div style="background: #11151A; border: 1px solid #1F262E; border-radius: 16px; padding: 20px">
+          <div style="font-size: 12px; letter-spacing: 0.14em; color: #8E9AA6; text-transform: uppercase">Next fill-up</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 34px; font-weight: 700; margin-top: 10px; color: #4FD1E8">~15 NOV</div>
+          <div style="font-size: 13px; color: #8E9AA6; margin-top: 6px">Every 25 days on average</div>
+        </div>
+      </div>
+    </section>
+
+    <section style="display: flex; flex-wrap: wrap; gap: 20px">
+      <div style="flex: 3 1 620px; min-width: 0; background: #11151A; border: 1px solid #1F262E; border-radius: 16px; padding: 24px">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px">
+          <h2 style="margin: 0; font-size: 16px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase">L/100 km per tank</h2>
+          <div style="display: flex; gap: 16px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #8E9AA6"><span style="color: #FFB547">━ trip</span><span style="color: #4FD1E8">┅ avg 9.29</span></div>
+        </div>
+        <svg viewBox="0 0 640 220" role="img" aria-label="Line chart of L/100 km for 22 trips, ranging from 8.23 to 10.25" style="width: 100%; height: auto; display: block; margin-top: 12px">
+          <line x1="40" x2="630" y1="160" y2="160" stroke="#1F262E"></line>
+          <line x1="40" x2="630" y1="124" y2="124" stroke="#1F262E"></line>
+          <line x1="40" x2="630" y1="88" y2="88" stroke="#1F262E"></line>
+          <line x1="40" x2="630" y1="52" y2="52" stroke="#1F262E"></line>
+          <text x="6" y="164" fill="#8E9AA6" style="font-size: 11px; font-family: 'JetBrains Mono', monospace">8.5</text>
+          <text x="6" y="128" fill="#8E9AA6" style="font-size: 11px; font-family: 'JetBrains Mono', monospace">9.0</text>
+          <text x="6" y="92" fill="#8E9AA6" style="font-size: 11px; font-family: 'JetBrains Mono', monospace">9.5</text>
+          <text x="2" y="56" fill="#8E9AA6" style="font-size: 11px; font-family: 'JetBrains Mono', monospace">10.0</text>
+          <path d="M40 128.3 L68.1 155 L96.2 106 L124.3 145.6 L152.4 130.5 L180.5 34 L208.6 58.5 L236.7 121.1 L264.8 82.2 L292.9 91.6 L321 179.4 L349 105.3 L377.1 116.1 L405.2 88.7 L433.3 113.2 L461.4 75.8 L489.5 86.6 L517.6 62.1 L545.7 99.5 L573.8 106 L601.9 67.8 L630 108.9 L630 196 L40 196 Z" fill="#FFB547" opacity="0.08"></path>
+          <line x1="40" x2="630" y1="103.1" y2="103.1" stroke="#4FD1E8" style="stroke-width: 1.5; stroke-dasharray: 5 5"></line>
+          <path d="M40 128.3 L68.1 155 L96.2 106 L124.3 145.6 L152.4 130.5 L180.5 34 L208.6 58.5 L236.7 121.1 L264.8 82.2 L292.9 91.6 L321 179.4 L349 105.3 L377.1 116.1 L405.2 88.7 L433.3 113.2 L461.4 75.8 L489.5 86.6 L517.6 62.1 L545.7 99.5 L573.8 106 L601.9 67.8 L630 108.9" fill="none" stroke="#FFB547" style="stroke-width: 2.5; stroke-linejoin: round"></path>
+          <circle cx="321" cy="179.4" r="5" fill="#5BD69A"></circle>
+          <circle cx="180.5" cy="34" r="5" fill="#FF6B5B"></circle>
+          <circle cx="630" cy="108.9" r="5" fill="#FFB547" stroke="#0A0C0F" style="stroke-width: 2"></circle>
+          <text x="330" y="190" fill="#5BD69A" style="font-size: 11px; font-family: 'JetBrains Mono', monospace">BEST 8.23 · DEC</text>
+          <text x="190" y="30" fill="#FF6B5B" style="font-size: 11px; font-family: 'JetBrains Mono', monospace">WORST 10.25 · JUL SPORT</text>
+          <text x="40" y="214" fill="#8E9AA6" style="font-size: 11px; font-family: 'JetBrains Mono', monospace">APR 25</text>
+          <text x="590" y="214" fill="#8E9AA6" style="font-size: 11px; font-family: 'JetBrains Mono', monospace">SEP 26</text>
+        </svg>
+      </div>
+
+      <div style="flex: 1 1 300px; background: #11151A; border: 1px solid #1F262E; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 14px">
+        <div style="display: flex; justify-content: space-between; align-items: baseline">
+          <h2 style="margin: 0; font-size: 16px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase">Pump prices</h2>
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #8E9AA6">WOQOD · OCT 2026</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px; border-radius: 10px; background: #2A2312; border: 1px solid #4A3B17">
+          <div><div style="font-weight: 600">Super 95</div><div style="font-size: 12px; color: #C9B48A">Your grade</div></div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 26px; font-weight: 700; color: #FFB547">2.10</div>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0 14px">
+          <div style="font-weight: 500; color: #C9D1DA">Premium 91</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 20px">1.95</div>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0 14px">
+          <div style="font-weight: 500; color: #C9D1DA">Diesel</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 20px">2.05</div>
+        </div>
+        <div style="margin-top: auto; border-top: 1px solid #1F262E; padding-top: 12px; font-size: 13px; color: #8E9AA6; line-height: 1.5">Unchanged since May. QAR per litre. November prices are fetched automatically on 1 Nov.</div>
+      </div>
+    </section>
+
+    <section style="display: flex; flex-wrap: wrap; gap: 20px">
+      <div style="flex: 1 1 520px; min-width: 0; background: #11151A; border: 1px solid #1F262E; border-radius: 16px; padding: 24px">
+        <div style="display: flex; justify-content: space-between; align-items: baseline">
+          <h2 style="margin: 0; font-size: 16px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase">Monthly spend · QAR</h2>
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #8E9AA6">APR 25 – OCT 26</span>
+        </div>
+        <svg viewBox="0 0 640 220" role="img" aria-label="Bar chart of monthly fuel spend, highest QAR 183 in July 2026" style="width: 100%; height: auto; display: block; margin-top: 12px">
+          <line x1="40" x2="630" y1="151" y2="151" stroke="#1F262E"></line>
+          <line x1="40" x2="630" y1="106" y2="106" stroke="#1F262E"></line>
+          <line x1="40" x2="630" y1="61" y2="61" stroke="#1F262E"></line>
+          <text x="10" y="155" fill="#8E9AA6" style="font-size: 11px; font-family: 'JetBrains Mono', monospace">50</text>
+          <text x="4" y="110" fill="#8E9AA6" style="font-size: 11px; font-family: 'JetBrains Mono', monospace">100</text>
+          <text x="4" y="65" fill="#8E9AA6" style="font-size: 11px; font-family: 'JetBrains Mono', monospace">150</text>
+          <rect x="45.9" y="83.4" width="19.3" height="112.6" rx="3" fill="#3A4552"></rect>
+          <rect x="77" y="52" width="19.3" height="144" rx="3" fill="#3A4552"></rect>
+          <rect x="139.1" y="45.8" width="19.3" height="150.2" rx="3" fill="#3A4552"></rect>
+          <rect x="201.2" y="122.2" width="19.3" height="73.8" rx="3" fill="#3A4552"></rect>
+          <rect x="232.2" y="39.4" width="19.3" height="156.6" rx="3" fill="#3A4552"></rect>
+          <rect x="263.3" y="113.9" width="19.3" height="82.1" rx="3" fill="#3A4552"></rect>
+          <rect x="294.3" y="116.8" width="19.3" height="79.2" rx="3" fill="#3A4552"></rect>
+          <rect x="325.4" y="43.3" width="19.3" height="152.7" rx="3" fill="#FFB547"></rect>
+          <rect x="356.4" y="123.1" width="19.3" height="72.9" rx="3" fill="#FFB547"></rect>
+          <rect x="387.5" y="124" width="19.3" height="72" rx="3" fill="#FFB547"></rect>
+          <rect x="418.5" y="118.6" width="19.3" height="77.4" rx="3" fill="#FFB547"></rect>
+          <rect x="480.6" y="34" width="19.3" height="162" rx="3" fill="#FFB547"></rect>
+          <rect x="511.7" y="31.3" width="19.3" height="164.7" rx="3" fill="#FFB547"></rect>
+          <rect x="542.7" y="112.3" width="19.3" height="83.7" rx="3" fill="#FFB547"></rect>
+          <rect x="573.8" y="116.2" width="19.3" height="79.8" rx="3" fill="#FFB547"></rect>
+          <rect x="604.8" y="114.1" width="19.3" height="81.9" rx="3" fill="#4FD1E8"></rect>
+          <text x="46" y="214" fill="#8E9AA6" style="font-size: 11px; font-family: 'JetBrains Mono', monospace">APR</text>
+          <text x="326" y="214" fill="#8E9AA6" style="font-size: 11px; font-family: 'JetBrains Mono', monospace">JAN 26</text>
+          <text x="600" y="214" fill="#4FD1E8" style="font-size: 11px; font-family: 'JetBrains Mono', monospace">OCT</text>
+        </svg>
+      </div>
+
+      <div style="flex: 1 1 460px; min-width: 0; background: #11151A; border: 1px solid #1F262E; border-radius: 16px; padding: 24px">
+        <div style="display: flex; justify-content: space-between; align-items: baseline">
+          <h2 style="margin: 0; font-size: 16px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase">Recent fill-ups</h2>
+          <a href="S1-Analytics.dc.html" style="font-size: 13px; letter-spacing: 0.08em">ALL TRIPS →</a>
+        </div>
+        <div style="overflow-x: auto; margin-top: 12px">
+          <table style="width: 100%; border-collapse: collapse; font-family: 'JetBrains Mono', monospace; font-size: 13px; min-width: 420px">
+            <thead><tr style="color: #8E9AA6; text-align: left"><th style="padding: 8px 6px; font-weight: 500">DATE</th><th style="padding: 8px 6px; font-weight: 500">STATION</th><th style="padding: 8px 6px; font-weight: 500; text-align: right">L</th><th style="padding: 8px 6px; font-weight: 500; text-align: right">QAR</th><th style="padding: 8px 6px; font-weight: 500; text-align: right">KM</th><th style="padding: 8px 6px; font-weight: 500; text-align: right">L/100</th></tr></thead>
+            <tbody>
+              <tr style="border-top: 1px solid #1F262E"><td style="padding: 10px 6px">21 OCT</td><td style="padding: 10px 6px">Dafna</td><td style="padding: 10px 6px; text-align: right">43.34</td><td style="padding: 10px 6px; text-align: right">91.01</td><td style="padding: 10px 6px; text-align: right; color: #4FD1E8">open</td><td style="padding: 10px 6px; text-align: right; color: #8E9AA6">—</td></tr>
+              <tr style="border-top: 1px solid #1F262E"><td style="padding: 10px 6px">10 SEP</td><td style="padding: 10px 6px">Dafna</td><td style="padding: 10px 6px; text-align: right">42.23</td><td style="padding: 10px 6px; text-align: right">88.68</td><td style="padding: 10px 6px; text-align: right">419</td><td style="padding: 10px 6px; text-align: right; color: #5BD69A">9.21</td></tr>
+              <tr style="border-top: 1px solid #1F262E"><td style="padding: 10px 6px">22 AUG</td><td style="padding: 10px 6px">Pearl</td><td style="padding: 10px 6px; text-align: right">44.29</td><td style="padding: 10px 6px; text-align: right">93.01</td><td style="padding: 10px 6px; text-align: right">404</td><td style="padding: 10px 6px; text-align: right; color: #FF6B5B">9.78</td></tr>
+              <tr style="border-top: 1px solid #1F262E"><td style="padding: 10px 6px">30 JUL</td><td style="padding: 10px 6px">Dafna</td><td style="padding: 10px 6px; text-align: right">42.87</td><td style="padding: 10px 6px; text-align: right">90.03</td><td style="padding: 10px 6px; text-align: right">434</td><td style="padding: 10px 6px; text-align: right; color: #5BD69A">9.25</td></tr>
+              <tr style="border-top: 1px solid #1F262E"><td style="padding: 10px 6px">05 JUL</td><td style="padding: 10px 6px">Fox Hills</td><td style="padding: 10px 6px; text-align: right">44.29</td><td style="padding: 10px 6px; text-align: right">93.01</td><td style="padding: 10px 6px; text-align: right">430</td><td style="padding: 10px 6px; text-align: right">9.34</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1240}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Oktan · Soft Fintech · Log fill-up</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=DM+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4F6FB}
+a{color:#4F46E5}a:hover{color:#3730A3}
+input:focus-visible,button:focus-visible{outline:3px solid #A5B4FC;outline-offset:2px}
+</style>
+</helmet>
+<div style="min-height: 1240px; background: #F4F6FB; color: #0F172A; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; display: flex; flex-wrap: wrap; align-items: stretch">
+  <aside style="flex: 1 1 240px; max-width: 280px; min-width: 220px; background: #FFFFFF; border-right: 1px solid #E2E8F0; padding: 28px 20px; box-sizing: border-box; display: flex; flex-direction: column; gap: 28px">
+    <div style="display: flex; align-items: center; gap: 10px; padding: 0 8px">
+      <div style="width: 36px; height: 36px; border-radius: 10px; background: #4F46E5; display: flex; align-items: center; justify-content: center">
+        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 C12 3 6 10 6 14 A6 6 0 0 0 18 14 C18 10 12 3 12 3 Z" fill="#FFFFFF"></path></svg>
+      </div>
+      <span style="font-weight: 800; font-size: 20px; letter-spacing: -0.02em">Oktan</span>
+    </div>
+    <nav aria-label="Main" style="display: flex; flex-direction: column; gap: 4px">
+      <a href="S4-Dashboard.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 10px; color: #475569; font-weight: 600; font-size: 15px; text-decoration: none">
+        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="2" fill="none" stroke="#475569" style="stroke-width: 2"></rect><rect x="14" y="3" width="7" height="5" rx="2" fill="none" stroke="#475569" style="stroke-width: 2"></rect><rect x="14" y="12" width="7" height="9" rx="2" fill="none" stroke="#475569" style="stroke-width: 2"></rect><rect x="3" y="16" width="7" height="5" rx="2" fill="none" stroke="#475569" style="stroke-width: 2"></rect></svg>Dashboard</a>
+      <a href="S4-Analytics.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 10px; color: #475569; font-weight: 600; font-size: 15px; text-decoration: none">
+        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20 V10 M10 20 V4 M16 20 V13 M22 20 H2" fill="none" stroke="#475569" style="stroke-width: 2; stroke-linecap: round"></path></svg>Analytics</a>
+      <a href="S4-Log.dc.html" aria-current="page" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 10px; background: #EEF2FF; color: #4338CA; font-weight: 700; font-size: 15px; text-decoration: none">
+        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="#4338CA" style="stroke-width: 2"></circle><path d="M12 8 V16 M8 12 H16" fill="none" stroke="#4338CA" style="stroke-width: 2; stroke-linecap: round"></path></svg>Log fill-up</a>
+    </nav>
+  </aside>
+
+  <main style="flex: 999 1 560px; min-width: 0; padding: 32px 40px 48px; box-sizing: border-box">
+    <h1 style="margin: 0 0 4px; font-size: 30px; font-weight: 800; letter-spacing: -0.02em">Log a fill-up</h1>
+    <p style="margin: 0 0 24px; color: #64748B; font-size: 15px">Saved straight to your Google Sheet. Price comes from WOQOD automatically.</p>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+      <form style="flex: 3 1 520px; min-width: 0; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 20px; padding: 28px; display: flex; flex-direction: column; gap: 22px">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 18px">
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <label for="s4-date" style="font-size: 14px; font-weight: 600; color: #334155">Date</label>
+            <input id="s4-date" type="date" value="2026-10-24" style="min-height: 48px; box-sizing: border-box; padding: 0 14px; border-radius: 12px; border: 1px solid #CBD5E1; background: #FFFFFF; color: #0F172A; font-family: inherit; font-size: 15px">
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <label for="s4-odo" style="font-size: 14px; font-weight: 600; color: #334155">Odometer</label>
+            <div style="display: flex; align-items: center; border: 1px solid #CBD5E1; border-radius: 12px; overflow: hidden">
+              <input id="s4-odo" type="text" inputmode="numeric" value="9,183" style="flex: 1; min-width: 0; min-height: 46px; border: 0; padding: 0 14px; font-family: 'DM Mono', monospace; font-size: 16px; color: #0F172A">
+              <span style="padding: 0 14px; color: #64748B; font-size: 14px">km</span>
+            </div>
+            <span style="font-size: 12px; color: #047857">+409 km since 21 Oct</span>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 10px">
+          <span style="font-size: 14px; font-weight: 600; color: #334155">I'll enter</span>
+          <div style="display: inline-flex; align-self: flex-start; background: #F1F5F9; border-radius: 12px; padding: 4px; gap: 2px">
+            <button type="button" aria-pressed="true" style="min-height: 40px; padding: 0 16px; border: 0; border-radius: 9px; background: #FFFFFF; color: #0F172A; font-family: inherit; font-weight: 700; font-size: 14px; box-shadow: 0 1px 3px rgba(15,23,42,0.12)">Litres</button>
+            <button type="button" style="min-height: 40px; padding: 0 16px; border: 0; border-radius: 9px; background: transparent; color: #475569; font-family: inherit; font-weight: 600; font-size: 14px">Amount paid</button>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 18px">
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <label for="s4-l" style="font-size: 14px; font-weight: 600; color: #334155">Litres</label>
+            <div style="display: flex; align-items: center; border: 2px solid #4F46E5; border-radius: 12px; overflow: hidden">
+              <input id="s4-l" type="text" inputmode="decimal" value="41.80" style="flex: 1; min-width: 0; min-height: 44px; border: 0; padding: 0 14px; font-family: 'DM Mono', monospace; font-size: 18px; color: #0F172A">
+              <span style="padding: 0 14px; color: #64748B; font-size: 14px">L</span>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <label for="s4-p" style="font-size: 14px; font-weight: 600; color: #334155">Price per litre</label>
+            <div style="display: flex; align-items: center; border: 1px solid #CBD5E1; border-radius: 12px; overflow: hidden; background: #F8FAFC">
+              <span style="padding: 0 0 0 14px; color: #64748B; font-size: 14px">QAR</span>
+              <input id="s4-p" type="text" inputmode="decimal" value="2.10" style="flex: 1; min-width: 0; min-height: 46px; border: 0; padding: 0 10px; font-family: 'DM Mono', monospace; font-size: 18px; color: #0F172A; background: transparent">
+            </div>
+            <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: #4338CA"><span style="width: 6px; height: 6px; border-radius: 50%; background: #4F46E5"></span>WOQOD · Super 95 · Oct 2026</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <span style="font-size: 14px; font-weight: 600; color: #334155">Total</span>
+            <div style="min-height: 48px; display: flex; align-items: center; padding: 0 14px; border-radius: 12px; background: #EEF2FF; color: #3730A3; font-family: 'DM Mono', monospace; font-size: 20px; font-weight: 500">QAR 87.78</div>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 24px">
+          <fieldset style="border: 0; margin: 0; padding: 0">
+            <legend style="font-size: 14px; font-weight: 600; color: #334155; margin-bottom: 10px">Drive mode</legend>
+            <div style="display: flex; gap: 8px">
+              <button type="button" aria-pressed="true" style="min-height: 44px; padding: 0 18px; border-radius: 12px; border: 2px solid #10B981; background: #ECFDF5; color: #047857; font-family: inherit; font-weight: 700; font-size: 14px">Eco</button>
+              <button type="button" style="min-height: 44px; padding: 0 18px; border-radius: 12px; border: 1px solid #CBD5E1; background: #FFFFFF; color: #334155; font-family: inherit; font-weight: 600; font-size: 14px">Normal</button>
+              <button type="button" style="min-height: 44px; padding: 0 18px; border-radius: 12px; border: 1px solid #CBD5E1; background: #FFFFFF; color: #334155; font-family: inherit; font-weight: 600; font-size: 14px">Sport</button>
+            </div>
+          </fieldset>
+          <div style="display: flex; flex-direction: column; gap: 10px">
+            <span style="font-size: 14px; font-weight: 600; color: #334155">Full tank</span>
+            <button type="button" role="switch" aria-checked="true" aria-label="Full tank" style="width: 56px; height: 32px; border-radius: 999px; border: 0; background: #4F46E5; position: relative; padding: 0">
+              <span style="position: absolute; top: 4px; left: 28px; width: 24px; height: 24px; border-radius: 50%; background: #FFFFFF"></span>
+            </button>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <label for="s4-st" style="font-size: 14px; font-weight: 600; color: #334155">Station</label>
+          <input id="s4-st" type="text" value="Dafna" style="min-height: 48px; box-sizing: border-box; padding: 0 14px; border-radius: 12px; border: 1px solid #CBD5E1; background: #FFFFFF; color: #0F172A; font-family: inherit; font-size: 15px">
+          <div style="display: flex; flex-wrap: wrap; gap: 8px">
+            <button type="button" style="min-height: 36px; padding: 0 12px; border-radius: 999px; border: 0; background: #EEF2FF; color: #4338CA; font-family: inherit; font-weight: 600; font-size: 13px">Dafna</button>
+            <button type="button" style="min-height: 36px; padding: 0 12px; border-radius: 999px; border: 0; background: #F1F5F9; color: #334155; font-family: inherit; font-weight: 600; font-size: 13px">Pearl</button>
+            <button type="button" style="min-height: 36px; padding: 0 12px; border-radius: 999px; border: 0; background: #F1F5F9; color: #334155; font-family: inherit; font-weight: 600; font-size: 13px">Fox Hills</button>
+            <button type="button" style="min-height: 36px; padding: 0 12px; border-radius: 999px; border: 0; background: #F1F5F9; color: #334155; font-family: inherit; font-weight: 600; font-size: 13px">Onaiza</button>
+          </div>
+        </div>
+
+        <button type="submit" style="min-height: 54px; border: 0; border-radius: 14px; background: #4F46E5; color: #FFFFFF; font-family: inherit; font-weight: 700; font-size: 16px; box-shadow: 0 6px 18px rgba(79,70,229,0.3)">Save fill-up</button>
+      </form>
+
+      <aside style="flex: 2 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
+        <div style="background: #0F172A; color: #FFFFFF; border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 16px">
+          <div style="font-size: 14px; color: #CBD5E1; font-weight: 600">Trip summary · 21 Oct → 24 Oct</div>
+          <div style="display: flex; align-items: baseline; gap: 10px"><span style="font-size: 44px; font-weight: 800; letter-spacing: -0.02em">9.33</span><span style="color: #CBD5E1">L/100 km</span></div>
+          <div style="display: inline-flex; align-self: flex-start; padding: 6px 10px; border-radius: 999px; background: #3F2D10; color: #FCD34D; font-size: 13px; font-weight: 700">+0.04 vs average</div>
+          <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; border-top: 1px solid #1E293B; padding-top: 16px">
+            <div><div style="font-size: 12px; color: #94A3B8">Distance</div><div style="font-family: 'DM Mono', monospace; font-size: 18px">409 km</div></div>
+            <div><div style="font-size: 12px; color: #94A3B8">Fuel used</div><div style="font-family: 'DM Mono', monospace; font-size: 18px">38.14 L</div></div>
+            <div><div style="font-size: 12px; color: #94A3B8">Cost/km</div><div style="font-family: 'DM Mono', monospace; font-size: 18px">0.196</div></div>
+          </div>
+        </div>
+        <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 12px">
+          <div style="font-size: 16px; font-weight: 700">What gets saved</div>
+          <div style="display: flex; gap: 12px; align-items: flex-start">
+            <span style="flex: none; width: 28px; height: 28px; border-radius: 8px; background: #FFFBEB; color: #B45309; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px">24</span>
+            <div style="font-size: 14px; line-height: 1.5"><b>Update row 24</b> · 21 Oct 2026<br><span style="color: #64748B">Odometer POST → 9,183</span></div>
+          </div>
+          <div style="display: flex; gap: 12px; align-items: flex-start">
+            <span style="flex: none; width: 28px; height: 28px; border-radius: 8px; background: #ECFDF5; color: #047857; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px">25</span>
+            <div style="font-size: 14px; line-height: 1.5"><b>New row 25</b> · 24 Oct 2026<br><span style="color: #64748B">41.80 L · QAR 2.10 · QAR 87.78 · Full · Eco · Dafna</span></div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1240}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>
