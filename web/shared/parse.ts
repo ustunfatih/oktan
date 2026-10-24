@@ -92,7 +92,7 @@ export function parsePrices(values: Cell[][]): MonthPrice[] {
   });
 }
 
-const SETTING_KEYS: Record<string, keyof Omit<Settings, "stations" | "modes">> = {
+export const SETTING_KEYS: Record<string, keyof Omit<Settings, "stations" | "stationList" | "modes">> = {
   theme: "theme",
   "fuel grade": "fuelGrade",
   "tank capacity (l)": "tankCapacityL",
@@ -107,18 +107,23 @@ export const DEFAULT_SETTINGS: Settings = {
   defaultMode: "Eco",
   currency: "QAR",
   stations: [],
+  stationList: [],
   modes: ["Eco", "Normal", "Sport"],
 };
 
-/** The Settings tab's A:G block: key/value pairs in A:B, stations in E, drive modes in G. */
+/** The Settings tab's A:G block: key/value pairs in A:B, stations in E (archived flag in F), drive modes in G. */
 export function parseSettings(values: Cell[][]): Settings {
-  const s: Settings = { ...DEFAULT_SETTINGS, stations: [], modes: [] };
+  const s: Settings = { ...DEFAULT_SETTINGS, stations: [], stationList: [], modes: [] };
   for (const r of values.slice(1)) {
     const key = SETTING_KEYS[normalize(r[0])];
     if (key === "tankCapacityL") s.tankCapacityL = num(r[1]) ?? DEFAULT_SETTINGS.tankCapacityL;
     else if (key) s[key] = text(r[1]) ?? DEFAULT_SETTINGS[key];
     const station = text(r[4]);
-    if (station) s.stations.push(station);
+    if (station) {
+      const archived = r[5] === true || normalize(r[5]) === "true";
+      s.stationList.push({ name: station, archived });
+      if (!archived) s.stations.push(station);
+    }
     const mode = text(r[6]);
     if (mode) s.modes.push(mode);
   }

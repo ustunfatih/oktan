@@ -34,6 +34,12 @@ export interface MonthPrice {
   source: string | null;
 }
 
+export interface StationItem {
+  name: string;
+  /** Archived stations stay in the sheet's list (for old fill-ups) but are hidden from the Log form. */
+  archived: boolean;
+}
+
 /** The Settings tab. */
 export interface Settings {
   theme: string;
@@ -41,7 +47,10 @@ export interface Settings {
   tankCapacityL: number;
   defaultMode: string;
   currency: string;
+  /** Active station names, in the sheet's order. */
   stations: string[];
+  /** Every station in the list, archived ones included. */
+  stationList: StationItem[];
   modes: string[];
 }
 
@@ -52,6 +61,8 @@ export interface DataResponse {
   canWrite: boolean;
   /** True when the Worker knows the DEV copy, so the app can offer test mode. */
   testModeAvailable: boolean;
+  /** Link to the Google Sheet this response came from. */
+  sheetUrl: string;
   /** ISO timestamp of the sheet read (may be up to the cache TTL old). */
   fetchedAt: string;
   entries: Entry[];
@@ -93,4 +104,10 @@ export interface WriteResponse {
 export interface PriceWriteResponse {
   data: DataResponse;
   outcome: { written: boolean; message: string; month?: string; price?: number };
+}
+
+/** Response to a settings or station-list change. */
+export interface SettingsWriteResponse {
+  data: DataResponse;
+  message: string;
 }

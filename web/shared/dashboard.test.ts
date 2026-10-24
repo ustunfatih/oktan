@@ -78,6 +78,7 @@ describe("parseSettings", () => {
       defaultMode: "Eco",
       currency: "QAR",
       stations: ["Pearl", "Dafna", "Fox Hills", "Onaiza"],
+      stationList: ["Pearl", "Dafna", "Fox Hills", "Onaiza"].map((name) => ({ name, archived: false })),
       modes: ["Eco", "Normal", "Sport"],
     });
   });

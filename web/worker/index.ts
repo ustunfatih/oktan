@@ -5,9 +5,11 @@ import { GoogleAuthError } from "./google";
 import { readWorkbook, SheetsApiError } from "./sheets";
 import { fetchWoqod } from "./woqod";
 import { refreshFromWoqod, writeMonthPrice, type PriceOutcome } from "./prices";
+import { writeSettings, writeStations } from "./settings";
 import { applyPlan } from "./writes";
 import { parseEntries, parsePrices, parseSettings, SheetLayoutError } from "../shared/parse";
-import type { DataResponse, Entry, PriceWriteResponse, WriteResponse } from "../shared/types";
+import { planStations, validateSettings, type SettingsPatch, type StationEdit } from "../shared/settings";
+import type { DataResponse, Entry, PriceWriteResponse, SettingsWriteResponse, WriteResponse } from "../shared/types";
 import { planAdd, planDelete, planEdit, PlanError, validateEntry, type EntryInput, type FieldErrors } from "../shared/writes";
 
 type App = { Bindings: Env; Variables: { email: string; sheet: ActiveSheet } };
@@ -41,6 +43,7 @@ async function load(c: Context<App>, fresh: boolean): Promise<{ body: DataRespon
       sheet: sheet.kind,
       canWrite: sheet.canWrite,
       testModeAvailable: sheet.testModeAvailable,
+      sheetUrl: `https://docs.google.com/spreadsheets/d/${sheet.id}/edit`,
       fetchedAt: wb.fetchedAt,
       entries,
       prices: parsePrices(wb.prices),
@@ -159,6 +162,39 @@ app.put("/api/prices/:month", async (c) => {
 app.post("/api/prices/:month/unlock", (c) =>
   priceResponse(c, () => writeMonthPrice(c.env, c.get("sheet").id, c.req.param("month"), 0, "Sheet", c.get("email"))),
 );
+
+// ── Settings ───────────────────────────────────────────────────────────────
+
+app.put("/api/settings", async (c) => {
+  if (!c.get("sheet").canWrite) return c.json({ error: LOCKED }, 403);
+  const { patch } = await c.req.json<{ patch: SettingsPatch }>();
+  const { body } = await load(c, true);
+  const clean: SettingsPatch = {};
+  if (patch.theme !== undefined) clean.theme = String(patch.theme);
+  if (patch.fuelGrade !== undefined) clean.fuelGrade = String(patch.fuelGrade);
+  if (patch.tankCapacityL !== undefined) clean.tankCapacityL = Number(patch.tankCapacityL);
+  if (patch.defaultMode !== undefined) clean.defaultMode = String(patch.defaultMode);
+  const errors = validateSettings(clean, body.settings.modes);
+  if (Object.keys(errors).length) return c.json({ error: Object.values(errors).join(" "), fields: errors }, 400);
+  const message = await writeSettings(c.env, c.get("sheet").id, clean, c.get("email"));
+  const res: SettingsWriteResponse = { data: (await load(c, true)).body, message };
+  return c.json(res);
+});
+
+app.put("/api/stations", async (c) => {
+  if (!c.get("sheet").canWrite) return c.json({ error: LOCKED }, 403);
+  const { stations, renameInHistory } = await c.req.json<{ stations: StationEdit[]; renameInHistory: boolean }>();
+  const { body, entries } = await load(c, true);
+  let plan;
+  try {
+    plan = planStations(body.settings.stationList, stations, entries, !!renameInHistory);
+  } catch (e) {
+    return c.json({ error: e instanceof Error ? e.message : String(e), data: body }, 400);
+  }
+  const message = await writeStations(c.env, c.get("sheet").id, plan, body.settings.stationList, c.get("email"));
+  const res: SettingsWriteResponse = { data: (await load(c, true)).body, message };
+  return c.json(res);
+});
 
 app.notFound((c) => c.json({ error: "Not found" }, 404));
 

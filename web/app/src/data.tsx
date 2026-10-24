@@ -18,7 +18,8 @@ interface DataState {
   setSheet: (sheet: "live" | "dev") => Promise<void>;
 }
 
-const CACHE_KEY = "oktan:data:v1";
+// Bump the version whenever DataResponse changes shape, so an older saved copy is ignored.
+const CACHE_KEY = "oktan:data:v2";
 const STALE_MS = 60_000;
 
 // Per-device convenience only: shows the last known numbers instantly while the sheet is re-read.

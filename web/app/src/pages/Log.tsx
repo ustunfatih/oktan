@@ -23,7 +23,16 @@ const toInput = (e: Entry): EntryInput => ({
 export function Log() {
   const { data, error, setData, setSheet, loading } = useData();
   const woqod = useWoqod();
-  const [tab, setTab] = useState<Tab>("new");
+  const [tab, setTab] = useState<Tab>(() => {
+    // Settings → "Fuel prices" opens this tab on Prices.
+    try {
+      const wanted = sessionStorage.getItem("oktan:logTab");
+      sessionStorage.removeItem("oktan:logTab");
+      return wanted === "prices" ? "prices" : "new";
+    } catch {
+      return "new";
+    }
+  });
   const [editing, setEditing] = useState<Entry | null>(null);
   const [toast, setToast] = useState<Toast | null>(null);
   const [formKey, setFormKey] = useState(0);

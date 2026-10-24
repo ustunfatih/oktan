@@ -4,8 +4,9 @@ import { fmt, fmtAgo } from "./format";
 import { BarsIcon, DropIcon, GaugeIcon, GearIcon, PlusIcon, RefreshIcon } from "./icons";
 import { Dashboard } from "./pages/Dashboard";
 import { Analytics } from "./pages/Analytics";
-import { ComingSoon } from "./pages/ComingSoon";
 import { Log } from "./pages/Log";
+import { Settings } from "./pages/Settings";
+import { useAppliedTheme } from "./theme";
 import { Link, RouterProvider, useRouter, type Route } from "./router";
 
 const TABS: { to: Route; label: string; icon: ComponentType }[] = [
@@ -26,6 +27,8 @@ export function App() {
 
 function Shell() {
   const { route } = useRouter();
+  const { data } = useData();
+  useAppliedTheme(data?.settings.theme);
   return (
     <div className="shell">
       <TopBar />
@@ -34,7 +37,7 @@ function Shell() {
         {route === "/" && <Dashboard />}
         {route === "/analytics" && <Analytics />}
         {route === "/log" && <Log />}
-        {route === "/settings" && <ComingSoon title="Settings" phase="phase 6b" />}
+        {route === "/settings" && <Settings />}
       </main>
       <nav className="bottom-nav" aria-label="Main">
         {TABS.map(({ to, label, icon: Icon }) => (

@@ -67,6 +67,22 @@ Progress log:
   - Every price change is recorded in App_Log.
   - **Tested:** 57 unit tests; a 9-step API run on the DEV sheet (save, no-op, manual, lock, unlock, restore,
     bad month, bad price); the cron triggered locally; the screen at phone size. DEV cleaned up afterwards.
+  - Committed as `752b2a2`.
+- 24 Oct — **Phase 6b (Settings page) deployed** (version `141a4bee`, uncommitted).
+  - **Theme picker** saved to Settings!B2, plus a per-device override. Only Instrument Cluster is selectable
+    until phase 7; the others are shown as "Arrives in phase 7".
+  - **Car & fuel:** tank capacity (warns that the sheet recalculates history), fuel grade for WOQOD prices,
+    default drive mode.
+  - **Stations editor:** rename, reorder, add, archive/restore (archived = column F, hidden from the Log
+    form). Deleting is allowed only for unused stations. Renaming a used station requires "also rename in
+    past fill-ups", which does an exact-match find-and-replace in the Data tab in the same atomic update.
+  - **Data & sync:** sheet link, last read, refresh, CSV export, Fuel prices shortcut, test-mode switch.
+  - **Account:** signed-in email, sign out.
+  - **Tested:** 64 unit tests; an 11-step API run on the DEV sheet (tank size flows into the sheet's
+    formulas; invalid grade refused; add/archive/reorder; rename refused without history and applied with
+    it; deleting a used station refused; full restore); the screen at desktop and phone sizes.
+  - **Bug found and fixed:** a copy of the data saved on the device by the previous version (no station
+    list) crashed the page. The saved-copy key is now versioned (`oktan:data:v2`).
 
 What you've decided so far:
 
