@@ -1,6 +1,8 @@
 import { useState, type KeyboardEvent, type PointerEvent } from "react";
 import type { TrendPoint } from "../../../shared/dashboard";
 import { fmt, fmtDate, fmtMonth } from "../format";
+import { robustRange, ticks } from "../../../shared/scale";
+import { ChartTable } from "./ChartTable";
 import { useWidth } from "./useWidth";
 
 interface Props {
@@ -21,17 +23,18 @@ export function TrendChart({ points, average, best, worst }: Props) {
   if (points.length < 2) return <div ref={ref} className="chart-empty">Not enough completed trips yet.</div>;
 
   const values = points.map((p) => p.value);
-  const lo = Math.floor((Math.min(...values) - 0.2) * 2) / 2;
-  const hi = Math.ceil((Math.max(...values) + 0.2) * 2) / 2;
+  // The axis ignores outliers: a value far outside the rest is drawn at the edge and marked "off scale".
+  const { lo, hi, outliers } = robustRange(values, 1, 4);
+  const offScale = (v: number) => outliers.has(v);
   const plotW = width - PAD.left - PAD.right;
   const plotH = height - PAD.top - PAD.bottom;
   const x = (i: number) => PAD.left + (plotW * i) / (points.length - 1);
-  const y = (v: number) => PAD.top + plotH * (1 - (v - lo) / (hi - lo));
+  const clampV = (v: number) => Math.min(hi, Math.max(lo, v));
+  const y = (v: number) => PAD.top + plotH * (1 - (clampV(v) - lo) / (hi - lo));
 
   const line = points.map((p, i) => `${i ? "L" : "M"}${x(i).toFixed(1)} ${y(p.value).toFixed(1)}`).join(" ");
   const area = `${line} L${x(points.length - 1).toFixed(1)} ${PAD.top + plotH} L${PAD.left} ${PAD.top + plotH} Z`;
-  const grid: number[] = [];
-  for (let v = lo; v <= hi + 1e-9; v += 0.5) grid.push(Math.round(v * 10) / 10);
+  const grid = ticks(lo, hi, 4);
 
   const pick = (e: PointerEvent<SVGSVGElement>) => {
     const box = e.currentTarget.getBoundingClientRect();
@@ -57,7 +60,7 @@ export function TrendChart({ points, average, best, worst }: Props) {
       <p className="chart-readout" aria-live="polite">
         {sel ? (
           <>
-            <b>{fmtDate(sel.date)}</b> · {fmt(sel.value, 2)} L/100 km · {fmt(sel.km)} km
+            <b>{fmtDate(sel.date)}</b> · {fmt(sel.value, 2)} L/100 km{offScale(sel.value) ? " (off the scale)" : ""} · {fmt(sel.km)} km
             {sel.station ? ` · ${sel.station}` : ""}
             {sel.mode ? ` · ${sel.mode}` : ""}
           </>
@@ -92,6 +95,13 @@ export function TrendChart({ points, average, best, worst }: Props) {
         <path d={line} className="trend__line" />
         {bi >= 0 && <circle cx={x(bi)} cy={y(points[bi]!.value)} r="5" className="dot-good" />}
         {wi >= 0 && <circle cx={x(wi)} cy={y(points[wi]!.value)} r="5" className="dot-bad" />}
+        {points.map((p, i) =>
+          offScale(p.value) ? (
+            <text key={`off-${p.id}`} x={x(i)} y={y(p.value) + (p.value > hi ? 14 : -6)} textAnchor="middle" className="chart-label">
+              {p.value > hi ? "▲" : "▼"}
+            </text>
+          ) : null,
+        )}
         <circle cx={x(li)} cy={y(points[li]!.value)} r="5" className="trend__last" />
         {sel && selected !== null && (
           <g>
@@ -112,6 +122,11 @@ export function TrendChart({ points, average, best, worst }: Props) {
         {best && <span className="legend-good">● best {fmt(best.value, 2)} · {fmtMonth(best.date)}</span>}
         {worst && <span className="legend-bad">● worst {fmt(worst.value, 2)} · {fmtMonth(worst.date)}</span>}
       </div>
+      <ChartTable
+        caption="Litres per 100 km for each tank"
+        head={["Date", "L per 100 km", "km driven"]}
+        rows={points.map((p) => [fmtDate(p.date), fmt(p.value, 2), fmt(p.km)])}
+      />
     </div>
   );
 }

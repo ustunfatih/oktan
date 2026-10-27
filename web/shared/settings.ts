@@ -13,7 +13,9 @@ export interface ThemeInfo {
 export const THEMES: ThemeInfo[] = [
   { id: "cluster", name: "Instrument Cluster", swatches: ["#0A0C0F", "#11151A", "#FFB547", "#4FD1E8"], fonts: "Chakra Petch + JetBrains Mono", available: true },
   { id: "swiss", name: "Swiss Ledger", swatches: ["#FFFFFF", "#F2F2F2", "#111111", "#E30613"], fonts: "Inter Tight + IBM Plex Mono", available: true },
+  { id: "swiss-dark", name: "Swiss Ledger (dark)", swatches: ["#0E0E0E", "#F5F5F5", "#FF5563", "#6EE08F"], fonts: "Inter Tight + IBM Plex Mono", available: true },
   { id: "doha", name: "Doha Editorial", swatches: ["#F6F1E9", "#FFFDF9", "#8A1538", "#1F6F6B"], fonts: "Fraunces + Work Sans", available: true },
+  { id: "doha-dark", name: "Doha Editorial (dark)", swatches: ["#1B1417", "#251C20", "#E7A9B9", "#8FD3C8"], fonts: "Fraunces + Work Sans", available: true },
   { id: "fintech", name: "Soft Fintech", swatches: ["#F4F6FB", "#FFFFFF", "#4F46E5", "#10B981"], fonts: "Plus Jakarta Sans + DM Mono", available: true },
   { id: "brutalist", name: "Pump Brutalist", swatches: ["#FFF8E7", "#FFFFFF", "#FFD60A", "#1F4FFF"], fonts: "Space Grotesk + Space Mono", available: true },
 ];

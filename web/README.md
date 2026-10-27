@@ -25,9 +25,9 @@ phone / browser ──► Cloudflare Access (Google login, one allowed email)
 | Folder | What's in it |
 | --- | --- |
 | `app/` | The React app (Vite). Pages: Dashboard, Analytics, Log, Settings. Themes are CSS tokens in `styles.css`. |
-| `worker/` | The Cloudflare Worker: routes in `app.ts`, entry point in `index.ts`, Google auth, Sheets client, writes. |
-| `shared/` | Code used by both: sheet parsing, metrics, analytics, write planning, validation. Most tests live here. |
-| `scripts/` | `load-secrets.sh`, which loads the Google key into Cloudflare and `.dev.vars`. |
+| `worker/` | The Cloudflare Worker: routes in `app.ts`, entry point in `index.ts`, Google auth, Sheets client, writes, service jobs (`service.ts`), web push (`push.ts`) and reminders (`reminders.ts`). |
+| `shared/` | Code used by both: sheet parsing, metrics, analytics, write planning, validation, service jobs and due dates (`maintenance.ts`). Most tests live here. |
+| `scripts/` | `load-secrets.sh` (loads the Google key into Cloudflare and `.dev.vars`) and `make-vapid.mjs` (makes the web push key pair). |
 | `mockups/` | The design boards the themes came from. |
 
 **The sheet is the only database.** The Worker keeps a 30-second in-memory copy per sheet to save quota.
@@ -98,6 +98,48 @@ If you ever recreate the Access application, its **AUD tag** changes. Copy the n
 Set `"LIVE_WRITES": "false"` in `wrangler.jsonc` and deploy. The app then refuses to save to the live sheet,
 and the cron skips it. Test mode (the DEV copy) keeps working. Set it back to `"true"` to unlock.
 
+### Service tabs (maintenance log)
+
+Two tabs hold the car's service history. The app creates them on your first save, so nothing is added to the sheet
+until you use the feature.
+
+- **`Maintenance`**: one row per job. Columns: Date, Odometer km, Category, Description, Cost QAR, Workshop,
+  Next due km, Next due date, Notes, and the hidden ID in column J. Edit by hand if you need to; a row without a
+  date, category or odometer is skipped and counted on the Service page.
+- **`Service plan`**: one row per category with **Every km** and **Every months**. Blank means that measure isn't
+  used. The starting values are generic: check them against your car's service book and change them in the app
+  (Service → Plan) or here.
+
+Due dates come from the latest job in each category. A job's own "next due" values override the plan for that
+job. The dashboard's "Next service" panel shows the four items due soonest, and the Analytics page totals service
+spend for the chosen range.
+
+Deleting rows in these tabs is safe (they have no formulas). Deletes made in the app go to `App_Log`.
+
+### Fill-up reminders (web push)
+
+The Worker sends a notification to each subscribed phone when it has been long enough since the last fill-up.
+It checks once a day at 08:00 Qatar time. Each fill-up gets at most one reminder, and the gap (default 10 days)
+is set in Settings.
+
+**One-time setup (needed before reminders can be turned on):**
+
+1. Make the key pair, saving the private half to a file outside the project:
+   ```bash
+   node scripts/make-vapid.mjs ~/Secrets/oktan-vapid.jwk.json
+   ```
+2. Put the printed public key in `wrangler.jsonc` as `VAPID_PUBLIC_KEY`, then deploy.
+3. Load the private key as a secret, then delete the file:
+   ```bash
+   npx wrangler secret put VAPID_PRIVATE_JWK < ~/Secrets/oktan-vapid.jwk.json
+   ```
+
+The subscriptions live in the KV namespace `PUSH` (device credentials, not sheet data). On iPhone, reminders only
+work for an app added to the Home Screen (iOS 16.4 or later).
+
+**Key rotation notice:** `KEY_CREATED_ON` in `wrangler.jsonc` is the date the Google key was made. The daily check
+sends a notice about 330 days after that date. After you rotate the key (above), update `KEY_CREATED_ON`.
+
 ### Logs and errors
 
 Every failed request, every write, every browser crash and every price check is written as one JSON line
@@ -108,6 +150,8 @@ to the Worker logs:
 | `api` | Any write, and any request that failed (method, path, status, duration). |
 | `api_error` | A failure with its cause: `google_auth`, `sheet_layout`, `sheets_<status>`, `unexpected`. |
 | `sheets_retry` | Google said "too many requests" or had a hiccup, and the Worker is retrying. |
+| `push_failed` | A reminder couldn't be delivered (the status code, or that the VAPID key isn't set). |
+| `daily_check` | The daily 08:00 check: reminders and the key notice that were sent. |
 | `client_error` | A crash or unhandled error in the browser (message, stack, page, browser). |
 | `price_check` | The monthly WOQOD job, per sheet: saved, unchanged, skipped or failed. |
 
@@ -116,6 +160,19 @@ To see them, go to **Cloudflare dashboard → Workers & Pages → oktan → Obse
 ```bash
 npx wrangler tail oktan --format pretty
 ```
+
+### Limits and security
+
+- **Changes are rate-limited:** 60 a minute per account (the `WRITE_LIMITER` binding). Crash reports: 20 a minute.
+  Access already restricts the app to one account, so a limit only trips on a runaway loop; the message says so.
+- **Headers:** `app/public/_headers` sets the Content-Security-Policy, HSTS, frame and referrer rules. Built files
+  are cached for a year (their names change when they change). Scripts come only from the app itself, so the theme
+  script is a file (`theme-init.js`), not inline. Styles allow inline `style` attributes, which React uses.
+- **Fonts are self-hosted** from the `@fontsource` packages, so nothing loads from Google at runtime. The build keeps
+  fonts as files (`assetsInlineLimit: 0`), because the content policy blocks inlined `data:` fonts. Adding a font
+  means adding its `@fontsource` package and CSS import in `app/src/main.tsx`.
+- **Access session:** in Cloudflare Zero Trust, check the session duration of the Oktan application (Access →
+  Applications → Oktan → Session duration). Shorter is safer on a shared phone.
 
 ### Google quota
 
@@ -139,6 +196,29 @@ The Sheets API allows about 60 reads and 60 writes per minute for this service a
 | Google Sheets is busy | Quota burst. | Wait a minute. |
 | Invalid sign-in token / This account is not allowed | `ACCESS_AUD` or `ALLOWED_EMAIL` doesn't match Access. | See "Changing who can sign in" above. |
 | This screen hit a problem | A bug in the app. It has been reported to the logs. | Reload. Look for the `client_error` line in the logs. |
+
+### Launch screen and splash
+
+Home Screen launches show two things, both the "gauge sweep" design:
+
+- **Launch image** (static, shown by iOS before the app starts): the gauge at its final reading, in light or dark
+  to match the phone's setting. iOS can't read the app's theme at this point, so light uses Soft Fintech colours and
+  dark uses Instrument Cluster colours (the Auto pair). There's one PNG per iPhone screen size in `app/public/splash/`,
+  linked from `app/index.html`. To change the colours or the gauge, edit `scripts/make-launch-images.mjs` and run
+  `node scripts/make-launch-images.mjs`.
+- **In-app splash** (animated): the gauge sweeps up to the same reading in the app's own theme colours, and the
+  wordmark fades in. It stays about 1.3 seconds, or until the first screen is ready, and never more than 6 seconds.
+  With Reduce Motion on, it shows the final frame briefly. Markup in `app/index.html`, styles in `styles.css`
+  (`.splash`), timing in `app/src/splash.ts`.
+
+In an ordinary browser tab neither appears. To see them, add Oktan to the Home Screen and open it from there.
+
+### Offline fill-ups
+
+A fill-up saved with no connection is kept on the phone (IndexedDB) under **Waiting to send** on the Log page, and
+the top bar shows how many are waiting. They go to the sheet when the phone is back online, or with **Send now**.
+If the sheet already has a fill-up with the same date, odometer and litres (the reply was lost, not the save), the
+queued copy is dropped instead of added twice. Edits and deletes need a connection.
 
 ### Backups and undo
 

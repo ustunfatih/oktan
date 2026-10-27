@@ -5,6 +5,7 @@ import { api, useData, type WriteError } from "../data";
 import { fmtAgo, fmtDate } from "../format";
 import { useRouter } from "../router";
 import { readDeviceTheme, writeDeviceTheme } from "../theme";
+import { RemindersSection } from "./Reminders";
 
 export function Settings() {
   const { data, error } = useData();
@@ -59,6 +60,7 @@ function SettingsView({ data }: { data: DataResponse }) {
 
       <ThemeSection data={data} onSave={(theme) => putSettings({ theme })} />
       <CarSection data={data} onSave={putSettings} />
+      <RemindersSection />
       <StationsSection data={data} onSave={(stations, renameInHistory) => save(() => api<SettingsWriteResponse>("/api/stations", { method: "PUT", body: { stations, renameInHistory } }))} />
       <DataSection data={data} />
 
@@ -97,13 +99,12 @@ function ThemeSection({ data, onSave }: { data: DataResponse; onSave: (theme: st
         <h2>Theme</h2>
         <span className="label">Everywhere you sign in</span>
       </div>
-      <div className="themes" role="radiogroup" aria-label="Theme">
+      <div className="themes" role="group" aria-label="Theme">
         {options.map((t) => (
           <button
             key={t.id}
             type="button"
-            role="radio"
-            aria-checked={data.settings.theme === t.id}
+            aria-pressed={data.settings.theme === t.id}
             className="theme-card"
             disabled={!t.available || !data.canWrite || busy}
             onClick={async () => {

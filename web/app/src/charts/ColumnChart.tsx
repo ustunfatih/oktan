@@ -1,4 +1,6 @@
 import { useState, type KeyboardEvent, type ReactNode } from "react";
+import { ChartTable } from "./ChartTable";
+import { niceStep } from "../../../shared/scale";
 import { useWidth } from "./useWidth";
 
 export interface Column {
@@ -30,14 +32,17 @@ export function ColumnChart({ columns, formatY, yStep, ariaLabel, hint, showValu
 
   if (!columns.length) return <div ref={ref} className="chart-empty">No data in this range.</div>;
 
-  const top = Math.max(yStep, Math.ceil(Math.max(...columns.map((c) => c.value)) / yStep) * yStep);
+  // At most about five labels, however large the biggest column is.
+  const maxValue = Math.max(...columns.map((c) => c.value));
+  const gridStep = Math.max(yStep, niceStep(maxValue, 5));
+  const top = Math.max(gridStep, Math.ceil(maxValue / gridStep) * gridStep);
   const plotW = width - PAD.left - PAD.right;
   const plotH = height - PAD.top - PAD.bottom;
   const slot = plotW / columns.length;
   const barW = Math.max(3, Math.min(showValues ? 64 : 26, slot * 0.64));
   const y = (v: number) => PAD.top + plotH * (1 - v / top);
   const grid: number[] = [];
-  for (let v = yStep; v <= top + 1e-9; v += yStep) grid.push(Math.round(v * 1000) / 1000);
+  for (let v = gridStep; v <= top + 1e-9; v += gridStep) grid.push(Math.round(v * 1000) / 1000);
   const sel = selected === null ? null : columns[selected]!;
   const onKey = (e: KeyboardEvent) => {
     if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
@@ -105,6 +110,11 @@ export function ColumnChart({ columns, formatY, yStep, ariaLabel, hint, showValu
           );
         })}
       </svg>
+      <ChartTable
+        caption={ariaLabel}
+        head={["Category", "Value"]}
+        rows={columns.map((c) => [c.axisLabel ?? c.key, formatY(c.value)])}
+      />
     </div>
   );
 }

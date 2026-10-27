@@ -20,9 +20,18 @@
 
   "observability": { "enabled": true },
 
-  // Monthly WOQOD price check: 03:00 UTC (06:00 Qatar) on the 1st–5th. Re-running is harmless:
+  // Push subscriptions for fill-up reminders, and the reminder settings. Not sheet data: device credentials.
+  "kv_namespaces": [{ "binding": "PUSH", "id": "4183a2e3115e495f9b44d12d5b629571" }],
+
+  // Per-user request limits (Workers Rate Limiting). Writes: 60 a minute. Crash reports: 20 a minute.
+  "ratelimits": [
+    { "name": "WRITE_LIMITER", "namespace_id": "1001", "simple": { "limit": 60, "period": 60 } },
+    { "name": "REPORT_LIMITER", "namespace_id": "1002", "simple": { "limit": 20, "period": 60 } }
+  ],
+
+  // Daily 05:00 UTC (08:00 Qatar): fill-up reminders and the key-rotation notice. Monthly WOQOD price check: 03:00 UTC (06:00 Qatar) on the 1st–5th. Re-running is harmless:
   // an unchanged price or a manual (locked) price is left alone.
-  "triggers": { "crons": ["0 3 1-5 * *"] },
+  "triggers": { "crons": ["0 3 1-5 * *", "0 5 * * *"] },
 
   "vars": {
     "ACCESS_TEAM_DOMAIN": "ustunfatih.cloudflareaccess.com",
@@ -34,7 +43,12 @@
     "DEV_SHEET_ID": "1MJUHs2YSOssKJBL3neTz7zXSvzrm2ll4dIMJtgvYf58",
     // "false" locks saving to the live sheet (test mode still works). Unlocked 24 Oct 2026 after the
     // add/edit/undo/delete flow was approved in test mode.
-    "LIVE_WRITES": "true"
+    "LIVE_WRITES": "true",
+    // Web push: the public half of the VAPID key pair (safe to publish). The private half is the secret VAPID_PRIVATE_JWK.
+    "VAPID_PUBLIC_KEY": "BOSQcPcRbAyi5lZWd0aR54tLcKaP4woPUhjg9NksUOzpUiWrl2ItNm-iXAd-lvLAM-bcMTtD37fe2pjUX3zRF5g",
+    "VAPID_SUBJECT": "mailto:ustunfa@gmail.com",
+    // Google key creation date, for the yearly rotation notice (see README, "Rotating the Google service account key").
+    "KEY_CREATED_ON": "2026-10-24"
   }
   // Secret (set with `npm run setup:secrets`, never committed): GOOGLE_SA_KEY
 }

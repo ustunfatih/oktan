@@ -1,6 +1,8 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
-import type { DataResponse, WoqodResponse } from "../../shared/types";
-import type { FieldErrors } from "../../shared/writes";
+import type { DataResponse, WriteResponse, WoqodResponse } from "../../shared/types";
+import type { Entry } from "../../shared/types";
+import type { EntryInput, FieldErrors } from "../../shared/writes";
+import { loadQueue, removeQueued, saveQueued, type QueuedEntry } from "./outbox";
 
 export type LoadError = { kind: "session" | "server" | "network"; message: string; detail?: string };
 /** A refused write: the message, any per-field errors, and the fresh sheet when the server sent it. */
@@ -16,10 +18,17 @@ interface DataState {
   setData: (data: DataResponse) => void;
   /** Switch between the live sheet and the DEV copy (test mode). */
   setSheet: (sheet: "live" | "dev") => Promise<void>;
+  /** Fill-ups saved on this phone that haven't reached the sheet yet. */
+  pending: QueuedEntry[];
+  /** Keep a fill-up for when the phone is back online. */
+  queueEntry: (entry: EntryInput, lastIdSeen: string | null) => Promise<void>;
+  /** Try to send the waiting fill-ups now. */
+  sendPending: () => void;
+  discardPending: (id: string) => Promise<void>;
 }
 
 // Bump the version whenever DataResponse changes shape, so an older saved copy is ignored.
-const CACHE_KEY = "oktan:data:v2";
+const CACHE_KEY = "oktan:data:v3";
 const STALE_MS = 60_000;
 
 // Per-device convenience only: shows the last known numbers instantly while the sheet is re-read.
@@ -73,11 +82,16 @@ export async function api<T>(path: string, init?: { method: string; body: unknow
 
 const DataContext = createContext<DataState | null>(null);
 
+/** A saved fill-up that matches a queued one: the same day, odometer and litres. Used after a lost reply. */
+const sameFillUp = (entry: EntryInput) => (e: Entry) => e.date === entry.date && e.odometer === entry.odometer && Math.abs(e.liters - entry.liters) < 0.005;
+
 export function DataProvider({ children }: { children: ReactNode }) {
   const [data, setDataState] = useState<DataResponse | null>(readCache);
   const [error, setError] = useState<LoadError | null>(null);
   const [loading, setLoading] = useState(true);
   const lastLoad = useRef(0);
+  const [pending, setPending] = useState<QueuedEntry[]>([]);
+  const flushing = useRef(false);
 
   const setData = useCallback((next: DataResponse) => {
     setDataState(next);
@@ -115,6 +129,54 @@ export function DataProvider({ children }: { children: ReactNode }) {
     [setData],
   );
 
+  /**
+   * Sends the waiting fill-ups in the order they were saved. Stops at the first sign of no connection, so
+   * nothing is lost. A fill-up the sheet already has (its reply was lost on the way) is dropped quietly.
+   */
+  const flushOutbox = useCallback(async () => {
+    if (flushing.current) return;
+    flushing.current = true;
+    try {
+      for (const q of await loadQueue()) {
+        try {
+          const res = await api<WriteResponse>("/api/entries", { method: "POST", body: { entry: q.entry, lastIdSeen: q.lastIdSeen } });
+          await removeQueued(q.id);
+          setData(res.data);
+        } catch (e) {
+          const w = e as WriteError;
+          if (w.kind === "network") break;
+          if (w.data?.entries.some(sameFillUp(q.entry))) {
+            await removeQueued(q.id);
+            setData(w.data);
+          } else {
+            await saveQueued({ ...q, error: w.message });
+          }
+        }
+      }
+    } finally {
+      flushing.current = false;
+      setPending(await loadQueue());
+    }
+  }, [setData]);
+
+  const queueEntry = useCallback(async (entry: EntryInput, lastIdSeen: string | null) => {
+    await saveQueued({ id: crypto.randomUUID(), entry, lastIdSeen, queuedAt: new Date().toISOString() });
+    setPending(await loadQueue());
+  }, []);
+
+  const discardPending = useCallback(async (id: string) => {
+    await removeQueued(id);
+    setPending(await loadQueue());
+  }, []);
+
+  useEffect(() => {
+    loadQueue().then(setPending);
+    const onOnline = () => flushOutbox();
+    addEventListener("online", onOnline);
+    flushOutbox();
+    return () => removeEventListener("online", onOnline);
+  }, [flushOutbox]);
+
   useEffect(() => {
     load(false);
     // Coming back to the app (e.g. after typing into the sheet directly): re-read if stale.
@@ -126,7 +188,20 @@ export function DataProvider({ children }: { children: ReactNode }) {
   }, [load]);
 
   return (
-    <DataContext.Provider value={{ data, error, loading, refresh: () => load(true), setData, setSheet }}>
+    <DataContext.Provider
+      value={{
+        data,
+        error,
+        loading,
+        refresh: () => load(true),
+        setData,
+        setSheet,
+        pending,
+        queueEntry,
+        sendPending: () => void flushOutbox(),
+        discardPending,
+      }}
+    >
       {children}
     </DataContext.Provider>
   );

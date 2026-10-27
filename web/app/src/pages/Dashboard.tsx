@@ -7,6 +7,7 @@ import { TrendChart } from "../charts/TrendChart";
 import { useData, useWoqod, type LoadError } from "../data";
 import { fmt, fmtDate, fmtDayMonth, fmtMonthLong, qar, qatarToday } from "../format";
 import { Link } from "../router";
+import { NextServicePanel } from "../service-ui";
 
 export function Dashboard() {
   const { data, error, loading } = useData();
@@ -69,6 +70,10 @@ export function Dashboard() {
           <MonthlyBars months={model.monthly} currentMonth={today.slice(0, 7)} />
         </div>
         <RecentCard model={model} data={data} />
+      </section>
+
+      <section className="row">
+        <NextServicePanel service={data.service} />
       </section>
     </div>
   );

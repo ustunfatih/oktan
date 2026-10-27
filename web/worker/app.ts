@@ -7,9 +7,13 @@ import { fetchWoqod } from "./woqod";
 import { refreshFromWoqod, writeMonthPrice, type PriceOutcome } from "./prices";
 import { writeSettings, writeStations } from "./settings";
 import { applyPlan } from "./writes";
+import { addSubscription, countSubscriptions, getPrefs, removeSubscription, savePrefs, broadcast } from "./reminders";
+import type { PushSubscription } from "./push";
+import { applyService, planAddJob, planDeleteJob, planEditJob, planSavePlan, serviceState, validatePlan } from "./service";
+import { validateJob, type JobInput, type PlanItem, type ServiceJob } from "../shared/maintenance";
 import { parseEntries, parsePrices, parseSettings, SheetLayoutError } from "../shared/parse";
 import { planStations, validateSettings, type SettingsPatch, type StationEdit } from "../shared/settings";
-import type { DataResponse, Entry, PriceWriteResponse, SettingsWriteResponse, WriteResponse } from "../shared/types";
+import type { DataResponse, Entry, PriceWriteResponse, ServiceState, SettingsWriteResponse, WriteResponse } from "../shared/types";
 import { planAdd, planDelete, planEdit, PlanError, validateEntry, type EntryInput, type FieldErrors } from "../shared/writes";
 
 type App = { Bindings: Env; Variables: { email: string; sheet: ActiveSheet } };
@@ -25,11 +29,35 @@ app.use("/api/*", async (c, next) => {
   }
 });
 
+// Responses from the API are never framed, sniffed or cached by the browser.
+app.use("/api/*", async (c, next) => {
+  await next();
+  c.header("x-content-type-options", "nosniff");
+  c.header("content-security-policy", "default-src 'none'; frame-ancestors 'none'");
+  c.header("cross-origin-resource-policy", "same-origin");
+});
+
 app.use("/api/*", requireAccess);
 app.use("/api/*", async (c, next) => {
   c.set("sheet", activeSheet(c.env, c.req.header("cookie")));
   await next();
   c.header("cache-control", "no-store");
+});
+
+// Limits how fast changes and crash reports can arrive. One person uses this, so a limit only trips on a
+// runaway loop or a bug, and the message says so.
+app.use("/api/*", async (c, next) => {
+  if (c.req.method === "GET") return next();
+  const isReport = c.req.path === "/api/client-error";
+  const limiter = isReport ? c.env.REPORT_LIMITER : c.env.WRITE_LIMITER;
+  if (limiter) {
+    const { success } = await limiter.limit({ key: `${c.get("email")}:${isReport ? "report" : "write"}` });
+    if (!success) {
+      c.header("retry-after", "60");
+      return c.json({ error: "Too many changes in a minute. Wait a moment and try again." }, 429);
+    }
+  }
+  return next();
 });
 
 // Writes must come from the app itself: same origin, JSON body. Together with Access's SameSite
@@ -46,6 +74,7 @@ async function load(c: Context<App>, fresh: boolean): Promise<{ body: DataRespon
   const sheet = c.get("sheet");
   const wb = await readWorkbook(c.env, sheet.id, fresh);
   const entries = parseEntries(wb.data);
+  const service = serviceState(wb, entries.flatMap((e) => [e.odometer, e.odometerEnd]), qatarToday());
   return {
     entries,
     body: {
@@ -58,6 +87,7 @@ async function load(c: Context<App>, fresh: boolean): Promise<{ body: DataRespon
       entries,
       prices: parsePrices(wb.prices),
       settings: parseSettings(wb.settings),
+      service,
     },
   };
 }
@@ -172,6 +202,132 @@ app.put("/api/prices/:month", async (c) => {
 app.post("/api/prices/:month/unlock", (c) =>
   priceResponse(c, () => writeMonthPrice(c.env, c.get("sheet").id, c.req.param("month"), 0, "Sheet", c.get("email"))),
 );
+
+// ── Service (maintenance) ─────────────────────────────────────────────────
+
+type ServiceWrite = {
+  requests: unknown[];
+  created: boolean;
+  log: { action: string; entryId: string; before: unknown; after: unknown };
+  result: { id: string; row: number | null };
+};
+
+/** Shared by the service routes: permission, a fresh read, the build step, one atomic write, and a fresh read back. */
+async function serviceWrite(c: Context<App>, status: 200 | 201, build: (service: ServiceState) => ServiceWrite) {
+  const sheet = c.get("sheet");
+  if (!sheet.canWrite) return c.json({ error: LOCKED }, 403);
+  const { body } = await load(c, true);
+  let result: ServiceWrite["result"];
+  try {
+    const out = build(body.service);
+    result = out.result;
+    await applyService(c.env, sheet.id, out.requests as Record<string, unknown>[], { ...out.log, email: c.get("email") }, out.created);
+  } catch (e) {
+    if (e instanceof PlanError) return c.json({ error: e.message, fields: e.fields, data: body }, 409);
+    throw e;
+  }
+  const res: WriteResponse = { data: (await load(c, true)).body, result: result as WriteResponse["result"] };
+  return c.json(res, status);
+}
+
+/** Checks a job against the rules in shared/maintenance.ts; the first problem found is shown on the form. */
+function checkJob(input: JobInput, service: ServiceState) {
+  const errors = validateJob(input, { today: qatarToday(), highestOdometer: service.highestOdometer, categories: service.plan.map((p) => p.category) });
+  if (Object.keys(errors).length) throw new PlanError("Please fix the highlighted fields.", errors);
+}
+
+const serviceSheet = (service: ServiceState) => ({ hasJobsTab: service.hasJobsTab, hasPlanTab: !service.planIsDefault, rowCount: service.rowCount });
+
+app.post("/api/service", async (c) => {
+  const { job, rowCountSeen } = await c.req.json<{ job: JobInput; rowCountSeen: number }>();
+  return serviceWrite(c, 201, (service) => {
+    checkJob(job, service);
+    const id = newId();
+    const plan = planAddJob(serviceSheet(service), job, id, rowCountSeen);
+    return { requests: plan.requests, created: plan.tabsCreated, log: { action: "service add", entryId: id, before: null, after: job }, result: { id, row: plan.row } };
+  });
+});
+
+app.put("/api/service/:id", async (c) => {
+  const id = c.req.param("id");
+  const { job, rowSeen } = await c.req.json<{ job: JobInput; rowSeen: number }>();
+  return serviceWrite(c, 200, (service) => {
+    checkJob(job, service);
+    const before: ServiceJob | undefined = service.jobs.find((j) => j.id === id);
+    const plan = planEditJob(service.jobs, id, job, rowSeen);
+    return { requests: plan.requests, created: false, log: { action: "service edit", entryId: id, before, after: job }, result: { id, row: plan.row } };
+  });
+});
+
+app.delete("/api/service/:id", async (c) => {
+  const id = c.req.param("id");
+  const { rowSeen } = await c.req.json<{ rowSeen: number }>();
+  return serviceWrite(c, 200, (service) => {
+    const plan = planDeleteJob(service.jobs, id, rowSeen);
+    return { requests: plan.requests, created: false, log: { action: "service delete", entryId: id, before: plan.job, after: null }, result: { id, row: plan.row } };
+  });
+});
+
+/** Saves the whole plan: the categories and their intervals. */
+app.put("/api/service-plan", async (c) => {
+  const sheet = c.get("sheet");
+  if (!sheet.canWrite) return c.json({ error: LOCKED }, 403);
+  const { plan } = await c.req.json<{ plan: PlanItem[] }>();
+  const errors = validatePlan(plan);
+  if (errors) return c.json({ error: errors.form, fields: errors }, 400);
+  const clean = plan.map((p) => ({ category: p.category.trim(), everyKm: p.everyKm, everyMonths: p.everyMonths }));
+  const { body } = await load(c, true);
+  const out = planSavePlan(serviceSheet(body.service), clean, body.service.plan.length);
+  await applyService(c.env, sheet.id, out.requests as Record<string, unknown>[], { action: "plan save", email: c.get("email"), entryId: "plan", before: body.service.plan, after: clean }, out.tabsCreated);
+  const res: SettingsWriteResponse = { data: (await load(c, true)).body, message: "Service plan saved." };
+  return c.json(res);
+});
+
+// ── Fill-up reminders (web push) ──────────────────────────────────────────
+
+const validSubscription = (s: PushSubscription | undefined): s is PushSubscription =>
+  !!s && typeof s.endpoint === "string" && s.endpoint.startsWith("https://") && s.endpoint.length < 2000 && typeof s.keys?.p256dh === "string" && typeof s.keys?.auth === "string";
+
+app.get("/api/push", async (c) => {
+  const kv = c.env.PUSH;
+  return c.json({
+    publicKey: c.env.VAPID_PUBLIC_KEY ?? null,
+    configured: !!c.env.VAPID_PRIVATE_JWK && !!kv,
+    subscriptions: kv ? await countSubscriptions(kv) : 0,
+    afterDays: kv ? (await getPrefs(kv)).afterDays : 10,
+  });
+});
+
+app.post("/api/push/subscribe", async (c) => {
+  if (!c.env.PUSH) return c.json({ error: "Reminders aren't set up on the Worker yet." }, 503);
+  const { subscription } = await c.req.json<{ subscription?: PushSubscription }>();
+  if (!validSubscription(subscription)) return c.json({ error: "That subscription isn't valid." }, 400);
+  await addSubscription(c.env.PUSH, subscription);
+  return c.json({ ok: true }, 201);
+});
+
+app.delete("/api/push/subscribe", async (c) => {
+  if (!c.env.PUSH) return c.json({ ok: true });
+  const { endpoint } = await c.req.json<{ endpoint?: string }>();
+  if (typeof endpoint === "string") await removeSubscription(c.env.PUSH, endpoint);
+  return c.json({ ok: true });
+});
+
+app.put("/api/push/prefs", async (c) => {
+  if (!c.env.PUSH) return c.json({ error: "Reminders aren't set up on the Worker yet." }, 503);
+  const { afterDays } = await c.req.json<{ afterDays: number }>();
+  if (!Number.isInteger(afterDays) || afterDays < 1 || afterDays > 60) return c.json({ error: "Remind after 1 to 60 days." }, 400);
+  const prefs = await getPrefs(c.env.PUSH);
+  await savePrefs(c.env.PUSH, { ...prefs, afterDays });
+  return c.json({ ok: true });
+});
+
+/** Sends a test notification to every subscribed phone, so you can check it works before you rely on it. */
+app.post("/api/push/test", async (c) => {
+  if (!c.env.PUSH) return c.json({ error: "Reminders aren't set up on the Worker yet." }, 503);
+  const result = await broadcast(c.env, { title: "Oktan is connected", body: "Reminders work on this phone.", url: "/", tag: "test" });
+  return c.json(result);
+});
 
 // ── Settings ───────────────────────────────────────────────────────────────
 

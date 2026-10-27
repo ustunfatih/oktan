@@ -4,6 +4,7 @@ import type { DataResponse, Entry, PriceWriteResponse, WoqodResponse, WriteRespo
 import { deleteConsequence, type EntryInput } from "../../../shared/writes";
 import { api, useData, useWoqod, type WriteError } from "../data";
 import { fmt, fmtDate, fmtMonthLong, qar, qatarToday } from "../format";
+import { reduceMotion } from "../motion";
 import { EntryForm } from "./EntryForm";
 
 type Tab = "new" | "history" | "prices";
@@ -21,7 +22,7 @@ const toInput = (e: Entry): EntryInput => ({
 });
 
 export function Log() {
-  const { data, error, setData, setSheet, loading } = useData();
+  const { data, error, setData, setSheet, loading, pending, sendPending, discardPending } = useData();
   const woqod = useWoqod();
   const [tab, setTab] = useState<Tab>(() => {
     // Settings → "Fuel prices" opens this tab on Prices.
@@ -89,7 +90,7 @@ export function Log() {
     <div className="dashboard log">
       <div className="page-head">
         <h1 className="page-title">Log</h1>
-        <div className="seg" role="tablist" aria-label="Log sections">
+        <div className="seg" role="group" aria-label="Log sections">
           {(
             [
               ["new", editing ? "EDIT" : "NEW FILL-UP"],
@@ -97,7 +98,7 @@ export function Log() {
               ["prices", "PRICES"],
             ] as [Tab, string][]
           ).map(([id, label]) => (
-            <button key={id} type="button" role="tab" className="seg__btn" aria-selected={tab === id} aria-pressed={tab === id} onClick={() => setTab(id)}>
+            <button key={id} type="button" className="seg__btn" aria-pressed={tab === id} onClick={() => setTab(id)}>
               {label}
             </button>
           ))}
@@ -105,6 +106,42 @@ export function Log() {
       </div>
 
       <SheetBanner data={data} loading={loading} onSwitch={setSheet} />
+
+      {pending.length > 0 && (
+        <section className="panel waiting" role="status" aria-label="Fill-ups waiting to send">
+          <div className="panel-head">
+            <h2>Waiting to send</h2>
+            <span className="label">
+              {pending.length} saved on this phone
+            </span>
+          </div>
+          <ul className="history">
+            {pending.map((q) => (
+              <li key={q.id} className="history__item">
+                <div className="history__row">
+                  <div className="history__main">
+                    <div className="mono">
+                      {fmtDate(q.entry.date)} · {q.entry.station || "—"}
+                    </div>
+                    <div className="muted small">
+                      {fmt(q.entry.liters, 2)} L · {qar(q.entry.totalCost)}
+                      {q.error ? ` · not sent: ${q.error}` : ""}
+                    </div>
+                  </div>
+                  <button type="button" className="btn btn--ghost btn--small" onClick={() => discardPending(q.id)}>
+                    Discard
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+          <div className="form-actions form-actions--start">
+            <button type="button" className="btn btn--small" onClick={sendPending}>
+              Send now
+            </button>
+          </div>
+        </section>
+      )}
 
       {tab === "new" && (
         <section className="panel log-panel">
@@ -122,6 +159,10 @@ export function Log() {
             woqod={woqod}
             editing={editing ?? undefined}
             onSaved={onSaved}
+            onQueued={() => {
+              setFormKey((k) => k + 1);
+              notify({ text: "You're offline. Saved on this phone; it will go to the sheet when you're back online." });
+            }}
             onConflict={setData}
             onCancel={
               editing
@@ -462,7 +503,7 @@ function Prices({
                     {busy === `unlock-${p.month}` ? "…" : "Unlock"}
                   </button>
                 ) : (
-                  <button type="button" className="icon-btn" aria-label={`Set the ${fmtMonthLong(p.month)} price`} disabled={!data.canWrite} onClick={() => { setMonth(p.month); scrollTo({ top: 0, behavior: "smooth" }); }}>
+                  <button type="button" className="icon-btn" aria-label={`Set the ${fmtMonthLong(p.month)} price`} disabled={!data.canWrite} onClick={() => { setMonth(p.month); scrollTo({ top: 0, behavior: reduceMotion() ? "auto" : "smooth" }); }}>
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" aria-hidden="true">
                       <path d="M4 20v-4L15 5l4 4L8 20Z" />
                     </svg>

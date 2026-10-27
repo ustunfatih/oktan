@@ -17,11 +17,13 @@ import {
   type GroupStats,
   type RangeKey,
 } from "../../../shared/analytics";
+import { jobTotals, type ServiceJob } from "../../../shared/maintenance";
 import { summarize } from "../../../shared/metrics";
 import type { DataResponse, Entry } from "../../../shared/types";
 import { ColumnChart } from "../charts/ColumnChart";
 import { SeriesChart } from "../charts/SeriesChart";
 import { useData } from "../data";
+import { jobsInRange } from "../service-ui";
 import { fmt, fmtDate, fmtDayMonth, fmtMonth, fmtMonthLong, qar, qatarToday } from "../format";
 
 const RANGES: { key: RangeKey; label: (year: string) => string }[] = [
@@ -269,6 +271,7 @@ function AnalyticsView({ data, filters, setFilters, today }: { data: DataRespons
           </section>
 
           <RecordsCard r={m.records} />
+          <ServiceCostsCard jobs={jobsInRange(data.service.jobs, rangeStart(filters.range, today))} />
           <TripsTable list={m.list} />
         </>
       )}
@@ -380,13 +383,64 @@ function InsightsCard({ m }: { m: Model }) {
   );
 }
 
+/** Service spend in the same date range as the fill-ups, with the table view under the chart. */
+function ServiceCostsCard({ jobs }: { jobs: ServiceJob[] }) {
+  const totals = jobTotals(jobs);
+  if (!jobs.length) {
+    return (
+      <section className="panel">
+        <div className="panel-head">
+          <h2>Service costs</h2>
+        </div>
+        <p className="muted">No service in this range.</p>
+      </section>
+    );
+  }
+  const top = Math.max(...totals.byCategory.map((c) => c.spendQar), 1);
+  const yStep = top > 1000 ? 500 : top > 300 ? 100 : 50;
+  return (
+    <section className="panel">
+      <div className="panel-head">
+        <h2>Service costs</h2>
+        <span className="label">{totals.jobs} jobs</span>
+      </div>
+      <div className="strip">
+        <div className="figure">
+          <span className="label">Spent</span>
+          <span className="figure__value">{qar(totals.spendQar, 0)}</span>
+        </div>
+        <div className="figure">
+          <span className="label">Per 1,000 km</span>
+          <span className="figure__value">{totals.perThousandKm === null ? "—" : qar(totals.perThousandKm, 0)}</span>
+        </div>
+      </div>
+      <ColumnChart
+        columns={totals.byCategory.map((c) => ({
+          key: c.category,
+          value: c.spendQar,
+          readout: (
+            <>
+              <b>{c.category}</b> · {qar(c.spendQar, 0)} · {c.jobs} job{c.jobs === 1 ? "" : "s"}
+            </>
+          ),
+          tone: "accent-2" as const,
+        }))}
+        formatY={(v) => fmt(v)}
+        yStep={yStep}
+        ariaLabel={`Service spend by category, ${qar(totals.spendQar, 0)} in total`}
+        hint="Tap a category to see its total"
+      />
+    </section>
+  );
+}
+
 function StationsCard({ stations, total }: { stations: GroupStats[]; total: number }) {
   return (
     <section className="panel">
       <div className="panel-head">
         <h2>Stations</h2>
       </div>
-      <div className="table-scroll">
+      <div className="table-scroll" role="region" aria-label="Stations table" tabIndex={0}>
         <table className="table">
           <thead>
             <tr>
@@ -434,7 +488,7 @@ function HeatCard({ heat, average }: { heat: ReturnType<typeof efficiencyHeat>; 
         <h2>L/100 km by month</h2>
         <span className="label">By the month a trip started</span>
       </div>
-      <div className="table-scroll">
+      <div className="table-scroll" role="region" aria-label="L/100 km by month table" tabIndex={0}>
         <table className="heat">
           <thead>
             <tr>
@@ -527,7 +581,7 @@ function TripsTable({ list }: { list: Entry[] }) {
         <h2>All fill-ups</h2>
         <span className="label">{list.length} rows · tap a column to sort</span>
       </div>
-      <div className="table-scroll">
+      <div className="table-scroll" role="region" aria-label="All fill-ups table" tabIndex={0}>
         <table className="table trips">
           <thead>
             <tr>
