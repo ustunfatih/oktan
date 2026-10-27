@@ -2,7 +2,7 @@ import { useMemo, useState, type FormEvent } from "react";
 import { priceForDate, woqodForGrade } from "../../../shared/prices";
 import type { DataResponse, Entry, WoqodResponse, WriteResponse } from "../../../shared/types";
 import { validateEntry, type EntryInput, type FieldErrors } from "../../../shared/writes";
-import { api, type WriteError } from "../data";
+import { api, useData, type WriteError } from "../data";
 import { fmt, fmtDate, qar, qatarToday } from "../format";
 
 interface Props {
@@ -13,6 +13,8 @@ interface Props {
   onSaved: (res: WriteResponse, previous: Entry | null) => void;
   onConflict: (data: DataResponse) => void;
   onCancel?: () => void;
+  /** Called when there is no connection and the fill-up was kept on this phone instead. */
+  onQueued?: () => void;
 }
 
 type Draft = Record<"date" | "odometer" | "liters" | "price" | "cost" | "station", string> & { full: boolean; mode: string };
@@ -20,7 +22,8 @@ type Draft = Record<"date" | "odometer" | "liters" | "price" | "cost" | "station
 const num = (s: string) => (s.trim() === "" ? NaN : Number(s.replace(",", ".")));
 const two = (n: number) => (Number.isFinite(n) ? n.toFixed(2) : "");
 
-export function EntryForm({ data, woqod, editing, onSaved, onConflict, onCancel }: Props) {
+export function EntryForm({ data, woqod, editing, onSaved, onConflict, onCancel, onQueued }: Props) {
+  const { queueEntry } = useData();
   const { entries, settings } = data;
   const index = editing ? entries.findIndex((e) => e.id === editing.id) : entries.length;
   const prev = index > 0 ? entries[index - 1]! : null;
@@ -106,6 +109,12 @@ export function EntryForm({ data, woqod, editing, onSaved, onConflict, onCancel 
       onSaved(res, editing ?? null);
     } catch (e) {
       const err = e as WriteError;
+      if (err.kind === "network" && !editing) {
+        // No connection: keep the fill-up on this phone; it goes to the sheet when Oktan is reachable again.
+        await queueEntry(input, entries.at(-1)?.id ?? null);
+        onQueued?.();
+        return;
+      }
       setServerError(err);
       if (err.data) onConflict(err.data);
     } finally {

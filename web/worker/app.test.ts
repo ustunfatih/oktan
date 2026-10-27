@@ -1,6 +1,8 @@
 import { exportPKCS8, generateKeyPair } from "jose";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { dataTab } from "../shared/__fixtures__/data-tab";
+import { JOBS_HEADERS, PLAN_HEADERS } from "../shared/maintenance";
+import { isoToSerial } from "../shared/writes";
 import type { Env } from "./env";
 import { LIVE_SHEET_ID } from "./env";
 
@@ -17,7 +19,20 @@ const settingsTab = [
 ];
 const pricesTab = [["Month", "Price", "Source"], [46296, 2.1, "WOQOD"]];
 
+/** Minimal stand-in for the Workers Cache API (`caches.default`), keyed by URL. */
+function fakeEdgeCache() {
+  const store = new Map<string, string>();
+  return {
+    default: {
+      match: async (req: Request) => (store.has(req.url) ? new Response(store.get(req.url)) : undefined),
+      put: async (req: Request, res: Response) => void store.set(req.url, await res.text()),
+      delete: async (req: Request) => store.delete(req.url),
+    },
+  };
+}
+
 type Reply = { status: number; body?: unknown; headers?: Record<string, string> };
+type Cell = string | number | boolean | null;
 
 let saKey: string;
 let app: typeof import("./app").app;
@@ -28,7 +43,17 @@ function fakeGoogle() {
   const writes: Reply[] = [];
   const batchUpdates: { requests: { [k: string]: unknown }[] }[] = [];
   const calls: string[] = [];
+  /** Rows of the optional service tabs; null means the tab doesn't exist yet. */
+  const tabs = { jobs: null as Cell[][] | null, plan: null as Cell[][] | null };
   const reply = (r: Reply) => new Response(JSON.stringify(r.body ?? {}), { status: r.status, headers: r.headers });
+  const valuesFor = (range: string): Cell[][] => {
+    if (range.startsWith("Data!")) return dataTab;
+    if (range.startsWith("'Fuel Prices'")) return pricesTab;
+    if (range.startsWith("Settings!")) return settingsTab;
+    if (range.startsWith("Maintenance!")) return tabs.jobs ?? [];
+    if (range.startsWith("'Service plan'")) return tabs.plan ?? [];
+    throw new Error(`Unexpected range ${range}`);
+  };
 
   const fetch = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
     const url = String(input);
@@ -45,20 +70,19 @@ function fakeGoogle() {
       calls.push("batchGet");
       const queued = reads.shift();
       if (queued) return reply(queued);
-      return reply({ status: 200, body: { valueRanges: [{ values: dataTab }, { values: pricesTab }, { values: settingsTab }] } });
+      const ranges = new URL(url).searchParams.getAll("ranges");
+      return reply({ status: 200, body: { valueRanges: ranges.map((r) => ({ values: valuesFor(r) })) } });
     }
     calls.push("meta");
-    return reply({
-      status: 200,
-      body: {
-        sheets: [
-          { properties: { sheetId: 0, title: "Data" }, tables: [{ tableId: "gas", range: { sheetId: 0, endRowIndex: 40 } }] },
-          { properties: { sheetId: 6000, title: "App_Log" } },
-        ],
-      },
-    });
+    const sheets = [
+      { properties: { sheetId: 0, title: "Data" }, tables: [{ tableId: "gas", range: { sheetId: 0, endRowIndex: 40 } }] },
+      { properties: { sheetId: 6000, title: "App_Log" } },
+    ];
+    if (tabs.jobs) sheets.push({ properties: { sheetId: 7000, title: "Maintenance" }, tables: undefined as never });
+    if (tabs.plan) sheets.push({ properties: { sheetId: 7001, title: "Service plan" }, tables: undefined as never });
+    return reply({ status: 200, body: { sheets: sheets.map((x) => (x.tables === undefined ? { properties: x.properties } : x)) } });
   });
-  return { fetch, reads, writes, batchUpdates, calls };
+  return { fetch, reads, writes, batchUpdates, calls, tabs };
 }
 
 const env = (over: Partial<Env> = {}): Env => ({
@@ -87,6 +111,7 @@ beforeEach(async () => {
   vi.resetModules();
   google = fakeGoogle();
   vi.stubGlobal("fetch", google.fetch);
+  vi.stubGlobal("caches", fakeEdgeCache());
   vi.spyOn(console, "log").mockImplementation(() => {});
   vi.spyOn(console, "warn").mockImplementation(() => {});
   vi.spyOn(console, "error").mockImplementation(() => {});
@@ -254,5 +279,110 @@ describe("monthly price check", () => {
     const line = JSON.parse(String(vi.mocked(console.log).mock.calls[0]![0]));
     expect(line).toMatchObject({ event: "price_check", sheet: "live sheet", message: "skipped (live writes locked)" });
     expect(google.fetch).not.toHaveBeenCalled();
+  });
+});
+
+describe("service (maintenance)", () => {
+  const job = (over: Record<string, unknown> = {}) => ({
+    date: "2026-10-01",
+    odometer: 8800,
+    category: "Oil and filter",
+    description: "Oil and filter",
+    costQar: 150,
+    workshop: "Al Meera",
+    nextDueKm: null,
+    nextDueDate: null,
+    notes: "",
+    ...over,
+  });
+  const existing = [JOBS_HEADERS as unknown as Cell[], [isoToSerial("2026-09-01"), 8500, "Oil and filter", "Oil", 150, "Al Meera", null, null, null, "j1"]];
+
+  it("adds a job, creating the Maintenance tab on the first save", async () => {
+    const res = await send("POST", "/api/service", { job: job(), rowCountSeen: 0 });
+    expect(res.status).toBe(201);
+    const body = (await res.json()) as { result: { id: string; row: number } };
+    expect(body.result).toMatchObject({ row: 2 });
+    const requests = google.batchUpdates[0]!.requests;
+    expect(requests).toContainEqual(expect.objectContaining({ addSheet: expect.objectContaining({ properties: expect.objectContaining({ sheetId: 7000, title: "Maintenance" }) }) }));
+    expect(JSON.stringify(requests)).toContain('"stringValue":"Oil and filter"');
+    expect(JSON.stringify(requests.at(-1))).toContain('"stringValue":"service add"');
+  });
+
+  it("adds below the last row when the tab exists", async () => {
+    google.tabs.jobs = existing;
+    const res = await send("POST", "/api/service", { job: job({ date: "2026-10-05" }), rowCountSeen: 2 });
+    expect(res.status).toBe(201);
+    expect(google.batchUpdates[0]!.requests[0]).toMatchObject({ updateCells: { range: { sheetId: 7000, startRowIndex: 2, endRowIndex: 3 } } });
+  });
+
+  it("refuses an add when rows were added since the page loaded", async () => {
+    google.tabs.jobs = existing;
+    const res = await send("POST", "/api/service", { job: job(), rowCountSeen: 1 });
+    expect(res.status).toBe(409);
+    expect(((await res.json()) as { error: string }).error).toMatch(/changed/);
+    expect(google.calls).not.toContain("batchUpdate");
+  });
+
+  it("refuses an odometer far above the last reading and names the field", async () => {
+    const res = await send("POST", "/api/service", { job: job({ odometer: 99999 }), rowCountSeen: 0 });
+    expect(res.status).toBe(409);
+    expect(((await res.json()) as { fields: Record<string, string> }).fields.odometer).toMatch(/2,000 km/);
+  });
+
+  it("edits a job in place", async () => {
+    google.tabs.jobs = existing;
+    const res = await send("PUT", "/api/service/j1", { job: job({ costQar: 200 }), rowSeen: 2 });
+    expect(res.status).toBe(200);
+    expect(google.batchUpdates[0]!.requests[0]).toMatchObject({ updateCells: { range: { sheetId: 7000, startRowIndex: 1, endRowIndex: 2 } } });
+    expect(JSON.stringify(google.batchUpdates[0]!.requests[0])).toContain('"numberValue":200');
+  });
+
+  it("refuses an edit when the job has moved", async () => {
+    google.tabs.jobs = existing;
+    const res = await send("PUT", "/api/service/j1", { job: job(), rowSeen: 7 });
+    expect(res.status).toBe(409);
+  });
+
+  it("deletes a job's row and logs it", async () => {
+    google.tabs.jobs = existing;
+    const res = await send("DELETE", "/api/service/j1", { rowSeen: 2 });
+    expect(res.status).toBe(200);
+    expect(google.batchUpdates[0]!.requests[0]).toEqual({ deleteDimension: { range: { sheetId: 7000, dimension: "ROWS", startIndex: 1, endIndex: 2 } } });
+    expect(JSON.stringify(google.batchUpdates[0]!.requests.at(-1))).toContain('"stringValue":"service delete"');
+  });
+
+  it("reads the jobs, what's due and the default plan on the data response", async () => {
+    google.tabs.jobs = existing;
+    const body = (await (await get("/api/data")).json()) as { service: { jobs: { id: string }[]; due: { category: string; status: string }[]; planIsDefault: boolean; plan: unknown[]; highestOdometer: number } };
+    expect(body.service.jobs.map((j) => j.id)).toEqual(["j1"]);
+    expect(body.service.due[0]).toMatchObject({ category: "Oil and filter" });
+    expect(body.service.planIsDefault).toBe(true);
+    expect(body.service.plan).toHaveLength(9);
+    expect(body.service.highestOdometer).toBe(8774); // the last fill-up is higher than the job at 8,500 km
+  });
+
+  it("saves the plan and creates its tab", async () => {
+    const res = await send("PUT", "/api/service-plan", { plan: [{ category: "Oil and filter", everyKm: 10000, everyMonths: 12 }] });
+    expect(res.status).toBe(200);
+    const requests = google.batchUpdates[0]!.requests;
+    expect(requests).toContainEqual(expect.objectContaining({ addSheet: expect.objectContaining({ properties: expect.objectContaining({ sheetId: 7001, title: "Service plan" }) }) }));
+    expect(PLAN_HEADERS).toContain("Every km");
+  });
+
+  it("refuses a plan with a duplicate category", async () => {
+    const res = await send("PUT", "/api/service-plan", {
+      plan: [
+        { category: "Tyres", everyKm: 40000, everyMonths: null },
+        { category: "tyres", everyKm: 30000, everyMonths: null },
+      ],
+    });
+    expect(res.status).toBe(400);
+    expect(google.calls).not.toContain("batchUpdate");
+  });
+
+  it("keeps service writes locked on the live sheet", async () => {
+    const res = await send("POST", "/api/service", { job: job(), rowCountSeen: 0 }, env({ SHEET_ID: LIVE_SHEET_ID }));
+    expect(res.status).toBe(403);
+    expect(google.calls).not.toContain("batchUpdate");
   });
 });

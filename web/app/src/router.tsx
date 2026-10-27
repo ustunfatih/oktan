@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, type AnchorHTMLAttributes, type ReactNode } from "react";
 
-export type Route = "/" | "/analytics" | "/log" | "/settings";
-const ROUTES: Route[] = ["/", "/analytics", "/log", "/settings"];
+export type Route = "/" | "/analytics" | "/log" | "/service" | "/settings";
+const ROUTES: Route[] = ["/", "/analytics", "/log", "/service", "/settings"];
 
 const toRoute = (path: string): Route => (ROUTES.includes(path as Route) ? (path as Route) : "/");
 

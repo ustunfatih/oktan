@@ -1,4 +1,6 @@
 import { useState, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
+import { ChartTable } from "./ChartTable";
+import { niceStep, robustRange } from "../../../shared/scale";
 import { useWidth } from "./useWidth";
 
 export interface SeriesPoint {
@@ -40,12 +42,16 @@ export function SeriesChart({ points, step, area, reference, highlightKey, forma
   if (points.length < 2) return <div ref={ref} className="chart-empty">Not enough data in this range.</div>;
 
   const values = points.map((p) => p.value).concat(reference ? [reference.value] : []);
-  const lo = fromZero ? 0 : Math.floor((Math.min(...values) - yStep * 0.3) / yStep) * yStep;
-  const hi = Math.ceil((Math.max(...values) + yStep * 0.3) / yStep) * yStep;
+  // Outliers don't stretch the axis (they're drawn at the edge, marked), and the grid never gets crowded.
+  const fitted = fromZero ? null : robustRange(values, yStep, 5);
+  const gridStep = Math.max(yStep, niceStep(fitted ? fitted.hi - fitted.lo : Math.max(...values), 5));
+  const lo = fitted ? Math.floor(fitted.lo / gridStep) * gridStep : 0;
+  const hi = Math.ceil((fitted ? fitted.hi : Math.max(...values)) / gridStep) * gridStep;
+  const offScale = (v: number) => !!fitted && fitted.outliers.has(v);
   const plotW = width - PAD.left - PAD.right;
   const plotH = height - PAD.top - PAD.bottom;
   const x = (i: number) => PAD.left + (plotW * i) / (points.length - 1);
-  const y = (v: number) => PAD.top + plotH * (1 - (v - lo) / (hi - lo || 1));
+  const y = (v: number) => PAD.top + plotH * (1 - (Math.min(hi, Math.max(lo, v)) - lo) / (hi - lo || 1));
 
   let d = `M${x(0).toFixed(1)} ${y(points[0]!.value).toFixed(1)}`;
   points.slice(1).forEach((p, j) => {
@@ -54,7 +60,7 @@ export function SeriesChart({ points, step, area, reference, highlightKey, forma
   });
   const fill = `${d} L${x(points.length - 1).toFixed(1)} ${PAD.top + plotH} L${PAD.left} ${PAD.top + plotH} Z`;
   const grid: number[] = [];
-  for (let v = lo; v <= hi + yStep * 1e-6; v += yStep) grid.push(Math.round(v * 1000) / 1000);
+  for (let v = lo; v <= hi + gridStep * 1e-6; v += gridStep) grid.push(Math.round(v * 1000) / 1000);
 
   const pick = (e: PointerEvent<SVGSVGElement>) => {
     const box = e.currentTarget.getBoundingClientRect();
@@ -114,6 +120,13 @@ export function SeriesChart({ points, step, area, reference, highlightKey, forma
             <circle cx={x(selected)} cy={y(sel.value)} r="6" className="series__sel" />
           </g>
         )}
+        {points.map((p, i) =>
+          offScale(p.value) ? (
+            <text key={`off-${i}`} x={x(i)} y={y(p.value) + (p.value > hi ? 14 : -6)} textAnchor="middle" className="chart-label">
+              {p.value > hi ? "▲" : "▼"}
+            </text>
+          ) : null,
+        )}
         <text x={PAD.left} y={height - 6} className="chart-label">
           {points[0]!.axisLabel}
         </text>
@@ -121,6 +134,7 @@ export function SeriesChart({ points, step, area, reference, highlightKey, forma
           {points[li]!.axisLabel}
         </text>
       </svg>
+      <ChartTable caption={ariaLabel} head={["Point", "Value"]} rows={points.map((p) => [p.axisLabel || p.key, formatY(p.value)])} />
     </div>
   );
 }

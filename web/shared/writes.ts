@@ -43,7 +43,7 @@ export interface Plan {
 export class PlanError extends Error {
   constructor(
     message: string,
-    readonly fields: FieldErrors = { form: message },
+    readonly fields: Partial<Record<string, string>> = { form: message },
   ) {
     super(message);
   }

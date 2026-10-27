@@ -1,6 +1,7 @@
 import { useState, type KeyboardEvent } from "react";
 import type { MonthTotal } from "../../../shared/dashboard";
 import { fmtMonth, fmtMonthLong, qar } from "../format";
+import { ChartTable } from "./ChartTable";
 import { useWidth } from "./useWidth";
 
 const PAD = { top: 12, right: 8, bottom: 26, left: 38 };
@@ -99,6 +100,11 @@ export function MonthlyBars({ months, currentMonth }: { months: MonthTotal[]; cu
           );
         })}
       </svg>
+      <ChartTable
+        caption="Spend per month"
+        head={["Month", "Spend", "Fill-ups"]}
+        rows={months.map((m) => [fmtMonthLong(m.month), qar(m.spend), m.fills])}
+      />
     </div>
   );
 }

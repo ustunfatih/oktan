@@ -35,3 +35,8 @@ export const RefreshIcon = () => (
     <path d="M20 4v7h-7" />
   </svg>
 );
+export const WrenchIcon = () => (
+  <svg {...base} aria-hidden="true">
+    <path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4Z" />
+  </svg>
+);

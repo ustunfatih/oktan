@@ -1,3 +1,4 @@
+import type { DueItem, PlanItem, ServiceJob } from "./maintenance";
 export type DriveMode = "Eco" | "Normal" | "Sport";
 
 /** One fill-up, i.e. one row of the sheet's Data tab. */
@@ -68,6 +69,23 @@ export interface DataResponse {
   entries: Entry[];
   prices: MonthPrice[];
   settings: Settings;
+  service: ServiceState;
+}
+
+/** Service history and what's due, read from the Maintenance and Service plan tabs. */
+export interface ServiceState {
+  jobs: ServiceJob[];
+  /** Rows in the Maintenance tab, header included; sent back with a save to detect changes. */
+  rowCount: number;
+  /** Rows that had a date or category missing, so they were left out. */
+  skipped: number;
+  plan: PlanItem[];
+  /** True until the Service plan tab exists: the plan shown is the built-in one. */
+  planIsDefault: boolean;
+  hasJobsTab: boolean;
+  /** Highest odometer in the sheet, fill-ups and jobs together. */
+  highestOdometer: number | null;
+  due: DueItem[];
 }
 
 export interface WoqodPrice {

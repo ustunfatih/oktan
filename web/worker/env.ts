@@ -9,6 +9,19 @@ export interface Env {
   LIVE_WRITES?: string;
   /** Service account key JSON (secret). */
   GOOGLE_SA_KEY?: string;
+  /** Rate limits: changes (every request that isn't a GET) and browser crash reports. */
+  WRITE_LIMITER?: RateLimit;
+  REPORT_LIMITER?: RateLimit;
+  /** Web push: subscriptions and reminder settings (device credentials, never sheet data). */
+  PUSH?: KVNamespace;
+  /** Web push: public half of the VAPID key pair (also in wrangler.jsonc vars). */
+  VAPID_PUBLIC_KEY?: string;
+  /** Web push: private half, as a JWK (secret). */
+  VAPID_PRIVATE_JWK?: string;
+  /** Web push: contact the push services can use, e.g. mailto:you@example.com. */
+  VAPID_SUBJECT?: string;
+  /** Day the Google key was created (YYYY-MM-DD). The daily check reminds you to rotate it after about 11 months. */
+  KEY_CREATED_ON?: string;
   /** Local development only: identity used for requests from localhost. */
   DEV_EMAIL?: string;
 }

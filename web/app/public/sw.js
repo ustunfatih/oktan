@@ -48,3 +48,38 @@ self.addEventListener("fetch", (event) => {
     );
   }
 });
+
+// Fill-up reminders: show the notification, and open the app at the right screen when it's tapped.
+self.addEventListener("push", (event) => {
+  let message = { title: "Oktan", body: "", url: "/" };
+  try {
+    message = { ...message, ...event.data.json() };
+  } catch {
+    /* no readable payload: show the generic message */
+  }
+  event.waitUntil(
+    self.registration.showNotification(message.title, {
+      body: message.body,
+      tag: message.tag,
+      icon: "/icons/icon-192.png",
+      data: { url: message.url || "/" },
+    }),
+  );
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const target = new URL(event.notification.data?.url || "/", self.location.origin).href;
+  event.waitUntil(
+    (async () => {
+      const windows = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+      const app = windows.find((c) => new URL(c.url).origin === self.location.origin);
+      if (app) {
+        await app.focus();
+        if (app.url !== target) await app.navigate(target);
+        return;
+      }
+      await self.clients.openWindow(target);
+    })(),
+  );
+});

@@ -25,7 +25,7 @@ export const EXPECTED_HEADERS = [
 
 export class SheetLayoutError extends Error {}
 
-type Cell = string | number | boolean | null | undefined;
+export type Cell = string | number | boolean | null | undefined;
 
 const normalize = (s: Cell) => String(s ?? "").replace(/\s+/g, " ").trim().toLowerCase();
 
