@@ -122,6 +122,8 @@ export function EntryForm({ data, woqod, editing, onSaved, onConflict, onCancel,
     }
   }
 
+  // Where the suggested price came from, shown under the box until the price is typed over.
+  const priceSource = priceTouched ? null : (suggestion?.source ?? null);
   const field = (id: keyof FieldErrors) => ({ "aria-invalid": !!show(id), "aria-describedby": show(id) ? `${id}-err` : undefined });
   const Err = ({ id }: { id: keyof FieldErrors }) => (show(id) ? <span id={`${id}-err`} className="field__err">{show(id)}</span> : null);
 
@@ -134,9 +136,9 @@ export function EntryForm({ data, woqod, editing, onSaved, onConflict, onCancel,
           <Err id="date" />
         </label>
         <label className="field">
-          <span className="field__label">Odometer now · km</span>
+          <span className="field__label">Odometer · km</span>
           <input
-            type="number"
+            type="text"
             inputMode="numeric"
             placeholder={prev?.odometer != null ? `> ${fmt(prev.odometer)}` : ""}
             value={draft.odometer}
@@ -150,26 +152,22 @@ export function EntryForm({ data, woqod, editing, onSaved, onConflict, onCancel,
         {enterAmount ? (
           <label className="field">
             <span className="field__label">Amount paid · QAR</span>
-            <input type="number" inputMode="decimal" step="0.01" value={draft.cost} onChange={(e) => set({ cost: e.target.value })} onBlur={() => touch("totalCost")} {...field("totalCost")} />
+            <input type="text" inputMode="decimal" value={draft.cost} onChange={(e) => set({ cost: e.target.value })} onBlur={() => touch("totalCost")} {...field("totalCost")} />
             <Err id="totalCost" />
           </label>
         ) : (
           <label className="field">
             <span className="field__label">Litres</span>
-            <input type="number" inputMode="decimal" step="0.01" value={draft.liters} onChange={(e) => set({ liters: e.target.value })} onBlur={() => touch("liters")} {...field("liters")} />
+            <input type="text" inputMode="decimal" value={draft.liters} onChange={(e) => set({ liters: e.target.value })} onBlur={() => touch("liters")} {...field("liters")} />
             <Err id="liters" />
           </label>
         )}
 
         <label className="field">
-          <span className="field__label field__label--split">
-            <span>Price · QAR/L</span>
-            {!priceTouched && suggestion && <span className="field__hint-accent">{suggestion.source.toUpperCase()}</span>}
-          </span>
+          <span className="field__label">Price · QAR/L</span>
           <input
-            type="number"
+            type="text"
             inputMode="decimal"
-            step="0.01"
             className="input--accent"
             value={priceTouched ? draft.price : two(suggestion?.price ?? NaN)}
             onChange={(e) => {
@@ -178,24 +176,32 @@ export function EntryForm({ data, woqod, editing, onSaved, onConflict, onCancel,
             }}
             onBlur={() => touch("pricePerLiter")}
             {...field("pricePerLiter")}
+            aria-describedby={[priceSource ? "price-source" : "", show("pricePerLiter") ? "pricePerLiter-err" : ""].filter(Boolean).join(" ") || undefined}
           />
+          {priceSource && (
+            <span id="price-source" className="field__hint">
+              {priceSource.charAt(0).toUpperCase() + priceSource.slice(1)}
+            </span>
+          )}
           <Err id="pricePerLiter" />
         </label>
       </div>
 
-      <div className="total">
-        <div>
-          <div className="field__label">{enterAmount ? "Litres" : "Total cost"}</div>
+      <div className="stack-tight">
+        <div className="total">
+          <div className="total__row">
+            <span className="field__label">{enterAmount ? "Litres" : "Total cost"}</span>
+            <span className="total__value mono">
+              {enterAmount ? `${Number.isFinite(liters) ? fmt(liters, 2) : "—"} L` : Number.isFinite(cost) ? qar(cost) : "QAR —"}
+            </span>
+          </div>
           <button type="button" className="link-btn" onClick={() => setEnterAmount(!enterAmount)}>
             {enterAmount ? "Enter litres instead" : "Enter the amount paid instead"}
           </button>
         </div>
-        <div className="total__value mono">
-          {enterAmount ? `${Number.isFinite(liters) ? fmt(liters, 2) : "—"} L` : Number.isFinite(cost) ? qar(cost) : "QAR —"}
-        </div>
+        {enterAmount && <Err id="liters" />}
+        {!enterAmount && <Err id="totalCost" />}
       </div>
-      {enterAmount && <Err id="liters" />}
-      {!enterAmount && <Err id="totalCost" />}
 
       <div className="form-row">
         <fieldset className="field">
@@ -283,21 +289,23 @@ export function EntryForm({ data, woqod, editing, onSaved, onConflict, onCancel,
       )}
       {!data.canWrite && <p className="form-error">Saving to your live sheet is locked. Switch to test mode above to try it.</p>}
 
-      <div className="form-actions">
-        {onCancel && (
-          <button type="button" className="btn btn--ghost" onClick={onCancel}>
-            Cancel
+      <div className="stack-tight">
+        <div className="form-actions">
+          {onCancel && (
+            <button type="button" className="btn btn--ghost" onClick={onCancel}>
+              Cancel
+            </button>
+          )}
+          <button type="submit" className="btn btn--big" disabled={saving || !data.canWrite}>
+            {saving ? "Saving…" : editing ? "Save changes" : "Save to sheet"}
           </button>
+        </div>
+        {!editing && prev && (
+          <p className="muted small">
+            Writes the closing odometer to the {fmtDate(prev.date)} row and adds a new row for this fill-up.
+          </p>
         )}
-        <button type="submit" className="btn btn--big" disabled={saving || !data.canWrite}>
-          {saving ? "Saving…" : editing ? "Save changes" : "Save to sheet"}
-        </button>
       </div>
-      {!editing && prev && (
-        <p className="muted small">
-          Writes the closing odometer to the {fmtDate(prev.date)} row and adds a new row for this fill-up.
-        </p>
-      )}
     </form>
   );
 }

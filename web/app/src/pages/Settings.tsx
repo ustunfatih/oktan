@@ -175,7 +175,7 @@ function CarSection({ data, onSave }: { data: DataResponse; onSave: (p: Settings
       <div className="form-grid form-grid--2">
         <label className="field">
           <span className="field__label">Tank capacity · L</span>
-          <input type="number" inputMode="decimal" value={tank} onChange={(e) => setTank(e.target.value)} aria-invalid={!tankValid} />
+          <input type="text" inputMode="decimal" value={tank} onChange={(e) => setTank(e.target.value)} aria-invalid={!tankValid} />
           {!tankValid && <span className="field__err">Between 20 and 150 L.</span>}
           {tankValid && tankNum !== s.tankCapacityL && <span className="field__warn">The sheet recalculates fuel used and L/100 km for every past fill-up with the new size.</span>}
         </label>

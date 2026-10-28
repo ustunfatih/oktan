@@ -88,7 +88,7 @@ export function Log() {
 
   return (
     <div className="dashboard log">
-      <div className="page-head">
+      <div className="page-head page-head--tabs">
         <h1 className="page-title">Log</h1>
         <div className="seg" role="group" aria-label="Log sections">
           {(
@@ -466,7 +466,7 @@ function Prices({
           </label>
           <label className="field">
             <span className="field__label">{data.settings.fuelGrade} · QAR/L</span>
-            <input type="number" inputMode="decimal" step="0.01" value={price} onChange={(e) => setPrice(e.target.value)} aria-invalid={price !== "" && !priceValid} />
+            <input type="text" inputMode="decimal" value={price} onChange={(e) => setPrice(e.target.value)} aria-invalid={price !== "" && !priceValid} />
             {price !== "" && !priceValid && <span className="field__err">Prices in Qatar are between QAR 0.50 and 5.00.</span>}
           </label>
         </div>
