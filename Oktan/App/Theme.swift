@@ -16,6 +16,9 @@ struct Theme: Identifiable, Hashable {
     let secondaryAccent: Color
     /// Subtle surface tint used behind hero cards (dynamic)
     let surfaceTint: Color
+    /// Text and icons drawn on an accent fill, e.g. prominent buttons (dynamic).
+    /// Dark where the accent is light, so labels keep 4.5:1 against it.
+    let onAccent: Color
 
     /// PostScript name of the bundled display font's named instance
     let displayFontName: String
@@ -67,6 +70,7 @@ struct Theme: Identifiable, Hashable {
         accent: .dynamic(light: 0x0F6E56, dark: 0x35B58F),
         secondaryAccent: .dynamic(light: 0xEF9F27, dark: 0xF4B858),
         surfaceTint: .dynamic(light: 0xEFF4F2, dark: 0x14201C),
+        onAccent: .dynamic(light: 0xFFFFFF, dark: 0x14201C),
         displayFontName: "SpaceGrotesk-Light_Bold",
         preferredScheme: nil
     )
@@ -78,6 +82,7 @@ struct Theme: Identifiable, Hashable {
         accent: .dynamic(light: 0x161616, dark: 0xE8E6E0),
         secondaryAccent: .dynamic(light: 0x6E6D68, dark: 0xB4B2A9),
         surfaceTint: .dynamic(light: 0xF5F4F0, dark: 0x1C1C1A),
+        onAccent: .dynamic(light: 0xFFFFFF, dark: 0x1C1C1A),
         displayFontName: "ArchivoRoman-ExtraBold",
         preferredScheme: nil
     )
@@ -89,6 +94,7 @@ struct Theme: Identifiable, Hashable {
         accent: .dynamic(light: 0x8A1538, dark: 0xC24A6B),
         secondaryAccent: .dynamic(light: 0xC89B5A, dark: 0xD9B67E),
         surfaceTint: .dynamic(light: 0xF6EEDF, dark: 0x221A12),
+        onAccent: .white,
         displayFontName: "Fraunces-SemiBold",
         preferredScheme: nil
     )
@@ -97,9 +103,10 @@ struct Theme: Identifiable, Hashable {
         id: "midnight",
         name: "Midnight Octane",
         tagline: "Electric lime, dark-first",
-        accent: .dynamic(light: 0x87B317, dark: 0xC6F432),
+        accent: .dynamic(light: 0x557A00, dark: 0xC6F432),
         secondaryAccent: .dynamic(light: 0x2298A1, dark: 0x39C5CF),
         surfaceTint: .dynamic(light: 0xF2F5E9, dark: 0x14161B),
+        onAccent: .dynamic(light: 0xFFFFFF, dark: 0x14161B),
         displayFontName: "Unbounded-Regular_SemiBold",
         preferredScheme: .dark
     )
@@ -111,6 +118,7 @@ struct Theme: Identifiable, Hashable {
         accent: .dynamic(light: 0x534AB7, dark: 0x9085E9),
         secondaryAccent: .dynamic(light: 0xAFA9EC, dark: 0x7F77DD),
         surfaceTint: .dynamic(light: 0xF2F1FB, dark: 0x191727),
+        onAccent: .dynamic(light: 0xFFFFFF, dark: 0x191727),
         displayFontName: "Sora-Regular_Bold",
         preferredScheme: nil
     )
@@ -122,6 +130,7 @@ struct Theme: Identifiable, Hashable {
         accent: .dynamic(light: 0x185FA5, dark: 0x3987E5),
         secondaryAccent: .dynamic(light: 0x85B7EB, dark: 0x5FA0E8),
         surfaceTint: .dynamic(light: 0xF7FAFC, dark: 0x131A21),
+        onAccent: .dynamic(light: 0xFFFFFF, dark: 0x131A21),
         displayFontName: "Manrope-ExtraBold",
         preferredScheme: nil
     )

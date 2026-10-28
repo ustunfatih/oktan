@@ -443,7 +443,7 @@ struct HomeView: View {
                 .frame(maxWidth: .infinity)
                 .matchedGeometryEffect(id: "addButton", in: animation)
         }
-        .buttonStyle(.borderedProminent)
+        .accentProminentButton()
         .accessibilityIdentifier("home-add-fillup-button")
     }
 }

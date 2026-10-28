@@ -267,7 +267,7 @@ struct ErrorStateView: View {
                         Text("Try Again")
                     }
                 }
-                .buttonStyle(.borderedProminent)
+                .accentProminentButton()
                 .disabled(isRetrying)
             }
         }
