@@ -138,7 +138,7 @@ export function EntryForm({ data, woqod, editing, onSaved, onConflict, onCancel,
         <label className="field">
           <span className="field__label">Odometer · km</span>
           <input
-            type="number"
+            type="text"
             inputMode="numeric"
             placeholder={prev?.odometer != null ? `> ${fmt(prev.odometer)}` : ""}
             value={draft.odometer}
@@ -152,13 +152,13 @@ export function EntryForm({ data, woqod, editing, onSaved, onConflict, onCancel,
         {enterAmount ? (
           <label className="field">
             <span className="field__label">Amount paid · QAR</span>
-            <input type="number" inputMode="decimal" step="0.01" value={draft.cost} onChange={(e) => set({ cost: e.target.value })} onBlur={() => touch("totalCost")} {...field("totalCost")} />
+            <input type="text" inputMode="decimal" value={draft.cost} onChange={(e) => set({ cost: e.target.value })} onBlur={() => touch("totalCost")} {...field("totalCost")} />
             <Err id="totalCost" />
           </label>
         ) : (
           <label className="field">
             <span className="field__label">Litres</span>
-            <input type="number" inputMode="decimal" step="0.01" value={draft.liters} onChange={(e) => set({ liters: e.target.value })} onBlur={() => touch("liters")} {...field("liters")} />
+            <input type="text" inputMode="decimal" value={draft.liters} onChange={(e) => set({ liters: e.target.value })} onBlur={() => touch("liters")} {...field("liters")} />
             <Err id="liters" />
           </label>
         )}
@@ -166,9 +166,8 @@ export function EntryForm({ data, woqod, editing, onSaved, onConflict, onCancel,
         <label className="field">
           <span className="field__label">Price · QAR/L</span>
           <input
-            type="number"
+            type="text"
             inputMode="decimal"
-            step="0.01"
             className="input--accent"
             value={priceTouched ? draft.price : two(suggestion?.price ?? NaN)}
             onChange={(e) => {
