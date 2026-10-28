@@ -45,7 +45,7 @@ Run these from `web/`.
 | `npm run typecheck` | TypeScript for the app and the Worker. |
 | `npm run preview` | Builds, then runs the real Worker at http://localhost:8787 against the **DEV sheet**. |
 | `npm run dev` | Vite only (fast UI work). The API calls need `npm run dev:worker` running alongside. |
-| `npm run deploy` | Builds and deploys to oktan.ustunfatih.com. |
+| `npm run deploy` | Builds and deploys to oktan.ustunfatih.com. Normally not needed: merging to `main` deploys (see below). |
 
 Local development always uses the DEV copy, because `.dev.vars` sets `SHEET_ID` to it. Requests from
 `localhost` skip the Access check using `DEV_EMAIL`. That bypass is ignored on any other host.
@@ -53,6 +53,16 @@ Local development always uses the DEV copy, because `.dev.vars` sets `SHEET_ID` 
 After `vite build`, restart `wrangler dev`. Otherwise it keeps serving the old asset names and returns 500.
 
 ## Ops notes
+
+### Deploys
+
+Every push to `main` that touches `web/` deploys automatically (`.github/workflows/web-deploy.yml`), after
+typecheck and tests pass. Pull requests run the same checks without deploying. To redeploy without a new commit:
+GitHub → Actions → **Web deploy** → **Run workflow**. A failed run means production still has the previous version.
+
+The workflow uses one repository secret, `CLOUDFLARE_API_TOKEN` (Cloudflare → My Profile → API Tokens, template
+**Edit Cloudflare Workers**); the account id is in `wrangler.jsonc`. Worker secrets (`GOOGLE_SA_KEY`, `VAPID_PRIVATE_JWK`)
+are not touched by a deploy.
 
 ### Rotating the Google service account key
 
