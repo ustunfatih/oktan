@@ -90,6 +90,27 @@ extension View {
     func livelyEntrance(delay: Double = 0) -> some View {
         self.modifier(LivelyEntranceModifier(delay: delay))
     }
+
+    /// Prominent button whose label uses the theme's on-accent ink, so it stays
+    /// legible on light accents (the system default is always white)
+    func accentProminentButton() -> some View {
+        self.modifier(AccentProminentButtonModifier())
+    }
+}
+
+extension EnvironmentValues {
+    /// Ink for content drawn on the accent fill; set from the theme at the app root
+    @Entry var onAccent: Color = .white
+}
+
+private struct AccentProminentButtonModifier: ViewModifier {
+    @Environment(\.onAccent) private var onAccent
+
+    func body(content: Content) -> some View {
+        content
+            .buttonStyle(.borderedProminent)
+            .foregroundStyle(onAccent)
+    }
 }
 
 private struct LivelyEntranceModifier: ViewModifier {

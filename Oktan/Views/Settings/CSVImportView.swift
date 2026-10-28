@@ -101,7 +101,7 @@ struct CSVImportView: View {
                     Label("Choose File", systemImage: "folder")
                         .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(.borderedProminent)
+                .accentProminentButton()
                 
                 if let error = errorMessage {
                     Text(error)

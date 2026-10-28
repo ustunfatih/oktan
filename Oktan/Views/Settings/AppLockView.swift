@@ -30,7 +30,7 @@ struct AppLockView: View {
                             .frame(maxWidth: .infinity)
                     }
                 }
-                .buttonStyle(.borderedProminent)
+                .accentProminentButton()
                 .disabled(appLockManager.isAuthenticating)
 
                 if let error = appLockManager.errorMessage {

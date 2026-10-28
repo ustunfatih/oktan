@@ -3,6 +3,7 @@ import AuthenticationServices
 
 struct ProfileView: View {
     @Environment(AuthenticationManager.self) private var authManager
+    @Environment(\.onAccent) private var onAccent
     @State private var showingSignOutConfirmation = false
     
     var body: some View {
@@ -26,7 +27,7 @@ struct ProfileView: View {
             HStack {
                 Text(user.initials)
                     .font(.headline)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(onAccent)
                     .padding()
                     .background(Circle().fill(.tint))
 
@@ -112,7 +113,7 @@ struct ProfileView: View {
                 Label("Sign in with Apple", systemImage: "apple.logo")
                     .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.borderedProminent)
+            .accentProminentButton()
             .disabled(authManager.isLoading)
             
             if authManager.isLoading {

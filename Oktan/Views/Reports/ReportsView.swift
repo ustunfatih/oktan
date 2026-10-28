@@ -624,7 +624,7 @@ struct ReportsView: View {
             Button("Unlock Premium") {
                 showingPaywall = true
             }
-            .buttonStyle(.borderedProminent)
+            .accentProminentButton()
         }
         .frame(maxWidth: .infinity)
         .padding()

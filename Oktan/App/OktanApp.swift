@@ -105,6 +105,7 @@ struct OktanApp: App {
                 }
             }
             .tint(appSettings.currentTheme.accent)
+            .environment(\.onAccent, appSettings.currentTheme.onAccent)
             .preferredColorScheme(appSettings.effectiveColorScheme)
             .environment(\.locale, appSettings.locale)
             .environment(appSettings)
