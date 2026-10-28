@@ -1,6 +1,8 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "oktan",
+  // Lets the GitHub deploy (.github/workflows/web-deploy.yml) skip the account lookup. Not a secret.
+  "account_id": "161fc91b37e4dfd78dd3f1b91b2624e7",
   "main": "worker/index.ts",
   "compatibility_date": "2026-09-01",
 
