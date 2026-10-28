@@ -33,7 +33,7 @@ export function Service() {
 
   return (
     <div className="dashboard service">
-      <div className="page-head">
+      <div className="page-head page-head--tabs">
         <h1 className="page-title">Service</h1>
         <div className="seg" role="group" aria-label="Service sections">
           {TABS.map(([id, label]) => (

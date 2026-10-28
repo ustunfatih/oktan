@@ -88,7 +88,7 @@ export function Log() {
 
   return (
     <div className="dashboard log">
-      <div className="page-head">
+      <div className="page-head page-head--tabs">
         <h1 className="page-title">Log</h1>
         <div className="seg" role="group" aria-label="Log sections">
           {(
